@@ -13,31 +13,11 @@ This project uses React Native and Expo. The frontend is made with the React Nat
    npm install
    ```
 
-2. Start the backend and the app concurrently
+2. Start the backend and the app concurrently, tunnel if on a secure network
 
    ```bash
    npx concurrently --raw "npm run backend" "npx expo start"
    ```
-
-   Note that since Eduroam is a private network, the command has to become
-
-   ```bash
-   npx concurrently --raw "npm run backend" "npx expo start --tunnel"
-   ```
-
-3. Set the IP addreess
-   Put the IP address into the YourIP variable within App.js. Enter only the IP address, not the full link. For example, if your IP is: bash Copy Edit
-
-   ```bash
-   127.0.0.1
-   ```
-
-   you should set App.js to
-
-   ```bash
-   const YourIP = "127.0.0.1"
-   ```
-
 
 ## Requirements
 - Node.js 18 or later (recommended)
