@@ -1,11 +1,11 @@
 ## Information
-Welcome to our App!
+Welcome to my App!
 
-The app allows users to log in or create an account. Once authenticated, they can scan barcodes or manually enter data to track their groceries. The app provides recipe recommendations based on the user's available food, and users can share these recipes with others via their preffered platform.
+This app is a food waste management tool, helping you track your groceries, discover recipes to make with them, and store everything properly.
 
-This project uses React Native and Expo. The frontend is made with the React Native Elements component library. See [here](https://reactnativeelements.com/) to read more about React Native Elements. The backend uses Express.js, a back end web application framework. The project utilizes various third-party APIs, with the Express server handling GET and POST requests to the relevant endpoints.
+Create an account and start scanning barcodes/taking photos/manually enter data to track your groceries. The app provides recipe recommendations based on the available food, and users can share these recipes with others via their preferred platform.
 
-## Set up
+## Set up 
 
 1. Install dependencies
 
