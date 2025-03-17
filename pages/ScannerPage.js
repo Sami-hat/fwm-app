@@ -31,8 +31,7 @@ export const ScannerPage = ({ ip, userId }) => {
         .then((result) => {
           const name = result.product.product_name;
           const quantity = result.product.quantity;
-          console.log(name + "nom");
-          console.log(quantity + "quan");
+          console.log(name + " quantity: " + quantity);
           fetch(
             `http://${ip}:3001/api/inventory/add?user=${userId}&name=${name}&quantity=${quantity}&barcode=${data}`,
             {
