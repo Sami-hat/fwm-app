@@ -20,10 +20,6 @@ const ProfileStack = ({
   setIndex,
   recipe,
   setRecipe,
-  item,
-  setItem,
-  itemUri,
-  setItemUri,
 }) => (
   <Stack.Navigator screenOptions={{ headerShown: false }}>
     <Stack.Screen name="ProfileMain">
@@ -68,7 +64,6 @@ const ProfileStack = ({
 const routes = [
   { key: "profile", title: "Profile" },
   { key: "entries", title: "Inventory" },
-  { key: "camera", title: "Camera" },
 ];
 
 export const Tabs = ({ ip }) => {
@@ -99,15 +94,6 @@ export const Tabs = ({ ip }) => {
       case "entries":
         return (
           <EntriesPage
-            ip={ip}
-            userId={userId}
-            setUserId={setUserId}
-            setIndex={setIndex}
-          />
-        );
-      case "camera":
-        return (
-          <CameraPage
             ip={ip}
             userId={userId}
             setUserId={setUserId}

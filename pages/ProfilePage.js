@@ -54,7 +54,7 @@ export const ProfilePage = ({ ip, userId, setUserId, setRecipe }) => {
 
           const chatPrompt =
             "take this list of ingredients and return a list of recipes names which can be made from them. Provide nothing else outside an array of data which can be fetched from an API call and re-inputted into code with no parsing Ingredients: " +
-            " Follow this exact format [{recipe_name: value, ingredients_needed: values, instructions: value}]. Give very very exact instruction including temperature and time for cooking/baking and in what appliances, and what quantities are needed for the ingredients, there should be no embedded JSON objects at all" +
+            " Follow this exact format [{recipe_name: value, ingredients_needed: values, instructions: values}]. Give very very exact instruction including temperature and time for cooking/baking and in what appliances, and what quantities are needed for the ingredients, there should be no embedded JSON objects at all" +
             ingredientsString;
 
           setPrompt(chatPrompt);
@@ -147,7 +147,7 @@ export const ProfilePage = ({ ip, userId, setUserId, setRecipe }) => {
           </View>
 
           {/* Recipes */}
-          <View style={{ maxHeight: windowHeight * 0.5, marginLeft: "3%" }}>
+          <View style={{ maxHeight: windowHeight * 0.5 }}>
             <Text h4 style={styles.header}>
               Suggested Recipes:
             </Text>

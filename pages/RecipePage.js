@@ -34,6 +34,41 @@ export const RecipePage = ({ ip, userId, recipe }) => {
     return "";
   };
 
+  const formatIngredients = (ingredients) => {
+    if (typeof ingredients === "string") {
+      return ingredients
+        .split(",")
+        .map((item) => `• ${item.trim()}`)
+        .join("\n");
+    } else if (Array.isArray(ingredients)) {
+      return ingredients.map((item) => `• ${item}`).join("\n");
+    } else if (typeof ingredients === "object" && ingredients !== null) {
+      return Object.values(ingredients).map((item) => `• ${item}`).join("\n");
+    }
+    return "";
+  };
+
+  const formatMethod = (method) => {
+    if (typeof method === "string") {
+      return method
+        .split(".")
+        .filter((item) => item.trim() !== "")
+        .map((item, index) => `${index + 1}. ${item.trim()}`)
+        .join("\n");
+    } else if (Array.isArray(method)) {
+      return method
+        .filter((item) => item.trim() !== "")
+        .map((item, index) => `${index + 1}. ${item}`)
+        .join("\n");
+    } else if (typeof method === "object" && method !== null) {
+      return Object.values(method)
+        .filter((item) => item.trim() !== "")
+        .map((item, index) => `${index + 1}. ${item}`)
+        .join("\n");
+    }
+    return "";
+  };
+
   const handlePopupSubmit = async () => {
     await shareRecipe();
     setRecipient(""); // Clear the input field
@@ -72,14 +107,14 @@ export const RecipePage = ({ ip, userId, recipe }) => {
             Ingredients
           </Text>
           <Text style={styles.displayText}>
-            {getString(recipe.ingredients_needed)}
+            {formatIngredients(getString(recipe.ingredients_needed))}
           </Text>
 
           <Text h4 style={styles.subtitle}>
             Method
           </Text>
           <Text style={styles.displayText}>
-            {getString(recipe.instructions)}
+            {formatMethod(getString(recipe.instructions))}
           </Text>
         </View>
       </ScrollView>
@@ -89,9 +124,9 @@ export const RecipePage = ({ ip, userId, recipe }) => {
         onPress={async () => {
           await shareText(
             `${recipe.recipe_name}`,
-            `Ingredients\n\n${getString(
+            `Ingredients\n\n${formatIngredients(getString(
               recipe.ingredients_needed
-            )}\n\nMethod\n\n${getString(recipe.instructions)}\n\n`
+            ))}\n\nMethod\n\n${formatMethod(getString(recipe.instructions))}\n\n`
           );
         }}
         buttonStyle={[styles.button, { marginTop: 10 }]}

@@ -209,9 +209,10 @@ const styles = StyleSheet.create({
         paddingHorizontal: 10,
     },
     button: {
+        width: Dimensions.get("window").width * 0.65,
         backgroundColor: "#52B788",
         borderRadius: 25,
-        marginVertical: 10,
+        marginVertical: 15,
         textAlign: "center",
         justifyContent: "center",
         margin: "auto"

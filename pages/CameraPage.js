@@ -51,7 +51,7 @@ export const CameraPage = ({ ip, userId }) => {
         <Text style={styles.message}>
           We need permission to use your camera. Turn it on pretty please...
         </Text>
-        <Button onPress={setPermission} title="grant permission" />
+        <Button onPress={setPermission(true)} title="grant permission" />
       </View>
     );
   }
@@ -60,9 +60,9 @@ export const CameraPage = ({ ip, userId }) => {
     setFacing((current) => (current === "back" ? "front" : "back"));
   }
 
-  const setupCamera = () => {
-    console.log("Camera Setup...");
-  };
+  //  const setupCamera = () => {
+  //    console.log("Camera Setup...");
+  //  };
 
   const takePicture = async () => {
     const photo = await cameraRef.current?.takePictureAsync();
@@ -144,7 +144,7 @@ export const CameraPage = ({ ip, userId }) => {
         <CameraView
           style={styles.camera}
           facing={facing}
-          onCameraReady={setupCamera}
+          //          onCameraReady={setupCamera}
           ref={cameraRef}
         >
           <View style={styles.buttonContainer}>
