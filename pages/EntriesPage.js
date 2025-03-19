@@ -11,8 +11,11 @@ import { Header } from "../components/Header";
 
 export const EntriesPage = ({ ip, userId }) => {
     const [inventory, setInventory] = useState([]);
+    const [isPosting, setIsPosting] = useState(false);
+    const [isEditing, setIsEditing] = useState(false);
     const [isAdding, setIsAdding] = useState(false);
-    const [added, setAdded] = useState(false);
+    const [posted, setPosted] = useState(false);
+    const [item, setItem] = useState(null);
     const [name, setName] = useState(null);
     const [quantity, setQuantity] = useState(null);
     const [barcode, setBarcode] = useState(null);
@@ -27,7 +30,7 @@ export const EntriesPage = ({ ip, userId }) => {
                 })
                 .catch((error) => console.error("Error fetching userID:", error));
         }
-    }, [userId, added]);
+    }, [userId, posted]);
 
     // Delete entry
     const deleteEntry = async (id) => {
@@ -44,7 +47,7 @@ export const EntriesPage = ({ ip, userId }) => {
 
     // Add entry 
     const addEntry = async () => {
-        setIsAdding(true);
+        setIsPosting(true);
         console.log("userId:", userId);
         fetch(
             `http://${ip}:3001/api/inventory/add?user=${userId}&name=${name}&quantity=${quantity}&barcode=${barcode}`,
@@ -54,11 +57,40 @@ export const EntriesPage = ({ ip, userId }) => {
         )
             .then((response) => response.json())
             .then((data) => {
-                setAdded(!added);
+                setPosted(!posted);
+                setIsPosting(false);
                 setIsAdding(false);
             })
             .catch((error) => console.error("Error adding entry:", error));
     };
+
+    // Edit entry
+    const editEntry = async () => {
+        setIsPosting(true);
+        console.log("userId:", userId);
+        fetch(
+            `http://${ip}:3001/api/inventory/edit?user=${userId}&id=${item}name=${name}&quantity=${quantity}&barcode=${barcode}`,
+            {
+                method: "POST",
+            }
+        )
+            .then((response) => response.json())
+            .then((data) => {
+                setPosted(!posted);
+                setIsPosting(false);
+                setIsEditing(false);
+                clearEntry();
+            })
+            .catch((error) => console.error("Error editing entry:", error));
+    };
+
+    const clearEntry = () => {
+        setItem(null);
+        setName(null);
+        setQuantity(null)
+        setBarcode(null);
+        
+    }
 
     return (
         <View style={styles.container}>
@@ -75,13 +107,13 @@ export const EntriesPage = ({ ip, userId }) => {
                         account, you will be able to see your groceries here.
                     </Text>
                 </View>
-            ) : isAdding ? (
+            ) : isPosting ? (
                 <View style={styles.content}>
                     <Text h4 style={styles.inputLabel}>
                         Name of Item:
                     </Text>
                     <Input
-                        placeholder="Enter item name"
+                        placeholder={isEditing ? name : "Enter item name"}
                         value={name}
                         onChangeText={setName}
                         inputContainerStyle={styles.inputContainer}
@@ -90,7 +122,7 @@ export const EntriesPage = ({ ip, userId }) => {
                         Quantity:
                     </Text>
                     <Input
-                        placeholder="Enter quantity"
+                        placeholder={isEditing ? quantity : "Enter quantity"}
                         keyboardType="numeric"
                         value={quantity}
                         onChangeText={setQuantity}
@@ -100,7 +132,7 @@ export const EntriesPage = ({ ip, userId }) => {
                         Barcode Number:
                     </Text>
                     <Input
-                        placeholder="Enter barcode"
+                        placeholder={isEditing ? barcode : "Enter barcode"}
                         keyboardType="numeric"
                         value={barcode}
                         onChangeText={setBarcode}
@@ -109,12 +141,17 @@ export const EntriesPage = ({ ip, userId }) => {
 
                     <Button
                         title="Submit"
-                        onPress={addEntry}
+                        onPress={isAdding ? addEntry : editEntry}
                         buttonStyle={styles.button}
                     />
                     <Button
                         title="Back to Inventory"
-                        onPress={() => setIsAdding(false)}
+                        onPress={() => {
+                            setIsPosting(false);
+                            setIsAdding(false);
+                            setIsEditing(false);
+                            clearEntry();
+                        }}
                         buttonStyle={styles.button}
                     />
                 </View>
@@ -148,11 +185,26 @@ export const EntriesPage = ({ ip, userId }) => {
                                         <Text style={styles.quantity}>
                                             Quantity: {item.quantity}
                                         </Text>
+                                        <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 2}}>
                                         <Button
                                             title="Delete"
-                                            buttonStyle={styles.deleteButton}
+                                            buttonStyle={[styles.subButton, styles.deleteButton]}
                                             onPress={() => deleteEntry(item.id)}
                                         />
+                                        <Button
+                                            title="Edit"
+                                            buttonStyle={[styles.subButton, styles.editButton]}
+                                            onPress={() => {
+                                                setIsPosting(true);
+                                                setIsEditing(true);
+
+                                                setItem(item.id);
+                                                setName(item.name);
+                                                setQuantity(item.quantity);
+                                                setBarcode(item.barcode);
+                                            }}
+                                        />
+                                        </View>
                                     </Card>
                                 )}
                             />
@@ -160,7 +212,10 @@ export const EntriesPage = ({ ip, userId }) => {
                     )}
                     <Button
                         title="Add Groceries Manually"
-                        onPress={() => setIsAdding(true)}
+                        onPress={() => {
+                            setIsPosting(true);
+                            setIsAdding(true);
+                        }}
                         buttonStyle={styles.button}
                     />
                 </View>
@@ -235,10 +290,19 @@ const styles = StyleSheet.create({
         color: "#555",
         marginVertical: 5,
     },
-    deleteButton: {
-        backgroundColor: "#FF5261FF",
+    subButton: {
         borderRadius: 10,
         marginTop: 10,
+        alignContent: "center",
+        alignItems: "center",
+        justifyContent: "center",
+        width: '88%',
+    },
+    deleteButton: {
+        backgroundColor: "#FF5261FF",
+    },
+    editButton: {
+        backgroundColor: "#FFB300",
     },
 });
 

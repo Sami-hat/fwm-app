@@ -122,6 +122,37 @@ app.post("/api/inventory/add", async (req, res) => {
   }
 });
 
+// Add Grocery
+app.post("/api/inventory/edit", async (req, res) => {
+  const { user, id, name, quantity, barcode } = req.query;
+
+  if (!user || isNaN(parseInt(user, 10))) {
+    return res.status(400).json({ message: "Invalid or missing user ID" });
+  }
+
+  try {
+    const insertQuery = `
+            UPDATE inventorytable
+            SET name = $2, quantity = $3, barcode = $4
+            WHERE id = $1 AND userid = $5;
+            RETURNING *;
+        `;
+    const insertResult = await con.query(insertQuery, [
+      id,
+      name,
+      quantity,
+      barcode,
+      parseInt(user, 10),
+    ]);
+
+    return res.status(201).json({ message: "Item edited successfully" });
+  } catch (error) {
+    console.error("Error editing entry:", error);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+});
+
+
 // Delete Grocery
 app.delete("/api/inventory/delete", async (req, res) => {
   const { user, id } = req.query;

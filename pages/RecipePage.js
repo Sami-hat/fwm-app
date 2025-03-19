@@ -53,6 +53,7 @@ export const RecipePage = ({ ip, userId, recipe }) => {
       return method
         .split(".")
         .filter((item) => item.trim() !== "")
+        .filter((item) => item.length > 2) 
         .map((item, index) => `${index + 1}. ${item.trim()}`)
         .join("\n");
     } else if (Array.isArray(method)) {
