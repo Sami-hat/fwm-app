@@ -37,7 +37,7 @@ con.connect((err) => {
 });
 
 const app = express();
-const port = 3001;
+const port = process.env.PORT || 3001;
 
 // Middleware to enable JSON parsing and CORS
 app.use(express.json());
@@ -108,7 +108,7 @@ app.post("/api/inventory/add", async (req, res) => {
             VALUES ($1, $2, $3, $4)
             RETURNING *;
         `;
-    const insertResult = await con.query(insertQuery, [
+    await con.query(insertQuery, [
       name,
       quantity,
       barcode,
@@ -134,11 +134,11 @@ app.post("/api/inventory/edit", async (req, res) => {
     const insertQuery = `
             UPDATE inventorytable
             SET name = $2, quantity = $3, barcode = $4
-            WHERE id = $1 AND userid = $5;
+            WHERE id = $1 AND userid = $5
             RETURNING *;
         `;
-    const insertResult = await con.query(insertQuery, [
-      id,
+    await con.query(insertQuery, [
+      parseInt(id, 10),
       name,
       quantity,
       barcode,
