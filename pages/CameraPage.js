@@ -20,8 +20,29 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import Entypo from "@expo/vector-icons/Entypo";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 
-//Project imports
-import { getIngredients } from "../backend/Api";
+const getIngredients = async (uri) => {
+  fetch(
+    `http://${ip}:3001/api/logmeal?user=${uri}`,
+    {
+      method: "POST",
+    }
+  )
+    .then((response) => response.json())
+    .then((result) => {
+      const name =
+        result.segmentation_results[0].recognition_results[0].name;
+      Alert.alert(
+        "Image Processed",
+        `Name: ${name}`,
+        [{ text: "OK", onPress: () => console.log("OK Pressed") }],
+        { cancelable: false }
+      );
+    })
+    .catch((error) => {
+      console.error("Error:", error);
+    });
+  setUri(null);
+}
 
 export const CameraPage = ({ ip, userId }) => {
   const navigation = useNavigation();
@@ -59,10 +80,6 @@ export const CameraPage = ({ ip, userId }) => {
   function toggleCameraFacing() {
     setFacing((current) => (current === "back" ? "front" : "back"));
   }
-
-  //  const setupCamera = () => {
-  //    console.log("Camera Setup...");
-  //  };
 
   const takePicture = async () => {
     const photo = await cameraRef.current?.takePictureAsync();
@@ -102,24 +119,7 @@ export const CameraPage = ({ ip, userId }) => {
             <Text style={styles.text}>Take another one?</Text>
           </TouchableOpacity>
           <TouchableOpacity
-            onPress={() => {
-              getIngredients(uri)
-                .then((response) => response.json())
-                .then((result) => {
-                  const name =
-                    result.segmentation_results[0].recognition_results[0].name;
-                  Alert.alert(
-                    "Image Processed",
-                    `Name: ${name}`,
-                    [{ text: "OK", onPress: () => console.log("OK Pressed") }],
-                    { cancelable: false }
-                  );
-                })
-                .catch((error) => {
-                  console.error("Error:", error);
-                });
-              setUri(null);
-            }}
+            onPress={() => getIngredients(uri)}
             style={{
               width: windowWidth * 0.75,
               backgroundColor: "green",

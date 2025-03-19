@@ -4,6 +4,8 @@ const cors = require("cors");
 const express = require("express");
 const bcrypt = require("bcrypt");
 const { GoogleGenerativeAI } = require("@google/generative-ai");
+const _ = require("lodash");
+const FormData = require("form-data");
 
 // API
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
@@ -269,6 +271,44 @@ app.get("/api/email", async (req, res) => {
     res.status(500).json({ error: "Error fetching email" });
   }
 });
+
+// LogMeal Image API Call
+app.post("/api/logmeal", async (req, res) => {
+  const { imageUri } = req.body;
+  if (!imageUri) {
+    return res.status(400).json({ error: "Missing imageUri" });
+  }
+
+  const baseUrl = "https://api.logmeal.com/v2/image/segmentation/complete";
+  const key = process.env.CAMERA_API_KEY;
+  
+  // Use FormData from the form-data package
+  const formData = new FormData();
+  formData.append("image", {
+    uri: imageUri,
+    name: "photo.jpg",
+    type: "image/jpg",
+  });
+
+  try {
+    const response = await fetch(baseUrl, {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        Authorization: `Bearer ${key}`,
+        ...formData.getHeaders(),
+      },
+      body: formData,
+    });
+    const data = await response.json();
+    res.json(data);
+  } catch (err) {
+    console.error("Error in logmeal API call:", err);
+    res.status(500).json({ error: "Error processing image" });
+  }
+});
+
+
 
 // Listen to port
 app.listen(port, () => {

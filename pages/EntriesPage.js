@@ -47,7 +47,6 @@ export const EntriesPage = ({ ip, userId }) => {
 
     // Add entry 
     const addEntry = async () => {
-        // setIsPosting(true);
         console.log("userId:", userId);
         fetch(
             `http://${ip}:3001/api/inventory/add?user=${userId}&name=${name}&quantity=${quantity}&barcode=${barcode}`,
@@ -66,8 +65,6 @@ export const EntriesPage = ({ ip, userId }) => {
 
     // Edit entry
     const editEntry = async () => {
-        // setIsPosting(true);
-        console.log("userId:", userId);
         fetch(
             `http://${ip}:3001/api/inventory/edit?user=${userId}&id=${item}&name=${name}&quantity=${quantity}&barcode=${barcode}`,
             {
