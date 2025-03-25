@@ -70,7 +70,7 @@ export const CameraPage = ({ ip, userId }) => {
     return (
       <View style={styles.container}>
         <Text style={styles.message}>
-          We need permission to use your camera. Turn it on pretty please...
+          We need permission to use your camera
         </Text>
         <Button onPress={setPermission(true)} title="grant permission" />
       </View>
