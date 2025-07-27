@@ -1,8 +1,7 @@
 import { Tabs } from './components/Tabs';
-import React, { useState, useEffect } from 'react';
 
 export default function App() {
-  const backendIP = "https://fwm-backend.vercel.app/api";
+  const API_BASE_URL = "https://fwm-backend-ah4x0vdkh-sami-hats-projects.vercel.app";
 
-  return <Tabs ip={backendIP}></Tabs>
+  return <Tabs ip={API_BASE_URL}></Tabs>
 }

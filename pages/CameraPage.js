@@ -22,7 +22,7 @@ import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 
 const getIngredients = async (uri) => {
   fetch(
-    `http://${ip}:3001/api/logmeal?user=${uri}`,
+    `${ip}/logmeal?user=${uri}`,
     {
       method: "POST",
     }

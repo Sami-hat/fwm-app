@@ -15,7 +15,7 @@ export const ProfilePage = ({ ip, userId, setUserId, setRecipe }) => {
 
   const handleSubmit = async () => {
     try {
-      const res = await fetch(`http://${ip}:3001/api/recipes`, {
+      const res = await fetch(`${ip}/recipes`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -46,15 +46,15 @@ export const ProfilePage = ({ ip, userId, setUserId, setRecipe }) => {
   // Get user's inventory
   useEffect(() => {
     if (userId >= 1) {
-      fetch(`http://${ip}:3001/api/inventory/names?user=${userId}`)
+      fetch(`${ip}/inventory/names?user=${userId}`)
         .then((response) => response.json())
         .then((data) => {
           setIngredients(data);
           const ingredientsString = data.join(", ");
 
           const chatPrompt =
-            "take this list of ingredients and return a list of recipes names which can be made from them. Provide nothing else outside an array of data which can be fetched from an API call and re-inputted into code with no parsing Ingredients: " +
-            " Follow this exact format [{recipe_name: value, ingredients_needed: values, instructions: values}]. Give very very exact instruction including temperature and time for cooking/baking and in what appliances, and what quantities are needed for the ingredients, there should be no embedded JSON objects at all" +
+            "Take this list of ingredients and return a list of recipes names which can be made from them. Provide nothing else outside an array of data which can be fetched from an API call and re-inputted into code with no parsing Ingredients: " +
+            "Follow this exact format [{recipe_name: value, ingredients_needed: values, instructions: values}]. Give very exact instruction including temperature and time for cooking/baking and in what appliances, and what quantities are needed for the ingredients, there should be no embedded JSON objects at all" +
             ingredientsString;
 
           setPrompt(chatPrompt);

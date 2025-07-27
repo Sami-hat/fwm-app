@@ -33,7 +33,7 @@ export const ScannerPage = ({ ip, userId }) => {
           const quantity = result.product.quantity;
           console.log(name + " quantity: " + quantity);
           fetch(
-            `http://${ip}:3001/api/inventory/add?user=${userId}&name=${name}&quantity=${quantity}&barcode=${data}`,
+            `${ip}/inventory/add?user=${userId}&name=${name}&quantity=${quantity}&barcode=${data}`,
             {
               method: "POST",
             }

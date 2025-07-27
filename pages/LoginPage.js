@@ -11,7 +11,7 @@ export const LoginPage = ({ ip, userId, setUserId }) => {
 
   const handleLogin = async (email, password) => {
     try {
-      const response = await fetch(`http://${ip}:3001/api/login`, {
+      const response = await fetch(`${ip}/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
