@@ -1,5 +1,5 @@
 ## Information
-Welcome to my App!
+Welcome to my Grocery Management App!
 
 This app is a food waste management tool, helping you track your groceries, discover recipes to make with them, and store everything properly.
 
@@ -14,6 +14,7 @@ Create an account and start scanning barcodes/taking photos/manually enter data 
    ```
 
 2. Start the backend and the app concurrently, tunnel if on a secure network
+   For my own testing purposes
 
    ```bash
    npx concurrently --raw "npm run backend" "npx expo start"
