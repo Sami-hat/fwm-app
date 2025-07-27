@@ -3,8 +3,6 @@ import React, { useState, useEffect } from 'react';
 
 export default function App() {
   const backendIP = "https://fwm-backend.vercel.app/api";
-  // Enter IP here
-  const [ip, setIP] = useState(YourIP);
 
-  return <Tabs ip={ip}></Tabs>
+  return <Tabs ip={backendIP}></Tabs>
 }
