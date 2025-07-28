@@ -10,37 +10,58 @@ export const ProfilePage = ({ ip, userId, setUserId, setRecipe }) => {
   const windowHeight = Dimensions.get("window").height;
   const navigation = useNavigation();
   const [ingredients, setIngredients] = useState([]);
-  const [response, setResponse] = useState("");
+  const [recipes, setRecipes] = useState("");
 
-  const handleSubmit = async () => {
+  const generateRecipes = async (ingredients, userId) => {
     try {
-      // Send ingredients and userId for prompt functionality
-      const res = await fetch(`${ip}/recipes`, {
+      const response = await fetch(`${ip}/recipes`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ 
-          ingredients: ingredients, // ingredient list
-          userId: userId // user's ID
+        body: JSON.stringify({
+          ingredients: ingredients,
+          userId: userId
         }),
       });
 
-      if (!res.ok) {
-        throw new Error(`Server error: ${res.status} ${res.statusText}`);
+      const data = await response.json();
+
+      if (response.status === 503) {
+        // API is overloaded
+        Alert.alert(
+          "Service Busy",
+          "The recipe service is temporarily busy. Please try again in a minute.",
+          [
+            { text: "OK" },
+            {
+              text: "Retry",
+              onPress: () => {
+                setTimeout(() => generateRecipes(ingredients, userId), 5000); // Retry after 5 seconds
+              }
+            }
+          ]
+        );
+        return;
       }
 
-      const data = await res.text();
-      const parsedResponse = JSON.parse(data);
-      setResponse(parsedResponse);
-    } catch (err) {
-      console.error("Fetch error:", err);
+      if (!response.ok) {
+        throw new Error(`Server error: ${response.status}`);
+      }
+
+      // Handle successful response
+      const recipes = JSON.parse(data);
+      setRecipes(recipes);
+
+    } catch (error) {
+      console.error('Recipe generation error:', error);
+      Alert.alert("Error", "Failed to generate recipes. Please try again later.");
     }
   };
-
+  
   // Get user's recipes
   useEffect(() => {
     if (ingredients.length > 0) {
-      setResponse([]);
-      handleSubmit();
+      setRecipes([]);
+      generateRecipes();
     }
   }, [ingredients]);
 
@@ -50,8 +71,8 @@ export const ProfilePage = ({ ip, userId, setUserId, setRecipe }) => {
       fetch(`${ip}/inventory/names?user=${userId}`)
         .then((response) => response.json())
         .then((data) => {
-          setIngredients(data);
           const ingredientsString = data.join(", ");
+          setIngredients(ingredientsString);
         });
     }
   }, [userId]);
@@ -159,9 +180,9 @@ export const ProfilePage = ({ ip, userId, setUserId, setRecipe }) => {
               Suggested Recipes:
             </Text>
             {ingredients.length > 0 ? (
-              response.length > 0 ? (
+              recipes.length > 0 ? (
                 <FlatList
-                  data={response}
+                  data={recipes}
                   keyExtractor={(item) => item.recipe_name}
                   renderItem={({ item }) => (
                     <ListItem
