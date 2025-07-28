@@ -1,3 +1,4 @@
+import React, { useState, useEffect } from "react";
 import { ProfilePage } from "../pages/ProfilePage";
 import { EntriesPage } from "../pages/EntriesPage";
 import { CameraPage } from "../pages/CameraPage";

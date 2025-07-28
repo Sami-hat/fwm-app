@@ -36,6 +36,7 @@ export const PreferencesPage = ({ userId }) => {
     try {
       await preferencesService.update(userId, preferences);
       Alert.alert("Success", "Preferences saved successfully!");
+      navigation.goBack();
     } catch (error) {
       console.error("Error saving preferences:", error);
       Alert.alert("Error", "Failed to save preferences");
