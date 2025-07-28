@@ -74,7 +74,6 @@ fastlane/test_output
 # Sensitive configuration files
 config/secrets.js
 config/api-keys.js
-/config
 
 # Any files containing API keys, passwords, or sensitive data
 **/secrets.*
