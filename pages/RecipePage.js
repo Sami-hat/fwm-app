@@ -81,9 +81,11 @@ export const RecipePage = ({ ip, userId, recipe }) => {
 
   // Parse the servings
   const formatServings = (servings) => {
-    const numServings = parseInt(servings);
-    if (isNaN(numServings) || numServings === 0) return "Not specified";
-    return `${numServings} ${numServings === 1 ? 'serving' : 'servings'}`;
+    if (!servings) return "Not specified";
+    return servings.toString();
+    // const numServings = parseInt(servings);
+    // if (isNaN(numServings) || numServings === 0) return "Not specified";
+    // return `${numServings} ${numServings === 1 ? 'serving' : 'servings'}`;
   };
 
   // Parse the difficulty

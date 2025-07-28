@@ -10,17 +10,18 @@ export const ProfilePage = ({ ip, userId, setUserId, setRecipe }) => {
   const windowHeight = Dimensions.get("window").height;
   const navigation = useNavigation();
   const [ingredients, setIngredients] = useState([]);
-  const [prompt, setPrompt] = useState("");
   const [response, setResponse] = useState("");
 
   const handleSubmit = async () => {
     try {
+      // Send ingredients and userId for prompt functionality
       const res = await fetch(`${ip}/recipes`, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ prompt }),
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ 
+          ingredients: ingredients, // ingredient list
+          userId: userId // user's ID
+        }),
       });
 
       if (!res.ok) {
@@ -51,42 +52,6 @@ export const ProfilePage = ({ ip, userId, setUserId, setRecipe }) => {
         .then((data) => {
           setIngredients(data);
           const ingredientsString = data.join(", ");
-
-          const chatPrompt = `Generate recipes using these available ingredients: ${ingredientsString}
-
-          Requirements:
-          - Only suggest recipes that can be made primarily with the provided ingredients
-          - If a recipe needs 1-2 common pantry items not listed (salt, pepper, oil, water), that's acceptable
-          - Include exact measurements, cooking temperatures, times, and equipment needed
-          - Each recipe should serve 2-4 people
-          - Difficulty should be rated on a scale of 1 - 5. with 1 being easy and 5 being the hardest
-
-          Return ONLY a valid JSON array in this exact format with no additional text:
-
-          [
-            {
-              "recipe_name": "Recipe Name Here",
-              "ingredients_needed": [
-                "1 cup flour",
-                "2 eggs",
-                "1 tsp salt"
-              ],
-              "instructions": [
-                "Preheat oven to 350°F",
-                "Mix flour and salt in a bowl",
-                "Beat eggs and add to mixture",
-                "Bake for 25 minutes until golden"
-              ],
-              "cooking_time": "25 minutes",
-              "prep_time": "10 minutes",
-              "servings": 4,
-              "difficulty": "2"
-            }
-          ]
-
-          Generate 3-5 recipes maximum.`;
-
-          setPrompt(chatPrompt);
         });
     }
   }, [userId]);
@@ -137,6 +102,19 @@ export const ProfilePage = ({ ip, userId, setUserId, setRecipe }) => {
         // Displayed if user signed in
         <View>
           <View style={{ alignItems: "center", justifyContent: "center" }}>
+            {/* Set Preferences */}
+            <Button
+              title="Set Preferences     "
+              icon={<Feather name="camera" size={18} color="white" />}
+              iconRight
+              onPress={() => navigation.navigate("Preferences")}
+              buttonStyle={{
+                ...styles.loggedInButton,
+                backgroundColor: "#44c339ff",
+              }}
+              titleStyle={styles.buttonText}
+            />
+
             {/* Scan Barcode */}
             <Button
               title="Scan Barcode     "

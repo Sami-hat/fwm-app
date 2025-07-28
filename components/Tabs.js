@@ -3,6 +3,7 @@ import { ProfilePage } from "../pages/ProfilePage";
 import { EntriesPage } from "../pages/EntriesPage";
 import { CameraPage } from "../pages/CameraPage";
 import { ScannerPage } from "../pages/ScannerPage";
+import { PreferencesPage } from "../pages/PreferencesPage";
 import { SignUpPage } from "../pages/SignUpPage";
 import { LoginPage } from "../pages/LoginPage";
 import { createStackNavigator } from "@react-navigation/stack";
@@ -49,6 +50,9 @@ const ProfileStack = ({
     </Stack.Screen>
     <Stack.Screen name="Scanner">
       {(props) => <ScannerPage {...props} ip={ip} userId={userId} />}
+    </Stack.Screen>
+    <Stack.Screen name="Preferences">
+      {(props) => <PreferencesPage {...props} ip={ip} userId={userId} />}
     </Stack.Screen>
     <Stack.Screen name="Recipe">
       {(props) => (
