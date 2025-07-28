@@ -23,7 +23,7 @@ export const EntriesPage = ({ ip, userId }) => {
     // Get user's inventory
     useEffect(() => {
         if (userId >= 1) {
-            fetch(`http://${ip}:3001/api/inventory?user=${userId}`)
+            fetch(`${ip}/inventory?user=${userId}`)
                 .then((response) => response.json())
                 .then((data) => {
                     setInventory(data);
@@ -34,7 +34,7 @@ export const EntriesPage = ({ ip, userId }) => {
 
     // Delete entry
     const deleteEntry = async (id) => {
-        fetch(`http://${ip}:3001/api/inventory/delete?user=${userId}&id=${id}`, {
+        fetch(`${ip}/inventory/delete?user=${userId}&id=${id}`, {
             method: "DELETE",
         })
             .then((response) => response.json())
@@ -49,7 +49,7 @@ export const EntriesPage = ({ ip, userId }) => {
     const addEntry = async () => {
         console.log("userId:", userId);
         fetch(
-            `http://${ip}:3001/api/inventory/add?user=${userId}&name=${name}&quantity=${quantity}&barcode=${barcode}`,
+            `${ip}/inventory/add?user=${userId}&name=${name}&quantity=${quantity}&barcode=${barcode}`,
             {
                 method: "POST",
             }
@@ -66,7 +66,7 @@ export const EntriesPage = ({ ip, userId }) => {
     // Edit entry
     const editEntry = async () => {
         fetch(
-            `http://${ip}:3001/api/inventory/edit?user=${userId}&id=${item}&name=${name}&quantity=${quantity}&barcode=${barcode}`,
+            `${ip}/inventory/edit?user=${userId}&id=${item}&name=${name}&quantity=${quantity}&barcode=${barcode}`,
             {
                 method: "POST",
             }
