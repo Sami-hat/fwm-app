@@ -34,6 +34,7 @@ export const RecipePage = ({ ip, userId, recipe }) => {
     return "";
   };
 
+  // Parse ingredient list and quantities
   const formatIngredients = (ingredients) => {
     if (typeof ingredients === "string") {
       return ingredients
@@ -48,31 +49,59 @@ export const RecipePage = ({ ip, userId, recipe }) => {
     return "";
   };
 
+  // Parse the recipe method steps 
   const formatMethod = (method) => {
-    if (typeof method === "string") {
-      return method
-        .split(".")
-        .filter((item) => item.trim() !== "")
-        .filter((item) => item.length > 2) 
-        .map((item, index) => `${index + 1}. ${item.trim()}`)
-        .join("\n");
-    } else if (Array.isArray(method)) {
-      return method
-        .filter((item) => item.trim() !== "")
-        .map((item, index) => `${index + 1}. ${item}`)
-        .join("\n");
-    } else if (typeof method === "object" && method !== null) {
-      return Object.values(method)
-        .filter((item) => item.trim() !== "")
-        .map((item, index) => `${index + 1}. ${item}`)
-        .join("\n");
-    }
+    const processSteps = (items) => items
+      .filter(item => item.trim() && item.length > 2)
+      .map((item, index) => {
+        // Remove leading commas and spaces
+        const cleanStep = item.trim().replace(/^[,\s]+/, '');
+        return `${index + 1}. ${cleanStep}`;
+      })
+      .join("\n");
+
+    if (typeof method === "string") return processSteps(method.split("."));
+    if (Array.isArray(method)) return processSteps(method);
+    if (typeof method === "object" && method !== null) return processSteps(Object.values(method));
     return "";
+  };
+
+
+  // Parse the cooking and preparation times
+  const formatTime = (time) => {
+    const cookingTime = parseInt(time);
+    if (isNaN(cookingTime)) return "Not specified";
+    if (cookingTime === 0) return "Not specified";
+    if (cookingTime < 60) return `${cookingTime} minutes`;
+    const hours = Math.floor(cookingTime / 60);
+    const minutes = cookingTime % 60;
+    if (minutes === 0) return `${hours} hour${hours > 1 ? 's' : ''}`;
+    return `${hours} hour${hours > 1 ? 's' : ''} ${minutes} minute${minutes > 1 ? 's' : ''}`;
+  };
+
+  // Parse the servings
+  const formatServings = (servings) => {
+    const numServings = parseInt(servings);
+    if (isNaN(numServings) || numServings === 0) return "Not specified";
+    return `${numServings} ${numServings === 1 ? 'serving' : 'servings'}`;
+  };
+
+  // Parse the difficulty
+  const formatDifficulty = (difficulty) => {
+    const numericDifficulty = parseInt(difficulty) || 0;
+    const maxStars = 5;
+    const filledStar = '★';
+    const emptyStar = '☆';
+    
+    const stars = filledStar.repeat(numericDifficulty) + 
+                  emptyStar.repeat(maxStars - numericDifficulty);
+    
+    return stars;
   };
 
   const handlePopupSubmit = async () => {
     await shareRecipe();
-    setRecipient(""); // Clear the input field
+    setRecipient("");
     setModalVisible(false); // Close the popup
   };
 
@@ -117,6 +146,36 @@ export const RecipePage = ({ ip, userId, recipe }) => {
           <Text style={styles.displayText}>
             {formatMethod(getString(recipe.instructions))}
           </Text>
+
+          {/* <Text h4 style={styles.subtitle}>
+            Cooking Time
+          </Text>
+          <Text style={styles.displayText}>
+            {formatTime(getString(recipe.cooking_time))}
+          </Text>
+
+          <Text h4 style={styles.subtitle}>
+            Preparation Time 
+          </Text>
+          <Text style={styles.displayText}>
+            {formatTime(getString(recipe.preparation_time))}
+          </Text> */}
+
+          <Text h4 style={styles.subtitle}>
+            Servings
+          </Text>
+          <Text style={styles.displayText}>
+            {formatServings(getString(recipe.servings))}
+          </Text>
+
+          <Text h4 style={styles.subtitle}>
+            Difficulty
+          </Text>
+          <Text style={styles.displayText}>
+            {formatDifficulty(getString(recipe.difficulty))}
+          </Text>
+
+
         </View>
       </ScrollView>
 

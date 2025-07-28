@@ -11,35 +11,26 @@ export const SignUpPage = ({ ip, setUserId }) => {
 
   const handleSignup = async (email, password) => {
     try {
+      setError(""); // Clear any previous errors
+      
       const response = await fetch(`${ip}/signup`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
       });
+      
       const data = await response.json();
 
-      if (data.userId) {
-        console.log("Signup successful:", data);
+      if (response.ok && data.userId) {
+        setUserId(data.userId); // Set the user ID
         navigation.goBack();
+      } else {
+        // Handle server errors (like "User already exists")
+        setError(data.message || "Signup failed");
       }
     } catch (error) {
       console.error("An error occurred during signup:", error);
-      setError("An error occurred during signup. Please try again.");
-    }
-
-
-    try {
-      const response = await fetch(`${ip}/login`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
-      });
-      const data = await response.json();
-      setUserId(data.userId);
-      navigation.goBack();
-    } catch (err) {
-      console.error("Error fetching user id:", err);
-      setError("Network error");
+      setError("Network error. Please try again.");
     }
   };
 
@@ -62,6 +53,7 @@ export const SignUpPage = ({ ip, setUserId }) => {
         inputContainerStyle={styles.inputContainer}
         inputStyle={styles.inputText}
         onChangeText={setEmail}
+        value={email}
       />
 
       <Input
@@ -77,6 +69,7 @@ export const SignUpPage = ({ ip, setUserId }) => {
         inputContainerStyle={styles.inputContainer}
         inputStyle={styles.inputText}
         onChangeText={setPassword}
+        value={password}
       />
 
       <Button

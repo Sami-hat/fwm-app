@@ -47,7 +47,6 @@ export const EntriesPage = ({ ip, userId }) => {
 
     // Add entry 
     const addEntry = async () => {
-        console.log("userId:", userId);
         fetch(
             `${ip}/inventory/add?user=${userId}&name=${name}&quantity=${quantity}&barcode=${barcode}`,
             {

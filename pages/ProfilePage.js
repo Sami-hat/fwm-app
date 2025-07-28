@@ -52,10 +52,39 @@ export const ProfilePage = ({ ip, userId, setUserId, setRecipe }) => {
           setIngredients(data);
           const ingredientsString = data.join(", ");
 
-          const chatPrompt =
-            "Take this list of ingredients and return a list of recipes names which can be made from them. Provide nothing else outside an array of data which can be fetched from an API call and re-inputted into code with no parsing Ingredients: " +
-            "Follow this exact format [{recipe_name: value, ingredients_needed: values, instructions: values}]. Give very exact instruction including temperature and time for cooking/baking and in what appliances, and what quantities are needed for the ingredients, there should be no embedded JSON objects at all" +
-            ingredientsString;
+          const chatPrompt = `Generate recipes using these available ingredients: ${ingredientsString}
+
+          Requirements:
+          - Only suggest recipes that can be made primarily with the provided ingredients
+          - If a recipe needs 1-2 common pantry items not listed (salt, pepper, oil, water), that's acceptable
+          - Include exact measurements, cooking temperatures, times, and equipment needed
+          - Each recipe should serve 2-4 people
+          - Difficulty should be rated on a scale of 1 - 5. with 1 being easy and 5 being the hardest
+
+          Return ONLY a valid JSON array in this exact format with no additional text:
+
+          [
+            {
+              "recipe_name": "Recipe Name Here",
+              "ingredients_needed": [
+                "1 cup flour",
+                "2 eggs",
+                "1 tsp salt"
+              ],
+              "instructions": [
+                "Preheat oven to 350°F",
+                "Mix flour and salt in a bowl",
+                "Beat eggs and add to mixture",
+                "Bake for 25 minutes until golden"
+              ],
+              "cooking_time": "25 minutes",
+              "prep_time": "10 minutes",
+              "servings": 4,
+              "difficulty": "2"
+            }
+          ]
+
+          Generate 3-5 recipes maximum.`;
 
           setPrompt(chatPrompt);
         });
