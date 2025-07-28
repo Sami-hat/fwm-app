@@ -3,7 +3,9 @@ import { Header } from "../components/Header";
 import { View, StyleSheet, FlatList, Dimensions } from "react-native";
 import { Button, Text, ListItem } from "@rneui/themed";
 import Feather from "@expo/vector-icons/Feather";
+import AntDesign from '@expo/vector-icons/AntDesign';
 import { React, useState, useEffect } from "react";
+import { Alert } from 'react-native';
 
 export const ProfilePage = ({ ip, userId, setUserId, setRecipe }) => {
   const windowWidth = Dimensions.get("window").width;
@@ -12,7 +14,8 @@ export const ProfilePage = ({ ip, userId, setUserId, setRecipe }) => {
   const [ingredients, setIngredients] = useState([]);
   const [recipes, setRecipes] = useState("");
 
-  const generateRecipes = async (ingredients, userId) => {
+  // Create recipes based on inventory and preferences
+  const generateRecipes = async () => {
     try {
       const response = await fetch(`${ip}/recipes`, {
         method: "POST",
@@ -22,8 +25,6 @@ export const ProfilePage = ({ ip, userId, setUserId, setRecipe }) => {
           userId: userId
         }),
       });
-
-      const data = await response.json();
 
       if (response.status === 503) {
         // API is overloaded
@@ -35,7 +36,7 @@ export const ProfilePage = ({ ip, userId, setUserId, setRecipe }) => {
             {
               text: "Retry",
               onPress: () => {
-                setTimeout(() => generateRecipes(ingredients, userId), 5000); // Retry after 5 seconds
+                setTimeout(() => generateRecipes(), 5000); // Retry after 5 seconds
               }
             }
           ]
@@ -44,11 +45,12 @@ export const ProfilePage = ({ ip, userId, setUserId, setRecipe }) => {
       }
 
       if (!response.ok) {
-        throw new Error(`Server error: ${response.status}`);
+        const errorData = await response.json();
+        throw new Error(errorData.error || `Server error: ${response.status}`);
       }
 
       // Handle successful response
-      const recipes = JSON.parse(data);
+      const recipes = await response.json(); // Only parse once
       setRecipes(recipes);
 
     } catch (error) {
@@ -56,7 +58,7 @@ export const ProfilePage = ({ ip, userId, setUserId, setRecipe }) => {
       Alert.alert("Error", "Failed to generate recipes. Please try again later.");
     }
   };
-  
+
   // Get user's recipes
   useEffect(() => {
     if (ingredients.length > 0) {
@@ -126,7 +128,7 @@ export const ProfilePage = ({ ip, userId, setUserId, setRecipe }) => {
             {/* Set Preferences */}
             <Button
               title="Set Preferences     "
-              icon={<Feather name="camera" size={18} color="white" />}
+              icon={<AntDesign name="edit" size={18} color="white" />}
               iconRight
               onPress={() => navigation.navigate("Preferences")}
               buttonStyle={{

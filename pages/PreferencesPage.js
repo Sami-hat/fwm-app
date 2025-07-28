@@ -12,6 +12,7 @@ export const PreferencesPage = ({ ip, userId }) => {
     is_gluten_free: false,
     is_dairy_free: false,
     is_nut_free: false,
+    is_high_protein: false,
     is_low_carb: false,
   });
 
@@ -104,6 +105,14 @@ export const PreferencesPage = ({ ip, userId }) => {
         title="Nut Free"
         checked={preferences.is_nut_free}
         onPress={() => updatePreference('is_nut_free', !preferences.is_nut_free)}
+        containerStyle={styles.checkboxContainer}
+        textStyle={styles.checkboxText}
+      />
+
+      <CheckBox
+        title="High Protein"
+        checked={preferences.is_nut_free}
+        onPress={() => updatePreference('is_high_protein', !preferences.is_high_protein)}
         containerStyle={styles.checkboxContainer}
         textStyle={styles.checkboxText}
       />
