@@ -1,10 +1,9 @@
-//React + React-Native Imports
 import { useState, useRef } from "react";
 import { Button, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { Dimensions } from "react-native";
 import { useNavigation } from "@react-navigation/native";
+import { Alert } from "react-native";
 
-//Expo Imports
 import { Camera, CameraView, useCameraPermissions } from "expo-camera";
 import { Image } from "expo-image";
 import Animated, {
@@ -13,38 +12,14 @@ import Animated, {
   useAnimatedStyle,
   Easing,
 } from "react-native-reanimated";
-import { Alert } from "react-native";
 
-//Icon Imports
 import Ionicons from "@expo/vector-icons/Ionicons";
 import Entypo from "@expo/vector-icons/Entypo";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 
-const getIngredients = async (uri) => {
-  fetch(
-    `${ip}/logmeal?user=${uri}`,
-    {
-      method: "POST",
-    }
-  )
-    .then((response) => response.json())
-    .then((result) => {
-      const name =
-        result.segmentation_results[0].recognition_results[0].name;
-      Alert.alert(
-        "Image Processed",
-        `Name: ${name}`,
-        [{ text: "OK", onPress: () => console.log("OK Pressed") }],
-        { cancelable: false }
-      );
-    })
-    .catch((error) => {
-      console.error("Error:", error);
-    });
-  setUri(null);
-}
+import { recipeService } from "../services/apiService";
 
-export const CameraPage = ({ ip, userId }) => {
+export const CameraPage = ({ userId }) => {
   const navigation = useNavigation();
   const [facing, setFacing] = useState("back");
   const [permission, setPermission] = useCameraPermissions();
@@ -62,6 +37,33 @@ export const CameraPage = ({ ip, userId }) => {
     };
   });
 
+  const getIngredients = async (imageUri) => {
+    try {
+      const result = await recipeService.analyzeImage(imageUri);
+      
+      if (result.segmentation_results && 
+          result.segmentation_results[0] && 
+          result.segmentation_results[0].recognition_results &&
+          result.segmentation_results[0].recognition_results[0]) {
+        
+        const name = result.segmentation_results[0].recognition_results[0].name;
+        Alert.alert(
+          "Image Processed",
+          `Detected: ${name}`,
+          [{ text: "OK", onPress: () => console.log("OK Pressed") }],
+          { cancelable: false }
+        );
+      } else {
+        Alert.alert("Error", "Could not identify any food items in the image");
+      }
+    } catch (error) {
+      console.error("Error processing image:", error);
+      Alert.alert("Error", "Failed to process image. Please try again.");
+    } finally {
+      setUri(null);
+    }
+  };
+
   if (!permission) {
     return <View />;
   }
@@ -72,7 +74,7 @@ export const CameraPage = ({ ip, userId }) => {
         <Text style={styles.message}>
           We need permission to use your camera
         </Text>
-        <Button onPress={setPermission(true)} title="grant permission" />
+        <Button onPress={() => setPermission(true)} title="Grant Permission" />
       </View>
     );
   }
@@ -82,9 +84,14 @@ export const CameraPage = ({ ip, userId }) => {
   }
 
   const takePicture = async () => {
-    const photo = await cameraRef.current?.takePictureAsync();
-    console.log(photo);
-    setUri(photo?.uri);
+    try {
+      const photo = await cameraRef.current?.takePictureAsync();
+      console.log(photo);
+      setUri(photo?.uri);
+    } catch (error) {
+      console.error("Error taking picture:", error);
+      Alert.alert("Error", "Failed to take picture");
+    }
   };
 
   const renderPicture = () => {
@@ -144,7 +151,6 @@ export const CameraPage = ({ ip, userId }) => {
         <CameraView
           style={styles.camera}
           facing={facing}
-          //          onCameraReady={setupCamera}
           ref={cameraRef}
         >
           <View style={styles.buttonContainer}>
@@ -174,6 +180,7 @@ export const CameraPage = ({ ip, userId }) => {
       </View>
     );
   };
+
   return (
     <View style={styles.container}>
       {uri ? renderPicture() : renderCamera()}

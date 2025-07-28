@@ -1,36 +1,73 @@
 import React, { useState } from "react";
-import { SafeAreaView, StyleSheet } from "react-native";
+import { SafeAreaView, StyleSheet, Alert } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { Button, Input, Text } from "@rneui/themed";
+import { authService } from "../services/apiService";
 
-export const SignUpPage = ({ ip, setUserId }) => {
+export const SignUpPage = ({ setUserId }) => {
   const navigation = useNavigation();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const validateEmail = (email) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
 
   const handleSignup = async (email, password) => {
+    // Input validation
+    if (!email.trim()) {
+      setError("Please enter your email");
+      return;
+    }
+
+    if (!validateEmail(email.trim())) {
+      setError("Please enter a valid email address");
+      return;
+    }
+    
+    if (!password.trim()) {
+      setError("Please enter a password");
+      return;
+    }
+
+    if (password.length < 6) {
+      setError("Password must be at least 6 characters long");
+      return;
+    }
+
     try {
+      setLoading(true);
       setError(""); // Clear any previous errors
       
-      const response = await fetch(`${ip}/signup`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
-      });
-      
-      const data = await response.json();
+      const data = await authService.signup(email.trim(), password);
 
-      if (response.ok && data.userId) {
+      if (data.userId) {
         setUserId(data.userId); // Set the user ID
         navigation.goBack();
+        Alert.alert("Success", "Account created successfully!");
       } else {
-        // Handle server errors (like "User already exists")
-        setError(data.message || "Signup failed");
+        setError("Signup failed. Please try again.");
       }
     } catch (error) {
-      console.error("An error occurred during signup:", error);
-      setError("Network error. Please try again.");
+      console.error("Signup error:", error);
+      
+      // Handle specific error messages
+      if (error.message.includes("User already exists")) {
+        setError("An account with this email already exists");
+      } else if (error.message.includes("Invalid email")) {
+        setError("Please enter a valid email address");
+      } else if (error.message.includes("Password")) {
+        setError("Password requirements not met");
+      } else if (error.message.includes("Network")) {
+        setError("Network error. Please check your connection.");
+      } else {
+        setError("Signup failed. Please try again.");
+      }
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -43,6 +80,8 @@ export const SignUpPage = ({ ip, setUserId }) => {
       <Input
         placeholder="Email"
         keyboardType="email-address"
+        autoCapitalize="none"
+        value={email}
         leftIcon={{
           type: "font-awesome",
           name: "envelope",
@@ -53,12 +92,13 @@ export const SignUpPage = ({ ip, setUserId }) => {
         inputContainerStyle={styles.inputContainer}
         inputStyle={styles.inputText}
         onChangeText={setEmail}
-        value={email}
+        errorMessage={error && error.includes("email") ? error : ""}
       />
 
       <Input
-        placeholder="Password"
+        placeholder="Password (min 6 characters)"
         secureTextEntry
+        value={password}
         leftIcon={{
           type: "font-awesome",
           name: "lock",
@@ -69,7 +109,7 @@ export const SignUpPage = ({ ip, setUserId }) => {
         inputContainerStyle={styles.inputContainer}
         inputStyle={styles.inputText}
         onChangeText={setPassword}
-        value={password}
+        errorMessage={error && error.includes("Password") ? error : ""}
       />
 
       <Button
@@ -77,6 +117,8 @@ export const SignUpPage = ({ ip, setUserId }) => {
         onPress={() => handleSignup(email, password)}
         buttonStyle={styles.signupButton}
         titleStyle={styles.buttonTitle}
+        loading={loading}
+        disabled={loading}
       />
 
       <Button
@@ -87,7 +129,9 @@ export const SignUpPage = ({ ip, setUserId }) => {
         onPress={() => navigation.goBack()}
       />
 
-      {error ? <Text style={styles.errorText}>{error}</Text> : null}
+      {error && !error.includes("email") && !error.includes("Password") ? (
+        <Text style={styles.errorText}>{error}</Text>
+      ) : null}
     </SafeAreaView>
   );
 };
@@ -137,6 +181,7 @@ const styles = StyleSheet.create({
   errorText: {
     color: "red",
     marginTop: 10,
+    textAlign: "center",
   },
 });
 

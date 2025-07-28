@@ -1,9 +1,11 @@
+import { preferencesService } from '../services/apiService';
+
 import React, { useState, useEffect } from "react";
 import { SafeAreaView, StyleSheet, Alert } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { Button, Text, CheckBox } from "@rneui/themed";
 
-export const PreferencesPage = ({ ip, userId }) => {
+export const PreferencesPage = ({ userId }) => {
   const navigation = useNavigation();
   const [loading, setLoading] = useState(false);
   const [preferences, setPreferences] = useState({
@@ -23,36 +25,20 @@ export const PreferencesPage = ({ ip, userId }) => {
 
   const loadPreferences = async () => {
     try {
-      const response = await fetch(`${ip}/preferences?user=${userId}`);
-      if (response.ok) {
-        const data = await response.json();
-        setPreferences(data);
-      }
+      const data = await preferencesService.get(userId);
+      setPreferences(data);
     } catch (error) {
       console.error("Error loading preferences:", error);
     }
   };
 
   const savePreferences = async () => {
-    setLoading(true);
     try {
-      const response = await fetch(`${ip}/preferences?user=${userId}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(preferences),
-      });
-
-      if (response.ok) {
-        Alert.alert("Success", "Preferences saved successfully!");
-        navigation.goBack();
-      } else {
-        Alert.alert("Error", "Failed to save preferences");
-      }
+      await preferencesService.update(userId, preferences);
+      Alert.alert("Success", "Preferences saved successfully!");
     } catch (error) {
       console.error("Error saving preferences:", error);
-      Alert.alert("Error", "Network error occurred");
-    } finally {
-      setLoading(false);
+      Alert.alert("Error", "Failed to save preferences");
     }
   };
 
@@ -109,9 +95,9 @@ export const PreferencesPage = ({ ip, userId }) => {
         textStyle={styles.checkboxText}
       />
 
-      <CheckBox
+     <CheckBox
         title="High Protein"
-        checked={preferences.is_nut_free}
+        checked={preferences.is_high_protein}
         onPress={() => updatePreference('is_high_protein', !preferences.is_high_protein)}
         containerStyle={styles.checkboxContainer}
         textStyle={styles.checkboxText}
@@ -148,7 +134,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#F5F5F5",
     paddingHorizontal: 20,
-    paddingTop: 20,
+    paddingTop: 60,
   },
   title: {
     textAlign: "center",

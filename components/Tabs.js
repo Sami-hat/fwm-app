@@ -1,4 +1,3 @@
-import React, { useState, useEffect } from "react";
 import { ProfilePage } from "../pages/ProfilePage";
 import { EntriesPage } from "../pages/EntriesPage";
 import { CameraPage } from "../pages/CameraPage";
@@ -8,14 +7,13 @@ import { SignUpPage } from "../pages/SignUpPage";
 import { LoginPage } from "../pages/LoginPage";
 import { createStackNavigator } from "@react-navigation/stack";
 import { NavigationContainer } from "@react-navigation/native";
-import { TabView, SceneMap, TabBar } from "react-native-tab-view";
+import { TabView, TabBar } from "react-native-tab-view";
 import { useWindowDimensions } from "react-native";
 import { RecipePage } from "../pages/RecipePage";
 
 const Stack = createStackNavigator();
 
 const ProfileStack = ({
-  ip,
   userId,
   setUserId,
   setIndex,
@@ -27,7 +25,6 @@ const ProfileStack = ({
       {(props) => (
         <ProfilePage
           {...props}
-          ip={ip}
           userId={userId}
           setUserId={setUserId}
           setIndex={setIndex}
@@ -37,30 +34,30 @@ const ProfileStack = ({
     </Stack.Screen>
     <Stack.Screen name="SignUp">
       {(props) => (
-        <SignUpPage {...props} ip={ip} userId={userId} setUserId={setUserId} />
+        <SignUpPage {...props} userId={userId} setUserId={setUserId} />
       )}
     </Stack.Screen>
     <Stack.Screen name="Login">
       {(props) => (
-        <LoginPage {...props} ip={ip} userId={userId} setUserId={setUserId} />
+        <LoginPage {...props} userId={userId} setUserId={setUserId} />
       )}
     </Stack.Screen>
     <Stack.Screen name="Camera">
-      {(props) => <CameraPage {...props} ip={ip} userId={userId} />}
+      {(props) => <CameraPage {...props} userId={userId} />}
     </Stack.Screen>
     <Stack.Screen name="Scanner">
-      {(props) => <ScannerPage {...props} ip={ip} userId={userId} />}
+      {(props) => <ScannerPage {...props} userId={userId} />}
     </Stack.Screen>
     <Stack.Screen name="Preferences">
-      {(props) => <PreferencesPage {...props} ip={ip} userId={userId} />}
+      {(props) => <PreferencesPage {...props} userId={userId} />}
     </Stack.Screen>
     <Stack.Screen name="Recipe">
       {(props) => (
-        <RecipePage {...props} ip={ip} userId={userId} recipe={recipe} />
+        <RecipePage {...props} userId={userId} recipe={recipe} />
       )}
     </Stack.Screen>
     <Stack.Screen name="AddEntry">
-      {(props) => <AddEntry {...props} ip={ip} userId={userId} />}
+      {(props) => <AddEntry {...props} userId={userId} />}
     </Stack.Screen>
   </Stack.Navigator>
 );
@@ -83,7 +80,6 @@ export const Tabs = ({ ip }) => {
       case "profile":
         return (
           <ProfileStack
-            ip={ip}
             userId={userId}
             setUserId={setUserId}
             setIndex={setIndex}
@@ -98,7 +94,6 @@ export const Tabs = ({ ip }) => {
       case "entries":
         return (
           <EntriesPage
-            ip={ip}
             userId={userId}
             setUserId={setUserId}
             setIndex={setIndex}

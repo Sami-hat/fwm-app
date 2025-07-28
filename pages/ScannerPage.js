@@ -4,7 +4,7 @@ import { CameraView, Camera } from "expo-camera";
 import { useNavigation } from "@react-navigation/native";
 import Ionicons from "@expo/vector-icons/Ionicons";
 
-export const ScannerPage = ({ ip, userId }) => {
+export const ScannerPage = ({ userId }) => {
   const navigation = useNavigation();
   const [hasPermission, setHasPermission] = useState(null);
   const [scanned, setScanned] = useState(false);
@@ -25,7 +25,7 @@ export const ScannerPage = ({ ip, userId }) => {
 
     try {
       fetch(
-        `https://world.openfoodfacts.org/api/v0/product/${4056489148739}.json`
+        `https://world.openfoodfacts.org/api/v0/product/${barcode}.json`
       )
         .then((response) => response.json())
         .then((result) => {

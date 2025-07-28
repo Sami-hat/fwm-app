@@ -1,33 +1,31 @@
-import { useNavigation } from "@react-navigation/native";
+import { recipeService, inventoryService } from '../services/apiService';
+
+import { React, useState, useEffect } from "react";
 import { Header } from "../components/Header";
+import { useNavigation } from "@react-navigation/native";
 import { View, StyleSheet, FlatList, Dimensions } from "react-native";
 import { Button, Text, ListItem } from "@rneui/themed";
 import Feather from "@expo/vector-icons/Feather";
 import AntDesign from '@expo/vector-icons/AntDesign';
-import { React, useState, useEffect } from "react";
 import { Alert } from 'react-native';
 
-export const ProfilePage = ({ ip, userId, setUserId, setRecipe }) => {
+export const ProfilePage = ({ userId, setUserId, setRecipe }) => {
   const windowWidth = Dimensions.get("window").width;
   const windowHeight = Dimensions.get("window").height;
   const navigation = useNavigation();
   const [ingredients, setIngredients] = useState([]);
   const [recipes, setRecipes] = useState("");
 
+
   // Create recipes based on inventory and preferences
   const generateRecipes = async () => {
     try {
-      const response = await fetch(`${ip}/recipes`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          ingredients: ingredients,
-          userId: userId
-        }),
-      });
-
-      if (response.status === 503) {
-        // API is overloaded
+      const recipesList = await recipeService.generate(ingredients, userId);
+      setRecipes(recipesList);
+    } catch (error) {
+      console.error('Recipe generation error:', error);
+      
+      if (error.message.includes("overloaded") || error.message.includes("503")) {
         Alert.alert(
           "Service Busy",
           "The recipe service is temporarily busy. Please try again in a minute.",
@@ -36,26 +34,14 @@ export const ProfilePage = ({ ip, userId, setUserId, setRecipe }) => {
             {
               text: "Retry",
               onPress: () => {
-                setTimeout(() => generateRecipes(), 5000); // Retry after 5 seconds
+                setTimeout(() => generateRecipes(), 5000);
               }
             }
           ]
         );
-        return;
+      } else {
+        Alert.alert("Error", "Failed to generate recipes. Please try again later.");
       }
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || `Server error: ${response.status}`);
-      }
-
-      // Handle successful response
-      const recipes = await response.json(); // Only parse once
-      setRecipes(recipes);
-
-    } catch (error) {
-      console.error('Recipe generation error:', error);
-      Alert.alert("Error", "Failed to generate recipes. Please try again later.");
     }
   };
 
@@ -70,11 +56,13 @@ export const ProfilePage = ({ ip, userId, setUserId, setRecipe }) => {
   // Get user's inventory
   useEffect(() => {
     if (userId >= 1) {
-      fetch(`${ip}/inventory/names?user=${userId}`)
-        .then((response) => response.json())
+      inventoryService.getNames(userId)
         .then((data) => {
           const ingredientsString = data.join(", ");
           setIngredients(ingredientsString);
+        })
+        .catch((error) => {
+          console.error("Error fetching inventory names:", error);
         });
     }
   }, [userId]);
@@ -133,7 +121,7 @@ export const ProfilePage = ({ ip, userId, setUserId, setRecipe }) => {
               onPress={() => navigation.navigate("Preferences")}
               buttonStyle={{
                 ...styles.loggedInButton,
-                backgroundColor: "#44c339ff",
+                backgroundColor: "#44c339dc",
               }}
               titleStyle={styles.buttonText}
             />

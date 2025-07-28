@@ -1,5 +1,5 @@
-import { Header } from "../components/Header";
 import React, { useState } from "react";
+import { Header } from "../components/Header";
 import {
   SafeAreaView,
   StyleSheet,
@@ -13,7 +13,7 @@ import { Button, Text, Input } from "@rneui/themed";
 import * as Sharing from "expo-sharing";
 import * as FileSystem from "expo-file-system";
 
-export const RecipePage = ({ ip, userId, recipe }) => {
+export const RecipePage = ({ userId, recipe }) => {
   const navigation = useNavigation();
   const [email, setEmail] = useState("");
   const [modalVisible, setModalVisible] = useState(false);
@@ -83,9 +83,6 @@ export const RecipePage = ({ ip, userId, recipe }) => {
   const formatServings = (servings) => {
     if (!servings) return "Not specified";
     return servings.toString();
-    // const numServings = parseInt(servings);
-    // if (isNaN(numServings) || numServings === 0) return "Not specified";
-    // return `${numServings} ${numServings === 1 ? 'serving' : 'servings'}`;
   };
 
   // Parse the difficulty
@@ -148,20 +145,6 @@ export const RecipePage = ({ ip, userId, recipe }) => {
           <Text style={styles.displayText}>
             {formatMethod(getString(recipe.instructions))}
           </Text>
-
-          {/* <Text h4 style={styles.subtitle}>
-            Cooking Time
-          </Text>
-          <Text style={styles.displayText}>
-            {formatTime(getString(recipe.cooking_time))}
-          </Text>
-
-          <Text h4 style={styles.subtitle}>
-            Preparation Time 
-          </Text>
-          <Text style={styles.displayText}>
-            {formatTime(getString(recipe.preparation_time))}
-          </Text> */}
 
           <Text h4 style={styles.subtitle}>
             Servings

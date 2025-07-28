@@ -1,29 +1,54 @@
 import React, { useState } from "react";
-import { SafeAreaView, StyleSheet } from "react-native";
+import { SafeAreaView, StyleSheet, Alert } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { Button, Input, Text } from "@rneui/themed";
+import { authService } from "../services/apiService";
 
-export const LoginPage = ({ ip, userId, setUserId }) => {
+export const LoginPage = ({ userId, setUserId }) => {
   const navigation = useNavigation();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const handleLogin = async (email, password) => {
+    if (!email.trim()) {
+      setError("Please enter your email");
+      return;
+    }
+    
+    if (!password.trim()) {
+      setError("Please enter your password");
+      return;
+    }
+
     try {
-      const response = await fetch(`${ip}/login`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
-      });
-      const data = await response.json();
+      setLoading(true);
+      setError("");
+      
+      const data = await authService.login(email.trim(), password);
+      
       if (data.userId) {
         setUserId(data.userId);
         navigation.goBack();
+        Alert.alert("Success", "Logged in successfully!");
+      } else {
+        setError("Login failed. Please try again.");
       }
-    } catch (err) {
-      console.error("Error fetching user id:", err);
-      setError("Network error");
+    } catch (error) {
+      console.error("Login error:", error);
+      
+      // Handle specific error messages
+      if (error.message.includes("Invalid credential") || 
+          error.message.includes("Invalid credentials")) {
+        setError("Invalid email or password");
+      } else if (error.message.includes("Network")) {
+        setError("Network error. Please check your connection.");
+      } else {
+        setError("Login failed. Please try again.");
+      }
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -36,6 +61,8 @@ export const LoginPage = ({ ip, userId, setUserId }) => {
       <Input
         placeholder="Email"
         keyboardType="email-address"
+        autoCapitalize="none"
+        value={email}
         leftIcon={{
           type: "font-awesome",
           name: "envelope",
@@ -46,11 +73,13 @@ export const LoginPage = ({ ip, userId, setUserId }) => {
         inputContainerStyle={styles.inputContainer}
         inputStyle={styles.inputText}
         onChangeText={setEmail}
+        errorMessage={error && error.includes("email") ? error : ""}
       />
 
       <Input
         placeholder="Password"
         secureTextEntry
+        value={password}
         leftIcon={{
           type: "font-awesome",
           name: "lock",
@@ -61,6 +90,7 @@ export const LoginPage = ({ ip, userId, setUserId }) => {
         inputContainerStyle={styles.inputContainer}
         inputStyle={styles.inputText}
         onChangeText={setPassword}
+        errorMessage={error && error.includes("password") ? error : ""}
       />
 
       <Button
@@ -68,6 +98,8 @@ export const LoginPage = ({ ip, userId, setUserId }) => {
         onPress={() => handleLogin(email, password)}
         buttonStyle={styles.loginButton}
         titleStyle={styles.buttonTitle}
+        loading={loading}
+        disabled={loading}
       />
 
       <Button
@@ -78,7 +110,9 @@ export const LoginPage = ({ ip, userId, setUserId }) => {
         onPress={() => navigation.goBack()}
       />
 
-      {error ? <Text style={styles.errorText}>{error}</Text> : null}
+      {error && !error.includes("email") && !error.includes("password") ? (
+        <Text style={styles.errorText}>{error}</Text>
+      ) : null}
     </SafeAreaView>
   );
 };
@@ -128,6 +162,7 @@ const styles = StyleSheet.create({
   errorText: {
     color: "red",
     marginTop: 10,
+    textAlign: "center",
   },
 });
 

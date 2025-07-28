@@ -5,88 +5,120 @@ import {
     Dimensions,
     FlatList,
     View,
+    Alert,
 } from "react-native";
 import { Button, Input, Text, Card } from "@rneui/themed";
 import { Header } from "../components/Header";
+import { inventoryService } from "../services/apiService";
 
-export const EntriesPage = ({ ip, userId }) => {
+export const EntriesPage = ({ userId }) => {
     const [inventory, setInventory] = useState([]);
     const [isPosting, setIsPosting] = useState(false);
     const [isEditing, setIsEditing] = useState(false);
     const [isAdding, setIsAdding] = useState(false);
-    const [posted, setPosted] = useState(false);
+    const [loading, setLoading] = useState(false);
     const [item, setItem] = useState(null);
-    const [name, setName] = useState(null);
-    const [quantity, setQuantity] = useState(null);
-    const [barcode, setBarcode] = useState(null);
+    const [name, setName] = useState("");
+    const [quantity, setQuantity] = useState("");
+    const [barcode, setBarcode] = useState("");
 
     // Get user's inventory
     useEffect(() => {
         if (userId >= 1) {
-            fetch(`${ip}/inventory?user=${userId}`)
-                .then((response) => response.json())
-                .then((data) => {
-                    setInventory(data);
-                })
-                .catch((error) => console.error("Error fetching userID:", error));
+            loadInventory();
         }
-    }, [userId, posted]);
+    }, [userId]);
+
+    const loadInventory = async () => {
+        try {
+            setLoading(true);
+            const data = await inventoryService.getAll(userId);
+            setInventory(data);
+        } catch (error) {
+            console.error("Error fetching inventory:", error);
+            Alert.alert("Error", "Failed to load inventory");
+        } finally {
+            setLoading(false);
+        }
+    };
 
     // Delete entry
     const deleteEntry = async (id) => {
-        fetch(`${ip}/inventory/delete?user=${userId}&id=${id}`, {
-            method: "DELETE",
-        })
-            .then((response) => response.json())
-            .then((data) => {
-                console.log("Deleted:", data);
-                setInventory(inventory.filter((item) => item.id !== id));
-            })
-            .catch((error) => console.error("Error deleting entry:", error));
+        Alert.alert(
+            "Confirm Delete",
+            "Are you sure you want to delete this item?",
+            [
+                { text: "Cancel", style: "cancel" },
+                {
+                    text: "Delete",
+                    style: "destructive",
+                    onPress: async () => {
+                        try {
+                            await inventoryService.delete(userId, id);
+                            setInventory(inventory.filter((item) => item.id !== id));
+                            Alert.alert("Success", "Item deleted successfully");
+                        } catch (error) {
+                            console.error("Error deleting entry:", error);
+                            Alert.alert("Error", "Failed to delete item");
+                        }
+                    }
+                }
+            ]
+        );
     };
 
     // Add entry 
     const addEntry = async () => {
-        fetch(
-            `${ip}/inventory/add?user=${userId}&name=${name}&quantity=${quantity}&barcode=${barcode}`,
-            {
-                method: "POST",
-            }
-        )
-            .then((response) => response.json())
-            .then((data) => {
-                setPosted(!posted);
-                setIsPosting(false);
-                setIsAdding(false);
-            })
-            .catch((error) => console.error("Error adding entry:", error));
+        if (!name.trim()) {
+            Alert.alert("Error", "Please enter an item name");
+            return;
+        }
+
+        try {
+            setLoading(true);
+            await inventoryService.add(userId, name.trim(), quantity || "1", barcode || null);
+            await loadInventory(); // Refresh inventory
+            clearEntry();
+            setIsPosting(false);
+            setIsAdding(false);
+            Alert.alert("Success", "Item added successfully");
+        } catch (error) {
+            console.error("Error adding entry:", error);
+            Alert.alert("Error", "Failed to add item");
+        } finally {
+            setLoading(false);
+        }
     };
 
     // Edit entry
     const editEntry = async () => {
-        fetch(
-            `${ip}/inventory/edit?user=${userId}&id=${item}&name=${name}&quantity=${quantity}&barcode=${barcode}`,
-            {
-                method: "POST",
-            }
-        )
-            .then((response) => response.json())
-            .then((data) => {
-                setPosted(!posted);
-                setIsPosting(false);
-                setIsEditing(false);
-                clearEntry();
-            })
-            .catch((error) => console.error("Error editing entry:", error));
+        if (!name.trim()) {
+            Alert.alert("Error", "Please enter an item name");
+            return;
+        }
+
+        try {
+            setLoading(true);
+            await inventoryService.edit(userId, item, name.trim(), quantity || "1", barcode || null);
+            await loadInventory(); // Refresh inventory
+            clearEntry();
+            setIsPosting(false);
+            setIsEditing(false);
+            Alert.alert("Success", "Item updated successfully");
+        } catch (error) {
+            console.error("Error editing entry:", error);
+            Alert.alert("Error", "Failed to update item");
+        } finally {
+            setLoading(false);
+        }
     };
 
     const clearEntry = () => {
         setItem(null);
-        setName(null);
-        setQuantity(null)
-        setBarcode(null);
-        
-    }
+        setName("");
+        setQuantity("");
+        setBarcode("");
+    };
 
     return (
         <View style={styles.container}>
@@ -109,7 +141,7 @@ export const EntriesPage = ({ ip, userId }) => {
                         Name of Item:
                     </Text>
                     <Input
-                        placeholder={isEditing ? name : "Enter item name"}
+                        placeholder={isEditing ? "Edit item name" : "Enter item name"}
                         value={name}
                         onChangeText={setName}
                         inputContainerStyle={styles.inputContainer}
@@ -118,7 +150,7 @@ export const EntriesPage = ({ ip, userId }) => {
                         Quantity:
                     </Text>
                     <Input
-                        placeholder={isEditing ? quantity : "Enter quantity"}
+                        placeholder={isEditing ? "Edit quantity" : "Enter quantity"}
                         keyboardType="numeric"
                         value={quantity}
                         onChangeText={setQuantity}
@@ -128,7 +160,7 @@ export const EntriesPage = ({ ip, userId }) => {
                         Barcode Number:
                     </Text>
                     <Input
-                        placeholder={isEditing ? barcode : "Enter barcode"}
+                        placeholder={isEditing ? "Edit barcode" : "Enter barcode (optional)"}
                         keyboardType="numeric"
                         value={barcode}
                         onChangeText={setBarcode}
@@ -136,24 +168,27 @@ export const EntriesPage = ({ ip, userId }) => {
                     />
 
                     <Button
-                        title="Submit"
+                        title={isAdding ? "Add Item" : "Update Item"}
                         onPress={isAdding ? addEntry : editEntry}
                         buttonStyle={styles.button}
+                        loading={loading}
                     />
                     <Button
-                        title="Back to Inventory"
+                        title="Cancel"
                         onPress={() => {
                             setIsPosting(false);
                             setIsAdding(false);
                             setIsEditing(false);
                             clearEntry();
                         }}
-                        buttonStyle={styles.button}
+                        buttonStyle={[styles.button, { backgroundColor: "#666" }]}
                     />
                 </View>
             ) : (
                 <View style={styles.content}>
-                    {inventory.length === 0 ? (
+                    {loading ? (
+                        <Text>Loading inventory...</Text>
+                    ) : inventory.length === 0 ? (
                         <>
                             <Text h3 style={styles.statisticsTitle}>
                                 Your Groceries
@@ -181,25 +216,29 @@ export const EntriesPage = ({ ip, userId }) => {
                                         <Text style={styles.quantity}>
                                             Quantity: {item.quantity}
                                         </Text>
+                                        {item.barcode && (
+                                            <Text style={styles.barcode}>
+                                                Barcode: {item.barcode}
+                                            </Text>
+                                        )}
                                         <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 2}}>
-                                        <Button
-                                            title="Delete"
-                                            buttonStyle={[styles.subButton, styles.deleteButton]}
-                                            onPress={() => deleteEntry(item.id)}
-                                        />
-                                        <Button
-                                            title="Edit"
-                                            buttonStyle={[styles.subButton, styles.editButton]}
-                                            onPress={() => {
-                                                setIsPosting(true);
-                                                setIsEditing(true);
-
-                                                setItem(item.id);
-                                                setName(item.name);
-                                                setQuantity(item.quantity);
-                                                setBarcode(item.barcode);
-                                            }}
-                                        />
+                                            <Button
+                                                title="Delete"
+                                                buttonStyle={[styles.subButton, styles.deleteButton]}
+                                                onPress={() => deleteEntry(item.id)}
+                                            />
+                                            <Button
+                                                title="Edit"
+                                                buttonStyle={[styles.subButton, styles.editButton]}
+                                                onPress={() => {
+                                                    setIsPosting(true);
+                                                    setIsEditing(true);
+                                                    setItem(item.id);
+                                                    setName(item.name);
+                                                    setQuantity(item.quantity?.toString() || "");
+                                                    setBarcode(item.barcode?.toString() || "");
+                                                }}
+                                            />
                                         </View>
                                     </Card>
                                 )}
@@ -211,6 +250,7 @@ export const EntriesPage = ({ ip, userId }) => {
                         onPress={() => {
                             setIsPosting(true);
                             setIsAdding(true);
+                            clearEntry();
                         }}
                         buttonStyle={styles.button}
                     />
@@ -268,7 +308,6 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         margin: "auto"
     },
-
     inventoryList: {
         width: Dimensions.get("window").width * 0.95,
     },
@@ -285,6 +324,11 @@ const styles = StyleSheet.create({
         fontSize: 16,
         color: "#555",
         marginVertical: 5,
+    },
+    barcode: {
+        fontSize: 14,
+        color: "#777",
+        marginBottom: 5,
     },
     subButton: {
         borderRadius: 10,
