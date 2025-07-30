@@ -1,8 +1,10 @@
-import { API_BASE_URL, API_ENDPOINTS, API_BARCODE_URL, buildApiUrl } from '../config/api';
+import { API_BASE_URL, API_ENDPOINTS, buildApiUrl } from '../config/api';
 
 // Base fetch function with error handling
 const apiRequest = async (url, options = {}) => {
   try {
+    console.log('Making API request to:', url); // Debug log
+
     const response = await fetch(url, {
       headers: {
         'Content-Type': 'application/json',
@@ -12,13 +14,50 @@ const apiRequest = async (url, options = {}) => {
     });
 
     if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.error || `HTTP ${response.status}`);
+
+      let errorMessage = `HTTP ${response.status}`;
+      try {
+        const errorData = await response.json();
+        errorMessage = errorData.error || errorData.message || errorMessage;
+      } catch (parseError) {
+
+        const errorText = await response.text();
+        console.log('Non-JSON error response:', errorText.substring(0, 200)); // Log first 200 chars
+        errorMessage = `Server error: ${response.status}`;
+      }
+      throw new Error(errorMessage);
+    }
+
+    // Check if response is JSON
+    const contentType = response.headers.get('content-type');
+    if (!contentType || !contentType.includes('application/json')) {
+      const textResponse = await response.text();
+      console.log('Non-JSON response:', textResponse.substring(0, 200)); // Log first 200 chars
+      throw new Error('Server returned non-JSON response');
     }
 
     return await response.json();
   } catch (error) {
     console.error('API Request failed:', error);
+    throw error;
+  }
+};
+
+// External API request function for third-party services
+const externalApiRequest = async (url, options = {}) => {
+  try {
+
+    const response = await fetch(url, {
+      ...options,
+    });
+
+    if (!response.ok) {
+      throw new Error(`External API error: ${response.status}`);
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error('External API Request failed:', error);
     throw error;
   }
 };
@@ -58,30 +97,30 @@ export const inventoryService = {
   },
 
   add: async (userId, name, quantity, barcode) => {
-    const url = buildApiUrl(API_ENDPOINTS.INVENTORY_ADD, { 
-      user: userId, 
-      name, 
-      quantity, 
-      barcode 
+    const url = buildApiUrl(API_ENDPOINTS.INVENTORY_ADD, {
+      user: userId,
+      name,
+      quantity,
+      barcode
     });
     return apiRequest(url, { method: 'POST' });
   },
 
   delete: async (userId, itemId) => {
-    const url = buildApiUrl(API_ENDPOINTS.INVENTORY_DELETE, { 
-      user: userId, 
-      id: itemId 
+    const url = buildApiUrl(API_ENDPOINTS.INVENTORY_DELETE, {
+      user: userId,
+      id: itemId
     });
     return apiRequest(url, { method: 'DELETE' });
   },
 
   edit: async (userId, itemId, name, quantity, barcode) => {
-    const url = buildApiUrl(API_ENDPOINTS.INVENTORY_EDIT, { 
-      user: userId, 
-      id: itemId, 
-      name, 
-      quantity, 
-      barcode 
+    const url = buildApiUrl(API_ENDPOINTS.INVENTORY_EDIT, {
+      user: userId,
+      id: itemId,
+      name,
+      quantity,
+      barcode
     });
     return apiRequest(url, { method: 'POST' });
   },
@@ -123,8 +162,35 @@ export const preferencesService = {
 // Barcode Services
 export const barcodeService = {
   search: async (barcode) => {
-    return apiRequest(`${API_BARCODE_URL}/${barcode}.json`, {
-      method: 'GET'
-    });
+    try {
+
+      // Use OpenFoodFacts API directly
+      const result = await externalApiRequest(
+        `https://world.openfoodfacts.org/api/v0/product/${barcode}.json`
+      );
+
+      console.log('Barcode API result:', result);
+
+      // Transform the response to match expected format
+      if (result.status === 1 && result.product) {
+        return {
+          found: true,
+          product: {
+            product_name: result.product.product_name,
+            quantity: result.product.quantity,
+            brand: result.product.brands,
+            image_url: result.product.image_url,
+          }
+        };
+      } else {
+        return {
+          found: false,
+          product: null
+        };
+      }
+    } catch (error) {
+      console.error('Barcode search failed:', error);
+      throw new Error('Failed to search barcode database');
+    }
   }
 };

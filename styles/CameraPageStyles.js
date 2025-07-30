@@ -2,7 +2,7 @@ import { StyleSheet, Dimensions } from "react-native";
 
 const { width: windowWidth, height: windowHeight } = Dimensions.get("window");
 
-export const CameraStyles = StyleSheet.create({
+export const cameraStyles = StyleSheet.create({
   container: {
     flex: 1,
   },

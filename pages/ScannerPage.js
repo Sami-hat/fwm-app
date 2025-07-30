@@ -1,39 +1,31 @@
 import { scannerStyles } from '../styles/ScannerPageStyles';
 
-import React, { useState, useEffect } from "react";
-import { Text, View, Button, scannerStylesheet, TouchableOpacity, Alert } from "react-native";
-import { CameraView, Camera } from "expo-camera";
+import React, { useState } from "react";
+import { Text, View, Button, StyleSheet, TouchableOpacity, Alert } from "react-native";
+import { CameraView, useCameraPermissions } from "expo-camera";
 import { useNavigation } from "@react-navigation/native";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import { inventoryService } from "../services/apiService";
-import { barcodeService } from "../services/apiService";
+import { inventoryService, barcodeService } from "../services/apiService";
 
 export const ScannerPage = ({ userId }) => {
   const navigation = useNavigation();
-  const [hasPermission, setHasPermission] = useState(null);
+  const [permission, requestPermission] = useCameraPermissions();
   const [scanned, setScanned] = useState(false);
   const [barcode, setBarcode] = useState("");
   const [processing, setProcessing] = useState(false);
 
-  useEffect(() => {
-    const getBarcodeScannerPermissions = async () => {
-      const { status } = await Camera.requestCameraPermissionsAsync();
-      setHasPermission(status === "granted");
-    };
-
-    getBarcodeScannerPermissions();
-  }, []);
-
   const handleBarcodeScanned = async ({ type, data }) => {
+    console.log('Barcode scanned:', { type, data });
     setScanned(true);
     setBarcode(data);
     setProcessing(true);
 
     try {
       // Fetch product information
-      const result = await barcodeService.search(barcode);
+      const result = await barcodeService.search(data);
+      console.log('Barcode service result:', result);
 
-      if (result.product) {
+      if (result.found && result.product) {
         const name = result.product.product_name || "Unknown Product";
         const quantity = result.product.quantity || "1";
         
@@ -66,7 +58,7 @@ export const ScannerPage = ({ userId }) => {
       
       if (error.message.includes("Failed to add")) {
         Alert.alert("Error", "Failed to add item to inventory. Please try again.");
-      } else if (error.message.includes("Failed to fetch")) {
+      } else if (error.message.includes("Failed to search")) {
         Alert.alert("Error", "Failed to lookup product information. Please try again or add manually.");
       } else {
         Alert.alert("Error", "Failed to process barcode. Please try again.");
@@ -76,38 +68,41 @@ export const ScannerPage = ({ userId }) => {
     }
   };
 
-  if (hasPermission === null) {
+  // Check permission status
+  if (!permission) {
+    // Camera permissions are still loading
+    return (
+      <View style={scannerStyles.container}>
+        <Text style={scannerStyles.message}>Loading camera...</Text>
+      </View>
+    );
+  }
+
+  if (!permission.granted) {
+    // Camera permissions are not granted yet
     return (
       <View style={scannerStyles.container}>
         <Text style={scannerStyles.message}>
-          Please enable camera permissions
+          We need camera permission to scan barcodes
         </Text>
-        <Button
-          onPress={() => Camera.requestCameraPermissionsAsync()}
-          title="Grant Permission"
-        />
+        <Button onPress={requestPermission} title="Grant Permission" />
       </View>
     );
   }
 
-  if (hasPermission === false) {
-    return (
-      <View style={scannerStyles.container}>
-        <Text style={scannerStyles.message}>No access to camera</Text>
-        <Button
-          onPress={() => Camera.requestCameraPermissionsAsync()}
-          title="Request Permission"
-        />
-      </View>
-    );
-  }
-
+  // Camera permissions are granted
   return (
     <View style={scannerStyles.container}>
       <CameraView
         onBarcodeScanned={scanned ? undefined : handleBarcodeScanned}
-        style={scannerStylesheet.absoluteFillObject}
+        style={StyleSheet.absoluteFillObject}
+        facing="back"
+        barcodeScannerSettings={{
+          barcodeTypes: ["qr", "pdf417", "ean13", "ean8", "code128", "code39", "upc_a", "upc_e"],
+        }}
       />
+      
+      {/* Back button */}
       <View style={scannerStyles.buttonContainer}>
         <TouchableOpacity
           style={scannerStyles.back_button}
@@ -117,12 +112,14 @@ export const ScannerPage = ({ userId }) => {
         </TouchableOpacity>
       </View>
       
+      {/* Processing overlay */}
       {processing && (
         <View style={scannerStyles.processingContainer}>
           <Text style={scannerStyles.processingText}>Processing barcode...</Text>
         </View>
       )}
       
+      {/* Scan again button */}
       {scanned && !processing && (
         <View style={scannerStyles.scannedContainer}>
           <Button 
@@ -133,8 +130,11 @@ export const ScannerPage = ({ userId }) => {
         </View>
       )}
       
+      {/* Display scanned barcode */}
       {barcode ? (
-        <Text style={scannerStyles.scannedText}>Scanned Code: {barcode}</Text>
+        <View style={scannerStyles.barcodeDisplay}>
+          <Text style={scannerStyles.scannedText}>Scanned: {barcode}</Text>
+        </View>
       ) : null}
     </View>
   );
