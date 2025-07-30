@@ -58,7 +58,7 @@ export const EntriesPage = ({ userId }) => {
                         try {
                             await inventoryService.delete(userId, id);
                             setInventory(inventory.filter((item) => item.id !== id));
-                            Alert.alert("Success", "Item deleted successfully");
+                            // Alert.alert("Success", "Item deleted successfully");
                         } catch (error) {
                             console.error("Error deleting entry:", error);
                             Alert.alert("Error", "Failed to delete item");
@@ -83,7 +83,7 @@ export const EntriesPage = ({ userId }) => {
             clearEntry();
             setIsPosting(false);
             setIsAdding(false);
-            Alert.alert("Success", "Item added successfully");
+            // Alert.alert("Success", "Item added successfully");
         } catch (error) {
             console.error("Error adding entry:", error);
             Alert.alert("Error", "Failed to add item");
@@ -106,7 +106,7 @@ export const EntriesPage = ({ userId }) => {
             clearEntry();
             setIsPosting(false);
             setIsEditing(false);
-            Alert.alert("Success", "Item updated successfully");
+            // Alert.alert("Success", "Item updated successfully");
         } catch (error) {
             console.error("Error editing entry:", error);
             Alert.alert("Error", "Failed to update item");

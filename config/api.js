@@ -1,4 +1,4 @@
-const getApiUrl = () => {
+const getBaseApiUrl = () => {
   // Use env var if available
   if (process.env.EXPO_PUBLIC_API_URL) {
     return process.env.EXPO_PUBLIC_API_URL;
@@ -10,10 +10,28 @@ const getApiUrl = () => {
   }
   
   // Production fallback 
-  throw new Error("API_URL not configured. Please set EXPO_PUBLIC_API_URL environment variable.");
+  throw new Error("Base API URL not configured. Please set EXPO_PUBLIC_API_URL environment variable.");
 };
 
-export const API_BASE_URL = getApiUrl();
+const getBarcodeApiUrl = () => {
+  // Use env var if available
+  if (process.env.EXPO_PUBLIC_API_URL) {
+    return process.env.OPEN_FOOD_FACTS_API_URL;
+  }
+  
+  // Development fallback
+  if (__DEV__) {
+    return "http://localhost:3000";
+  }
+  
+  // Production fallback 
+  throw new Error("Barcode API URL not configured. Please set BARCODE_API_URL environment variable.");
+};
+
+
+export const API_BASE_URL = getBaseApiUrl();
+
+export const API_BARCODE_URL = getBarcodeApiUrl();
 
 export const API_ENDPOINTS = {
   // Auth

@@ -1,4 +1,4 @@
-import { API_BASE_URL, API_ENDPOINTS, buildApiUrl } from '../config/api';
+import { API_BASE_URL, API_ENDPOINTS, API_BARCODE_URL, buildApiUrl } from '../config/api';
 
 // Base fetch function with error handling
 const apiRequest = async (url, options = {}) => {
@@ -118,4 +118,13 @@ export const preferencesService = {
       body: JSON.stringify(preferences),
     });
   },
+};
+
+// Barcode Services
+export const barcodeService = {
+  search: async (barcode) => {
+    return apiRequest(`${API_BARCODE_URL}/${barcode}.json`, {
+      method: 'GET'
+    });
+  }
 };

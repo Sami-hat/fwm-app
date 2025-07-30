@@ -1,5 +1,7 @@
+import { cameraStyles } from '../styles/CameraPageStyles';
+
 import { useState, useRef } from "react";
-import { Button, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Button, cameraStylesheet, Text, TouchableOpacity, View } from "react-native";
 import { Dimensions } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { Alert } from "react-native";
@@ -70,8 +72,8 @@ export const CameraPage = ({ userId }) => {
 
   if (!permission.granted) {
     return (
-      <View style={styles.container}>
-        <Text style={styles.message}>
+      <View style={cameraStyles.container}>
+        <Text style={cameraStyles.message}>
           We need permission to use your camera
         </Text>
         <Button onPress={() => setPermission(true)} title="Grant Permission" />
@@ -123,7 +125,7 @@ export const CameraPage = ({ userId }) => {
               justifyContent: "center",
             }}
           >
-            <Text style={styles.text}>Take another one?</Text>
+            <Text style={cameraStyles.text}>Take another one?</Text>
           </TouchableOpacity>
           <TouchableOpacity
             onPress={() => getIngredients(uri)}
@@ -136,7 +138,7 @@ export const CameraPage = ({ userId }) => {
               justifyContent: "center",
             }}
           >
-            <Text type="subtitle" style={styles.text}>
+            <Text type="subtitle" style={cameraStyles.text}>
               Process
             </Text>
           </TouchableOpacity>
@@ -147,26 +149,26 @@ export const CameraPage = ({ userId }) => {
 
   const renderCamera = () => {
     return (
-      <View style={styles.container}>
+      <View style={cameraStyles.container}>
         <CameraView
-          style={styles.camera}
+          style={cameraStyles.camera}
           facing={facing}
           ref={cameraRef}
         >
-          <View style={styles.buttonContainer}>
+          <View style={cameraStyles.buttonContainer}>
             <TouchableOpacity
-              style={styles.back_button}
+              style={cameraStyles.back_button}
               onPress={() => navigation.goBack()}
             >
               <Ionicons name="arrow-back" size={24} color="white" />
             </TouchableOpacity>
-            <View style={styles.shutterContainer}>
-              <TouchableOpacity style={styles.button} onPress={takePicture}>
+            <View style={cameraStyles.shutterContainer}>
+              <TouchableOpacity style={cameraStyles.button} onPress={takePicture}>
                 <Entypo name="circle" size={60} color="white" />
               </TouchableOpacity>
             </View>
             <TouchableOpacity
-              style={styles.button}
+              style={cameraStyles.button}
               onPress={toggleCameraFacing}
             >
               <MaterialCommunityIcons
@@ -182,58 +184,10 @@ export const CameraPage = ({ userId }) => {
   };
 
   return (
-    <View style={styles.container}>
+    <View style={cameraStyles.container}>
       {uri ? renderPicture() : renderCamera()}
     </View>
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  message: {
-    textAlign: "center",
-    paddingBottom: 10,
-  },
-  camera: {
-    flex: 1,
-    width: "100%",
-  },
-  buttonContainer: {
-    flex: 1,
-    flexDirection: "row",
-    backgroundColor: "transparent",
-    margin: 64,
-  },
-  shutterContainer: {
-    position: "absolute",
-    bottom: 32,
-    left: 0,
-    width: "100%",
-    alignItems: "center",
-    flexDirection: "row",
-    justifyContent: "space-between",
-    paddingHorizontal: 30,
-  },
-  button: {
-    flex: 1,
-    alignSelf: "flex-end",
-    alignItems: "center",
-  },
-  back_button: {
-    flex: 1,
-    alignSelf: "flex-start",
-    alignItems: "left",
-  },
-  image: {
-    flex: 1,
-    width: "100%",
-    backgroundColor: "#0553",
-  },
-  text: {
-    fontSize: 18,
-    fontWeight: "bold",
-    color: "white",
-  },
-});
+export default CameraPage;

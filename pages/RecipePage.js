@@ -219,3 +219,4 @@ export const RecipePage = ({ userId, recipe }) => {
   );
 };
 
+export default RecipePage;
