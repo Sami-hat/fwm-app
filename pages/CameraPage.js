@@ -40,12 +40,12 @@ export const CameraPage = ({ userId }) => {
   const getIngredients = async (imageUri) => {
     try {
       const result = await recipeService.analyzeImage(imageUri);
-      
-      if (result.segmentation_results && 
-          result.segmentation_results[0] && 
-          result.segmentation_results[0].recognition_results &&
-          result.segmentation_results[0].recognition_results[0]) {
-        
+
+      if (result.segmentation_results &&
+        result.segmentation_results[0] &&
+        result.segmentation_results[0].recognition_results &&
+        result.segmentation_results[0].recognition_results[0]) {
+
         const name = result.segmentation_results[0].recognition_results[0].name;
         Alert.alert(
           "Image Processed",

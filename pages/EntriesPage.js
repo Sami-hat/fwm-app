@@ -1,7 +1,9 @@
+import { entriesStyles } from '../styles/EntriesPageStyles';
+
 import React, { useState, useEffect } from "react";
 import {
     SafeAreaView,
-    StyleSheet,
+    entriesStylesheet,
     Dimensions,
     FlatList,
     View,
@@ -121,32 +123,32 @@ export const EntriesPage = ({ userId }) => {
     };
 
     return (
-        <View style={styles.container}>
+        <View style={entriesStyles.container}>
             <Header />
 
             {/* Main Content Section */}
             {userId < 1 ? (
-                <View style={styles.content}>
-                    <Text h3 style={styles.statisticsTitle}>
+                <View style={entriesStyles.content}>
+                    <Text h3 style={entriesStyles.statisticsTitle}>
                         Your Groceries
                     </Text>
-                    <Text style={styles.statisticsText}>
+                    <Text style={entriesStyles.statisticsText}>
                         Make an account or log in to see inventory. Once you make an
                         account, you will be able to see your groceries here.
                     </Text>
                 </View>
             ) : isPosting ? (
-                <View style={styles.content}>
-                    <Text h4 style={styles.inputLabel}>
+                <View style={entriesStyles.content}>
+                    <Text h4 style={entriesStyles.inputLabel}>
                         Name of Item:
                     </Text>
                     <Input
                         placeholder={isEditing ? "Edit item name" : "Enter item name"}
                         value={name}
                         onChangeText={setName}
-                        inputContainerStyle={styles.inputContainer}
+                        inputContainerStyle={entriesStyles.inputContainer}
                     />
-                    <Text h4 style={styles.inputLabel}>
+                    <Text h4 style={entriesStyles.inputLabel}>
                         Quantity:
                     </Text>
                     <Input
@@ -154,9 +156,9 @@ export const EntriesPage = ({ userId }) => {
                         keyboardType="numeric"
                         value={quantity}
                         onChangeText={setQuantity}
-                        inputContainerStyle={styles.inputContainer}
+                        inputContainerStyle={entriesStyles.inputContainer}
                     />
-                    <Text h4 style={styles.inputLabel}>
+                    <Text h4 style={entriesStyles.inputLabel}>
                         Barcode Number:
                     </Text>
                     <Input
@@ -164,13 +166,13 @@ export const EntriesPage = ({ userId }) => {
                         keyboardType="numeric"
                         value={barcode}
                         onChangeText={setBarcode}
-                        inputContainerStyle={styles.inputContainer}
+                        inputContainerStyle={entriesStyles.inputContainer}
                     />
 
                     <Button
                         title={isAdding ? "Add Item" : "Update Item"}
                         onPress={isAdding ? addEntry : editEntry}
-                        buttonStyle={styles.button}
+                        buttonStyle={entriesStyles.button}
                         loading={loading}
                     />
                     <Button
@@ -181,19 +183,19 @@ export const EntriesPage = ({ userId }) => {
                             setIsEditing(false);
                             clearEntry();
                         }}
-                        buttonStyle={[styles.button, { backgroundColor: "#666" }]}
+                        buttonStyle={[entriesStyles.button, { backgroundColor: "#666" }]}
                     />
                 </View>
             ) : (
-                <View style={styles.content}>
+                <View style={entriesStyles.content}>
                     {loading ? (
                         <Text>Loading inventory...</Text>
                     ) : inventory.length === 0 ? (
                         <>
-                            <Text h3 style={styles.statisticsTitle}>
+                            <Text h3 style={entriesStyles.statisticsTitle}>
                                 Your Groceries
                             </Text>
-                            <Text style={styles.statisticsText}>
+                            <Text style={entriesStyles.statisticsText}>
                                 You have not recorded any shopping trips. To add to your
                                 inventory, take a picture of your shopping or scan one of their
                                 barcodes.
@@ -201,35 +203,35 @@ export const EntriesPage = ({ userId }) => {
                         </>
                     ) : (
                         <>
-                            <Text h3 style={styles.title}>
+                            <Text h3 style={entriesStyles.title}>
                                 Your Groceries
                             </Text>
                             <FlatList
                                 data={inventory}
                                 keyExtractor={(item) => item.id.toString()}
-                                style={styles.inventoryList}
+                                style={entriesStyles.inventoryList}
                                 renderItem={({ item }) => (
-                                    <Card containerStyle={styles.entry}>
-                                        <Text style={styles.item}>
+                                    <Card containerStyle={entriesStyles.entry}>
+                                        <Text style={entriesStyles.item}>
                                             {item.name.charAt(0).toUpperCase() + item.name.slice(1)}
                                         </Text>
-                                        <Text style={styles.quantity}>
+                                        <Text style={entriesStyles.quantity}>
                                             Quantity: {item.quantity}
                                         </Text>
                                         {item.barcode && (
-                                            <Text style={styles.barcode}>
+                                            <Text style={entriesStyles.barcode}>
                                                 Barcode: {item.barcode}
                                             </Text>
                                         )}
-                                        <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 2}}>
+                                        <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 2 }}>
                                             <Button
                                                 title="Delete"
-                                                buttonStyle={[styles.subButton, styles.deleteButton]}
+                                                buttonStyle={[entriesStyles.subButton, entriesStyles.deleteButton]}
                                                 onPress={() => deleteEntry(item.id)}
                                             />
                                             <Button
                                                 title="Edit"
-                                                buttonStyle={[styles.subButton, styles.editButton]}
+                                                buttonStyle={[entriesStyles.subButton, entriesStyles.editButton]}
                                                 onPress={() => {
                                                     setIsPosting(true);
                                                     setIsEditing(true);
@@ -252,98 +254,12 @@ export const EntriesPage = ({ userId }) => {
                             setIsAdding(true);
                             clearEntry();
                         }}
-                        buttonStyle={styles.button}
+                        buttonStyle={entriesStyles.button}
                     />
                 </View>
             )}
         </View>
     );
 };
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: "#F5F5F5",
-    },
-    content: {
-        flex: 1,
-        alignItems: "center",
-        paddingHorizontal: 20,
-        justifyContent: "flex-start",
-    },
-    title: {
-        fontSize: 24,
-        textAlign: "center",
-        color: "black",
-        marginTop: 20,
-        marginBottom: 10,
-    },
-    statisticsTitle: {
-        textAlign: "center",
-        marginTop: 20,
-        marginBottom: 10,
-    },
-    statisticsText: {
-        textAlign: "center",
-        color: "#555",
-        marginHorizontal: 20,
-        marginBottom: 20,
-    },
-    inputLabel: {
-        marginTop: 10,
-        alignSelf: "flex-start",
-    },
-    inputContainer: {
-        borderRadius: 10,
-        borderWidth: 1,
-        borderColor: "#ccc",
-        paddingHorizontal: 10,
-    },
-    button: {
-        width: Dimensions.get("window").width * 0.65,
-        backgroundColor: "#52B788",
-        borderRadius: 25,
-        marginVertical: 15,
-        textAlign: "center",
-        justifyContent: "center",
-        margin: "auto"
-    },
-    inventoryList: {
-        width: Dimensions.get("window").width * 0.95,
-    },
-    entry: {
-        borderRadius: 10,
-        padding: 15,
-        marginBottom: 10,
-    },
-    item: {
-        fontSize: 18,
-        fontWeight: "bold",
-    },
-    quantity: {
-        fontSize: 16,
-        color: "#555",
-        marginVertical: 5,
-    },
-    barcode: {
-        fontSize: 14,
-        color: "#777",
-        marginBottom: 5,
-    },
-    subButton: {
-        borderRadius: 10,
-        marginTop: 10,
-        alignContent: "center",
-        alignItems: "center",
-        justifyContent: "center",
-        width: '88%',
-    },
-    deleteButton: {
-        backgroundColor: "#FF5261FF",
-    },
-    editButton: {
-        backgroundColor: "#FFB300",
-    },
-});
 
 export default EntriesPage;

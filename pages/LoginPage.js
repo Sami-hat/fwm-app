@@ -1,5 +1,7 @@
+import { loginStyles } from '../styles/LoginPageStyles';
+
 import React, { useState } from "react";
-import { SafeAreaView, StyleSheet, Alert } from "react-native";
+import { SafeAreaView, loginStylesheet, Alert } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { Button, Input, Text } from "@rneui/themed";
 import { authService } from "../services/apiService";
@@ -16,7 +18,7 @@ export const LoginPage = ({ userId, setUserId }) => {
       setError("Please enter your email");
       return;
     }
-    
+
     if (!password.trim()) {
       setError("Please enter your password");
       return;
@@ -25,9 +27,9 @@ export const LoginPage = ({ userId, setUserId }) => {
     try {
       setLoading(true);
       setError("");
-      
+
       const data = await authService.login(email.trim(), password);
-      
+
       if (data.userId) {
         setUserId(data.userId);
         navigation.goBack();
@@ -36,10 +38,10 @@ export const LoginPage = ({ userId, setUserId }) => {
       }
     } catch (error) {
       console.error("Login error:", error);
-      
+
       // Handle specific error messages
-      if (error.message.includes("Invalid credential") || 
-          error.message.includes("Invalid credentials")) {
+      if (error.message.includes("Invalid credential") ||
+        error.message.includes("Invalid credentials")) {
         setError("Invalid email or password");
       } else if (error.message.includes("Network")) {
         setError("Network error. Please check your connection.");
@@ -52,8 +54,8 @@ export const LoginPage = ({ userId, setUserId }) => {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <Text h3 style={styles.title}>
+    <SafeAreaView style={loginStyles.container}>
+      <Text h3 style={loginStyles.title}>
         Log In
       </Text>
 
@@ -68,9 +70,9 @@ export const LoginPage = ({ userId, setUserId }) => {
           color: "#52B788",
           size: 20,
         }}
-        leftIconContainerStyle={styles.leftIconContainer}
-        inputContainerStyle={styles.inputContainer}
-        inputStyle={styles.inputText}
+        leftIconContainerStyle={loginStyles.leftIconContainer}
+        inputContainerStyle={loginStyles.inputContainer}
+        inputStyle={loginStyles.inputText}
         onChangeText={setEmail}
         errorMessage={error && error.includes("email") ? error : ""}
       />
@@ -85,9 +87,9 @@ export const LoginPage = ({ userId, setUserId }) => {
           color: "#52B788",
           size: 22,
         }}
-        leftIconContainerStyle={styles.leftIconContainer}
-        inputContainerStyle={styles.inputContainer}
-        inputStyle={styles.inputText}
+        leftIconContainerStyle={loginStyles.leftIconContainer}
+        inputContainerStyle={loginStyles.inputContainer}
+        inputStyle={loginStyles.inputText}
         onChangeText={setPassword}
         errorMessage={error && error.includes("password") ? error : ""}
       />
@@ -95,8 +97,8 @@ export const LoginPage = ({ userId, setUserId }) => {
       <Button
         title="Log In"
         onPress={() => handleLogin(email, password)}
-        buttonStyle={styles.loginButton}
-        titleStyle={styles.buttonTitle}
+        buttonStyle={loginStyles.loginButton}
+        titleStyle={loginStyles.buttonTitle}
         loading={loading}
         disabled={loading}
       />
@@ -105,64 +107,15 @@ export const LoginPage = ({ userId, setUserId }) => {
         style={{ paddingTop: 10 }}
         title="Back to Profile"
         type="clear"
-        titleStyle={styles.backText}
+        titleStyle={loginStyles.backText}
         onPress={() => navigation.goBack()}
       />
 
       {error && !error.includes("email") && !error.includes("password") ? (
-        <Text style={styles.errorText}>{error}</Text>
+        <Text style={loginStyles.errorText}>{error}</Text>
       ) : null}
     </SafeAreaView>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "#F5F5F5",
-    paddingHorizontal: 20,
-  },
-  title: {
-    marginBottom: 20,
-  },
-  inputContainer: {
-    backgroundColor: "white",
-    borderRadius: 25,
-    borderWidth: 1,
-    borderColor: "#ccc",
-    paddingHorizontal: 15,
-    height: 50,
-    alignItems: "center",
-  },
-  inputText: {
-    fontSize: 16,
-    paddingLeft: 10,
-  },
-  leftIconContainer: {
-    marginLeft: 5,
-    marginRight: 5,
-  },
-  loginButton: {
-    backgroundColor: "#52B788",
-    width: 200,
-    marginTop: 10,
-    borderRadius: 25,
-  },
-  buttonTitle: {
-    fontSize: 18,
-    fontWeight: "bold",
-  },
-  backText: {
-    color: "#5295B7",
-    fontSize: 16,
-  },
-  errorText: {
-    color: "red",
-    marginTop: 10,
-    textAlign: "center",
-  },
-});
 
 export default LoginPage;
