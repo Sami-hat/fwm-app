@@ -31,7 +31,6 @@ export const LoginPage = ({ userId, setUserId }) => {
       if (data.userId) {
         setUserId(data.userId);
         navigation.goBack();
-        // Alert.alert("Success", "Logged in successfully!");
       } else {
         setError("Login failed. Please try again.");
       }
