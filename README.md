@@ -13,7 +13,9 @@ Create an account and start scanning barcodes/taking photos/manually enter data 
    npm install
    ```
 
-2. Start the backend and the app concurrently, tunnel if on a secure network
+2a. Ammed the .env.example file to accomodate your own backend should you wish to experiment with the code
+
+2b. Start the backend and the app concurrently, tunnel if on a secure network
    For my own testing purposes
 
    ```bash
