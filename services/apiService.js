@@ -3,8 +3,6 @@ import { API_BASE_URL, API_ENDPOINTS, buildApiUrl } from '../config/api';
 // Base fetch function with error handling
 const apiRequest = async (url, options = {}) => {
   try {
-    console.log('Making API request to:', url); // Debug log
-
     const response = await fetch(url, {
       headers: {
         'Content-Type': 'application/json',
@@ -14,50 +12,13 @@ const apiRequest = async (url, options = {}) => {
     });
 
     if (!response.ok) {
-
-      let errorMessage = `HTTP ${response.status}`;
-      try {
-        const errorData = await response.json();
-        errorMessage = errorData.error || errorData.message || errorMessage;
-      } catch (parseError) {
-
-        const errorText = await response.text();
-        console.log('Non-JSON error response:', errorText.substring(0, 200)); // Log first 200 chars
-        errorMessage = `Server error: ${response.status}`;
-      }
-      throw new Error(errorMessage);
-    }
-
-    // Check if response is JSON
-    const contentType = response.headers.get('content-type');
-    if (!contentType || !contentType.includes('application/json')) {
-      const textResponse = await response.text();
-      console.log('Non-JSON response:', textResponse.substring(0, 200)); // Log first 200 chars
-      throw new Error('Server returned non-JSON response');
+      const errorData = await response.json();
+      throw new Error(errorData.error || `HTTP ${response.status}`);
     }
 
     return await response.json();
   } catch (error) {
     console.error('API Request failed:', error);
-    throw error;
-  }
-};
-
-// External API request function for third-party services
-const externalApiRequest = async (url, options = {}) => {
-  try {
-
-    const response = await fetch(url, {
-      ...options,
-    });
-
-    if (!response.ok) {
-      throw new Error(`External API error: ${response.status}`);
-    }
-
-    return await response.json();
-  } catch (error) {
-    console.error('External API Request failed:', error);
     throw error;
   }
 };
@@ -161,36 +122,142 @@ export const preferencesService = {
 
 // Barcode Services
 export const barcodeService = {
-  search: async (barcode) => {
+  
+  // Open Food Facts
+  searchOpenFoodFacts: async (barcode) => {
     try {
-
-      // Use OpenFoodFacts API directly
-      const result = await externalApiRequest(
+      const response = await fetch(
         `https://world.openfoodfacts.org/api/v0/product/${barcode}.json`
       );
-
-      console.log('Barcode API result:', result);
-
-      // Transform the response to match expected format
+      
+      if (!response.ok) throw new Error('OpenFoodFacts API failed');
+      
+      const result = await response.json();
       if (result.status === 1 && result.product) {
         return {
+          source: 'OpenFoodFacts',
           found: true,
+          confidence: 'high',
           product: {
-            product_name: result.product.product_name,
+            product_name: result.product.product_name || result.product.product_name_en,
             quantity: result.product.quantity,
             brand: result.product.brands,
             image_url: result.product.image_url,
+            categories: result.product.categories,
+            ingredients: result.product.ingredients_text,
+            nutriscore: result.product.nutriscore_grade,
+            stores: result.product.stores, 
           }
         };
-      } else {
+      }
+      return { source: 'OpenFoodFacts', found: false };
+    } catch (error) {
+      throw new Error(`OpenFoodFacts: ${error.message}`);
+    }
+  },
+
+  // UPC Item DB
+  searchUPCItemDB: async (barcode) => {
+    try {
+      const response = await fetch(
+        `https://api.upcitemdb.com/prod/trial/lookup?upc=${barcode}`
+      );
+      
+      if (!response.ok) throw new Error('UPCItemDB API failed');
+      
+      const result = await response.json();
+      if (result.code === 'OK' && result.items && result.items.length > 0) {
+        const product = result.items[0];
         return {
-          found: false,
-          product: null
+          source: 'UPCItemDB',
+          found: true,
+          confidence: 'medium',
+          product: {
+            product_name: product.title,
+            quantity: product.size,
+            brand: product.brand,
+            image_url: product.images?.[0],
+            categories: product.category,
+            description: product.description,
+          }
         };
       }
+      return { source: 'UPCItemDB', found: false };
     } catch (error) {
-      console.error('Barcode search failed:', error);
-      throw new Error('Failed to search barcode database');
+      throw new Error(`UPCItemDB: ${error.message}`);
+    }
+  },
+
+  // Main search function
+  search: async (barcode) => {
+    console.log(`Searching for barcode: ${barcode} across UK databases...`);
+    
+    const startTime = Date.now();
+    
+    try {
+      // Priority order
+      const searchPromises = [
+        barcodeService.searchOpenFoodFacts(barcode),  
+        barcodeService.searchUPCItemDB(barcode),        
+      ];
+
+      // Run searches concurrently
+      const results = await Promise.allSettled(searchPromises);
+      
+      const searchTime = Date.now() - startTime;
+      console.log(`Barcode searches completed in ${searchTime}ms`);
+
+      // Find best result (prioritised by confidence and data completeness)
+      let bestResult = null;
+      let highestScore = 0;
+
+      for (const result of results) {
+        if (result.status === 'fulfilled' && result.value.found) {
+          // Score results
+          let score = 0;
+          const product = result.value.product;
+          
+          if (result.value.source === 'OpenFoodFacts') score += 30;
+          else if (result.value.source === 'BarcodeLookup') score += 25;
+          else if (result.value.source === 'UPCItemDB') score += 20;
+          else score += 15;
+
+          if (product.product_name) score += 10;
+          if (product.brand) score += 5;
+          if (product.image_url) score += 5;
+          if (product.categories) score += 3;
+          if (product.quantity) score += 2;
+
+          if (score > highestScore) {
+            highestScore = score;
+            bestResult = result.value;
+          }
+        }
+      }
+
+      if (bestResult) {
+        console.log(`Best result from ${bestResult.source} (score: ${highestScore})`);
+        return bestResult;
+      }
+
+      // Log failures for debugging
+      results.forEach((result, index) => {
+        const sources = ['OpenFoodFacts', 'UPCItemDB', 'BarcodeLookup', 'EAN Data'];
+        if (result.status === 'rejected') {
+          console.log(`${sources[index]} failed:`, result.reason.message);
+        }
+      });
+
+      return {
+        source: 'None',
+        found: false,
+        product: null,
+        searchTime: searchTime
+      };
+
+    } catch (error) {
+      console.error('Barcode search error:', error);
+      throw new Error('Failed to search barcode databases');
     }
   }
 };

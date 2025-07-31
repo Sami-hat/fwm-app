@@ -133,7 +133,7 @@ export const ProfilePage = ({ userId, setUserId, setRecipe }) => {
     <View style={profileStyles.container}>
       <Header />
 
-      {/* If userId >= 1, user is signed in/up */}
+      {/* If userId >= 1, user is signed in */}
       {userId < 1 ? (
         // Displayed if user not signed in
         <View style={{ alignItems: "center", justifyContent: "center" }}>
@@ -162,8 +162,7 @@ export const ProfilePage = ({ userId, setUserId, setRecipe }) => {
               Your Statistics
             </Text>
             <Text style={profileStyles.statisticsText}>
-              Make an account or log in to see statistics. Once you make an
-              account, you will be able to see your past meals here.
+              Sign in to access your grocery list, make amendments, and find out to effectively use the food products you own!
             </Text>
           </View>
         </View>
