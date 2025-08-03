@@ -3,11 +3,9 @@ import { profileStyles } from '../styles/ProfilePageStyles';
 import { React, useState, useEffect } from "react";
 import { Header } from "../components/Header";
 import { useNavigation } from "@react-navigation/native";
-import { View, FlatList, Dimensions, TouchableOpacity } from "react-native";
-import { Button, Text, ListItem } from "@rneui/themed";
+import { View } from "react-native";
+import { Button, Text } from "@rneui/themed";
 import Feather from "@expo/vector-icons/Feather";
-import AntDesign from '@expo/vector-icons/AntDesign';
-import { Alert } from 'react-native';
 
 export const SettingsPage = ({ userId, setUserId, setIndex }) => {
     const navigation = useNavigation();

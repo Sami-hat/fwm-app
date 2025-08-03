@@ -2,16 +2,9 @@ import { recipeStyles } from '../styles/RecipePageStyles';
 
 import React, { useState } from "react";
 import { Header } from "../components/Header";
-import {
-  SafeAreaView,
-  recipeStylesheet,
-  Dimensions,
-  ScrollView,
-  Modal,
-  View,
-} from "react-native";
+import { SafeAreaView, ScrollView, Modal, View } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import { Button, Text, Input } from "@rneui/themed";
+import { Button, Text, Input, Icon } from "@rneui/themed";
 import * as Sharing from "expo-sharing";
 import * as FileSystem from "expo-file-system";
 
@@ -24,7 +17,7 @@ export const RecipePage = ({ userId, recipe }) => {
   // Recipe States
   const [ingredients, setIngredients] = useState("");
 
-  // Convert a JSON to a String if input type was wrong
+  // Convert JSON to String
   const getString = (data) => {
     if (typeof data === "string") {
       return data;
@@ -56,7 +49,6 @@ export const RecipePage = ({ userId, recipe }) => {
     const processSteps = (items) => items
       .filter(item => item.trim() && item.length > 2)
       .map((item, index) => {
-        // Remove leading commas and spaces
         const cleanStep = item.trim().replace(/^[,\s]+/, '');
         return `${index + 1}. ${cleanStep}`;
       })
@@ -103,10 +95,10 @@ export const RecipePage = ({ userId, recipe }) => {
   const handlePopupSubmit = async () => {
     await shareRecipe();
     setRecipient("");
-    setModalVisible(false); // Close the popup
+    setModalVisible(false);
   };
 
-  // Called when the Cancel button is pressed.
+  // Called on cancel
   const handleCancel = () => {
     setRecipient("");
     setModalVisible(false);
@@ -161,29 +153,34 @@ export const RecipePage = ({ userId, recipe }) => {
           <Text style={recipeStyles.displayText}>
             {formatDifficulty(getString(recipe.difficulty))}
           </Text>
-
-
         </View>
       </ScrollView>
 
-      <Button
-        title="Share Recipe"
-        onPress={async () => {
-          await shareText(
-            `${recipe.recipe_name}`,
-            `Ingredients\n\n${formatIngredients(getString(
-              recipe.ingredients_needed
-            ))}\n\nMethod\n\n${formatMethod(getString(recipe.instructions))}\n\n`
-          );
-        }}
-        buttonStyle={[recipeStyles.button, { marginTop: 10 }]}
-      />
+      <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', padding: 10 }}>
+        <Button
+          icon={<Icon name="arrow-back" type="material" color="black" />}
+          onPress={() => navigation.navigate("ProfileMain")}
+          buttonStyle={recipeStyles.iconButton}
+        />
 
-      <Button
-        title="Back to Home"
-        onPress={() => navigation.navigate("ProfileMain")}
-        buttonStyle={recipeStyles.button}
-      />
+        <Button
+          title="Consume Ingredients"
+          buttonStyle={recipeStyles.button}
+        />
+
+        <Button
+          icon={<Icon name="share" type="material" color="black" />}
+          onPress={async () => {
+            await shareText(
+              `${recipe.recipe_name}`,
+              `Ingredients\n\n${formatIngredients(getString(
+                recipe.ingredients_needed
+              ))}\n\nMethod\n\n${formatMethod(getString(recipe.instructions))}\n\n`
+            );
+          }}
+          buttonStyle={recipeStyles.iconButton}
+        />
+      </View>
 
       <Modal
         animationType="slide"

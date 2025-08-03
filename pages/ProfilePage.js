@@ -66,7 +66,7 @@ export const ProfilePage = ({ userId, setUserId, setRecipe }) => {
     }
   };
 
-  // Get user's inventory
+  // Get users inventory
   useEffect(() => {
     if (userId >= 1) {
       inventoryService.getNames(userId)
@@ -100,7 +100,7 @@ export const ProfilePage = ({ userId, setUserId, setRecipe }) => {
     } else {
       setRecipes([]);
     }
-  }, [ingredients, preferences, preferencesVersion]); // Added preferences dependencies
+  }, [ingredients, preferences, preferencesVersion]);
 
   // Listen for navigation focus to reload preferences
   useEffect(() => {

@@ -5,7 +5,9 @@ const { width: windowWidth, height: windowHeight } = Dimensions.get("window");
 export const recipeStyles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#f9f9f9",
+    backgroundColor: "white",
+    height: windowHeight,
+    overflow: "hidden"
   },
   recipeContainer: {
     backgroundColor: "white",
@@ -49,7 +51,17 @@ export const recipeStyles = StyleSheet.create({
     shadowRadius: 5,
     marginBottom: 12,
     alignSelf: "center",
-    width: "50%",
+    width: "90%",
+  },
+  iconButton: {
+    backgroundColor: "white",
+    alignItems: "center",
+    borderRadius: 5,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 5,
+    marginBottom: 12,
   },
   buttonText: {
     fontSize: 18,

@@ -70,7 +70,7 @@ export const ScannerPage = ({ userId }) => {
 
   // Check permission status
   if (!permission) {
-    // Camera permissions are still loading
+    // Camera permissions loading
     return (
       <View style={scannerStyles.container}>
         <Text style={scannerStyles.message}>Loading camera...</Text>

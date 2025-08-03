@@ -3,7 +3,7 @@ import { preferencesStyles } from '../styles/PreferencesPageStyles';
 import { preferencesService } from '../services/apiService';
 
 import React, { useState, useEffect } from "react";
-import { SafeAreaView, preferencesStylesheet, Alert } from "react-native";
+import { SafeAreaView, Alert } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { Button, Text, CheckBox } from "@rneui/themed";
 

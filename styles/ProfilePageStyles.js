@@ -19,7 +19,7 @@ export const profileStyles  = StyleSheet.create({
   loggedInButton: {
     width: Dimensions.get("window").width * 0.85,
     height: Dimensions.get("window").height * 0.07,
-    marginVertical: "2%",
+    marginVertical: "3%",
     borderRadius: 10,
   },
   buttonText: {

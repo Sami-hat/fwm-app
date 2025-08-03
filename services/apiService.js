@@ -57,12 +57,13 @@ export const inventoryService = {
     return apiRequest(url);
   },
 
-  add: async (userId, name, quantity, barcode) => {
+  add: async (userId, name, quantity, barcode, expiry_date) => {
     const url = buildApiUrl(API_ENDPOINTS.INVENTORY_ADD, {
       user: userId,
       name,
       quantity,
-      barcode
+      barcode,
+      expiry_date
     });
     return apiRequest(url, { method: 'POST' });
   },
@@ -75,13 +76,14 @@ export const inventoryService = {
     return apiRequest(url, { method: 'DELETE' });
   },
 
-  edit: async (userId, itemId, name, quantity, barcode) => {
+  edit: async (userId, itemId, name, quantity, barcode, expiry_date) => {
     const url = buildApiUrl(API_ENDPOINTS.INVENTORY_EDIT, {
       user: userId,
       id: itemId,
       name,
       quantity,
-      barcode
+      barcode,
+      expiry_date
     });
     return apiRequest(url, { method: 'POST' });
   },

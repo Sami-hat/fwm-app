@@ -1,7 +1,7 @@
 import { loginStyles } from '../styles/LoginPageStyles';
 
 import React, { useState } from "react";
-import { SafeAreaView, loginStylesheet, Alert } from "react-native";
+import { SafeAreaView } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { Button, Input, Text } from "@rneui/themed";
 import { authService } from "../services/apiService";

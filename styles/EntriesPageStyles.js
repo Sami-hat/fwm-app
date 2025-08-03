@@ -33,6 +33,8 @@ export const entriesStyles = StyleSheet.create({
     },
     inputLabel: {
         marginTop: 10,
+        marginBottom: 5,
+        paddingHorizontal: 15,
         alignSelf: "flex-start",
     },
     inputContainer: {

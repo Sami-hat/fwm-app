@@ -1,14 +1,7 @@
 import { entriesStyles } from '../styles/EntriesPageStyles';
 
 import React, { useState, useEffect } from "react";
-import {
-    SafeAreaView,
-    entriesStylesheet,
-    Dimensions,
-    FlatList,
-    View,
-    Alert,
-} from "react-native";
+import { FlatList, View, Alert } from "react-native";
 import { Button, Input, Text, Card } from "@rneui/themed";
 import { Header } from "../components/Header";
 import { inventoryService } from "../services/apiService";
@@ -23,6 +16,7 @@ export const EntriesPage = ({ userId }) => {
     const [name, setName] = useState("");
     const [quantity, setQuantity] = useState("");
     const [barcode, setBarcode] = useState("");
+    const [expiry, setExpiry] = useState("");
 
     // Get user's inventory
     useEffect(() => {
@@ -58,7 +52,6 @@ export const EntriesPage = ({ userId }) => {
                         try {
                             await inventoryService.delete(userId, id);
                             setInventory(inventory.filter((item) => item.id !== id));
-                            // Alert.alert("Success", "Item deleted successfully");
                         } catch (error) {
                             console.error("Error deleting entry:", error);
                             Alert.alert("Error", "Failed to delete item");
@@ -78,12 +71,11 @@ export const EntriesPage = ({ userId }) => {
 
         try {
             setLoading(true);
-            await inventoryService.add(userId, name.trim(), quantity || "1", barcode || null);
+            await inventoryService.add(userId, name.trim(), quantity || "1", barcode || null, expiry || null);
             await loadInventory(); // Refresh inventory
             clearEntry();
             setIsPosting(false);
             setIsAdding(false);
-            // Alert.alert("Success", "Item added successfully");
         } catch (error) {
             console.error("Error adding entry:", error);
             Alert.alert("Error", "Failed to add item");
@@ -101,12 +93,11 @@ export const EntriesPage = ({ userId }) => {
 
         try {
             setLoading(true);
-            await inventoryService.edit(userId, item, name.trim(), quantity || "1", barcode || null);
+            await inventoryService.edit(userId, item, name.trim(), quantity || "1", barcode || null, expiry || null);
             await loadInventory(); // Refresh inventory
             clearEntry();
             setIsPosting(false);
             setIsEditing(false);
-            // Alert.alert("Success", "Item updated successfully");
         } catch (error) {
             console.error("Error editing entry:", error);
             Alert.alert("Error", "Failed to update item");
@@ -120,6 +111,7 @@ export const EntriesPage = ({ userId }) => {
         setName("");
         setQuantity("");
         setBarcode("");
+        setExpiry("");
     };
 
     return (
@@ -156,6 +148,16 @@ export const EntriesPage = ({ userId }) => {
                         keyboardType="numeric"
                         value={barcode}
                         onChangeText={setBarcode}
+                        inputContainerStyle={entriesStyles.inputContainer}
+                    />
+                    <Text h4 style={entriesStyles.inputLabel}>
+                        Expiry Date (DD/MM/YYYY):
+                    </Text>
+                    <Input
+                        placeholder={isEditing ? "Edit expiration date" : "Enter expiration date (optional)"}
+                        keyboardType="numeric"
+                        value={expiry}
+                        onChangeText={setExpiry}
                         inputContainerStyle={entriesStyles.inputContainer}
                     />
 
@@ -229,6 +231,7 @@ export const EntriesPage = ({ userId }) => {
                                                     setName(item.name);
                                                     setQuantity(item.quantity?.toString() || "");
                                                     setBarcode(item.barcode?.toString() || "");
+                                                    setExpiry(item.expiry_date?.toString() || "");
                                                 }}
                                             />
                                         </View>

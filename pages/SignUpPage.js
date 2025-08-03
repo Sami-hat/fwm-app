@@ -1,7 +1,7 @@
 import { signUpStyles } from '../styles/SignUpPageStyles';
 
 import React, { useState } from "react";
-import { SafeAreaView, signUpStylesheet, Alert } from "react-native";
+import { SafeAreaView, Alert } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { Button, Input, Text } from "@rneui/themed";
 import { authService } from "../services/apiService";
@@ -47,7 +47,7 @@ export const SignUpPage = ({ setUserId }) => {
       const data = await authService.signup(email.trim(), password);
 
       if (data.userId) {
-        setUserId(data.userId); // Set the user ID
+        setUserId(data.userId);
         navigation.goBack();
         Alert.alert("Success", "Account created successfully!");
       } else {
