@@ -21,28 +21,6 @@ A comprehensive food waste management solution that helps you track groceries, d
 - **Personalised Experience**: User-specific inventory and preferences
 - **Preference Management**: Detailed dietary preference settings that influence recipe generation
 
-## 🛠 Tech Stack
-
-### Frontend (React Native/Expo)
-- **Framework**: Expo with React Native
-- **Navigation**: React Navigation (Stack & Tab)
-- **UI Components**: React Native Elements (RNEUI)
-- **Camera**: Expo Camera for barcode scanning and photo capture
-- **Icons**: Expo Vector Icons (Ionicons, Feather, AntDesign, etc.)
-- **Animations**: React Native Reanimated
-- **File Sharing**: Expo Sharing and FileSystem
-
-### Backend Integration
-- RESTful API architecture with comprehensive error handling
-- Environment-based configuration for development and production
-- Modular service architecture for different API endpoints
-
-### External APIs
-- **OpenFoodFacts**: Primary barcode database for product information
-- **UPCItemDB**: Secondary barcode lookup service
-- **LogMeal API**: AI-powered food recognition from images
-- **Custom Recipe API**: AI-generated recipe suggestions
-
 ## Project Structure
 
 ```
