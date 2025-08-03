@@ -14,7 +14,7 @@ export const Header = ({ onLogout, showMenu }) => {
 
 const headerStyle = (windowWidth, windowHeight) => ({
   width: windowWidth,
-  height: windowHeight * 0.13,
+  height: windowHeight * 0.10,
   backgroundColor: "#52B788",
   justifyContent: "center",
   alignItems: "center",
@@ -27,6 +27,6 @@ const styles = StyleSheet.create({
   text: {
     color: "white",
     fontSize: 24,
-    marginTop: "10%",
+    marginTop: "8%",
   },
 });

@@ -15,7 +15,7 @@ const getBaseApiUrl = () => {
 
 const getBarcodeApiUrl = () => {
   // Use env var if available
-  if (process.env.EXPO_PUBLIC_API_URL) {
+  if (process.env.OPEN_FOOD_FACTS_API_URL) {
     return process.env.OPEN_FOOD_FACTS_API_URL;
   }
   

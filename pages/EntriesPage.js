@@ -127,17 +127,7 @@ export const EntriesPage = ({ userId }) => {
             <Header />
 
             {/* Main Content Section */}
-            {userId < 1 ? (
-                <View style={entriesStyles.content}>
-                    <Text h3 style={entriesStyles.statisticsTitle}>
-                        Your Groceries
-                    </Text>
-                    <Text style={entriesStyles.statisticsText}>
-                        Make an account or log in to see inventory. Once you make an
-                        account, you will be able to see your groceries here.
-                    </Text>
-                </View>
-            ) : isPosting ? (
+            {isPosting ? (
                 <View style={entriesStyles.content}>
                     <Text h4 style={entriesStyles.inputLabel}>
                         Name of Item:

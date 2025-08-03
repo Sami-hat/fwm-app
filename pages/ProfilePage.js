@@ -117,14 +117,6 @@ export const ProfilePage = ({ userId, setUserId, setRecipe }) => {
     return unsubscribe;
   }, [navigation, userId]);
 
-  const handleLogout = async () => {
-    setUserId(0);
-    setIngredients([]);
-    setRecipes([]);
-    setPreferences(null);
-    setPreferencesVersion(0);
-  };
-
   const handlePreferencesPress = () => {
     navigation.navigate('Preferences');
   };
@@ -195,18 +187,7 @@ export const ProfilePage = ({ userId, setUserId, setRecipe }) => {
               }}
               titleStyle={profileStyles.buttonText}
             />
-            {/* Log Out */}
-            <Button
-              title="Log Out     "
-              icon={<Feather name="log-out" size={18} color="white" />}
-              iconRight
-              onPress={() => handleLogout()}
-              buttonStyle={{
-                ...profileStyles.loggedInButton,
-                backgroundColor: "#5295B7FF",
-              }}
-              titleStyle={profileStyles.buttonText}
-            />
+
           </View>
 
           {/* Preferences Display */}

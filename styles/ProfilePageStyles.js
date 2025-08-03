@@ -45,6 +45,11 @@ export const profileStyles  = StyleSheet.create({
     fontSize: 18,
     color: "#FFFFFF",
   },
+    statisticsTitleBlack: {
+      textAlign: "center",
+      marginTop: 20,
+      marginBottom: 10,
+  },
   banner: {
     width: "110%",
     backgroundColor: "#5295B7FF",

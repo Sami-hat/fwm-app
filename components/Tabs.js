@@ -11,6 +11,7 @@ import { NavigationContainer } from "@react-navigation/native";
 import { TabView, TabBar } from "react-native-tab-view";
 import { useWindowDimensions } from "react-native";
 import { RecipePage } from "../pages/RecipePage";
+import { SettingsPage } from "../pages/SettingsPage";
 
 const Stack = createStackNavigator();
 
@@ -64,8 +65,9 @@ const ProfileStack = ({
 );
 
 const routes = [
-  { key: "profile", title: "Profile" },
+  { key: "profile", title: "Home" },
   { key: "entries", title: "Inventory" },
+  { key: "settings", title: "Settings" },
 ];
 
 export const Tabs = ({ ip }) => {
@@ -83,35 +85,44 @@ export const Tabs = ({ ip }) => {
           <ProfileStack
             userId={userId}
             setUserId={setUserId}
-            setIndex={setIndex}
             recipe={recipe}
             setRecipe={setRecipe}
             item={item}
             setItem={setItem}
             itemUri={itemUri}
             setItemUri={setItemUri}
+            setIndex={setIndex}
           />
         );
       case "entries":
         return (
           <EntriesPage
             userId={userId}
+          />
+        );
+      case "settings":
+        return (
+          <SettingsPage
+            userId={userId}
             setUserId={setUserId}
             setIndex={setIndex}
           />
-        );
+        )
       default:
         return null;
     }
   };
 
-  const renderTabBar = (props) => (
-    <TabBar
-      {...props}
-      indicatorStyle={{ backgroundColor: "#52B788" }}
-      style={{ backgroundColor: "#52B788", fontSize: 46 }}
-    />
-  );
+  const renderTabBar = (props) => {
+    if (!userId) return null;
+    return (
+      <TabBar
+        {...props}
+        indicatorStyle={{ backgroundColor: "#52B788" }}
+        style={{ backgroundColor: "#52B788", fontSize: 50, height: dimensions.height * 0.06 }}
+      />
+    );
+  };
 
   return (
     <NavigationContainer>
