@@ -48,8 +48,7 @@ export const SignUpPage = ({ setUserId }) => {
 
       if (data.userId) {
         setUserId(data.userId);
-        navigation.goBack();
-        Alert.alert("Success", "Account created successfully!");
+        navigation.navigate('Home');
       } else {
         setError("Signup failed. Please try again.");
       }

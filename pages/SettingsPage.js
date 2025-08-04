@@ -2,13 +2,11 @@ import { profileStyles } from '../styles/ProfilePageStyles';
 
 import { React, useState, useEffect } from "react";
 import { Header } from "../components/Header";
-import { useNavigation } from "@react-navigation/native";
 import { View } from "react-native";
 import { Button, Text } from "@rneui/themed";
 import Feather from "@expo/vector-icons/Feather";
 
 export const SettingsPage = ({ userId, setUserId, setIndex }) => {
-    const navigation = useNavigation();
 
     const handleLogout = async () => {
         setUserId(0);

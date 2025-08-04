@@ -8,7 +8,7 @@ import { Alert } from "react-native";
 
 import { Camera, CameraView, useCameraPermissions } from "expo-camera";
 import { Image } from "expo-image";
-import Animated, { useSharedValue, withTiming, useAnimatedStyle, Easing } from "react-native-reanimated";
+import { useSharedValue, withTiming, useAnimatedStyle, Easing } from "react-native-reanimated";
 
 import Ionicons from "@expo/vector-icons/Ionicons";
 import Entypo from "@expo/vector-icons/Entypo";

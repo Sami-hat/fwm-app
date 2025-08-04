@@ -7,9 +7,15 @@
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.anonymous.fwmapp"
     },
     "android": {
+      "permissions": [
+        "android.permission.CAMERA",
+        "android.permission.CAMERA"
+      ],
+      "package": "com.anonymous.fwmapp"
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -36,7 +42,8 @@
             "flipper": true
           }
         }
-      ]
+      ],
+      "expo-secure-store"
     ]
   }
 }

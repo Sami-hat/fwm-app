@@ -32,7 +32,7 @@ export const LoginPage = ({ userId, setUserId }) => {
 
       if (data.userId) {
         setUserId(data.userId);
-        navigation.goBack();
+        navigation.navigate('Home');
       } else {
         setError("Login failed. Please try again.");
       }

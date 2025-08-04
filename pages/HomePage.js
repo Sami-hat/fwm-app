@@ -1,7 +1,7 @@
 import { recipeService, inventoryService, preferencesService } from '../services/apiService';
 import { profileStyles } from '../styles/ProfilePageStyles';
 
-import { React, useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { Header } from "../components/Header";
 import { useNavigation } from "@react-navigation/native";
 import { View, FlatList, Dimensions, TouchableOpacity } from "react-native";
@@ -11,14 +11,20 @@ import AntDesign from '@expo/vector-icons/AntDesign';
 import { Alert } from 'react-native';
 
 
-export const ProfilePage = ({ userId, setUserId, setRecipe }) => {
-  const windowWidth = Dimensions.get("window").width;
+export const HomePage = ({ userId, setRecipe }) => {
   const windowHeight = Dimensions.get("window").height;
   const navigation = useNavigation();
   const [ingredients, setIngredients] = useState([]);
   const [recipes, setRecipes] = useState([]);
   const [preferences, setPreferences] = useState(null);
   const [preferencesVersion, setPreferencesVersion] = useState(0);
+
+    React.useEffect(() => {
+        if (userId == 0) {
+            navigation.goBack();
+        }
+    }, [userId]);
+
 
   // Create recipes based on inventory and preferences
   const generateRecipes = async () => {
@@ -124,42 +130,6 @@ export const ProfilePage = ({ userId, setUserId, setRecipe }) => {
   return (
     <View style={profileStyles.container}>
       <Header />
-
-      {/* If userId >= 1, user is signed in */}
-      {userId < 1 ? (
-        // Displayed if user not signed in
-        <View style={{ alignItems: "center", justifyContent: "center" }}>
-          <View style={profileStyles.banner}>
-            <Text h4 style={profileStyles.welcomeText}>
-              Welcome! Please sign up or log in to access your profile.
-            </Text>
-          </View>
-
-          <Button
-            title="Sign Up"
-            onPress={() => navigation.navigate("SignUp")}
-            buttonStyle={profileStyles.button}
-            titleStyle={profileStyles.buttonText}
-          />
-
-          <Button
-            title="Log In"
-            onPress={() => navigation.navigate("Login")}
-            buttonStyle={profileStyles.button}
-            titleStyle={profileStyles.buttonText}
-          />
-
-          <View style={profileStyles.statisticsBox}>
-            <Text h3 style={profileStyles.statisticsTitle}>
-              Your Statistics
-            </Text>
-            <Text style={profileStyles.statisticsText}>
-              Sign in to access your grocery list, make amendments, and find out to effectively use the food products you own!
-            </Text>
-          </View>
-        </View>
-      ) : (
-        // Displayed if user signed in
         <View>
           <View style={{ alignItems: "center", justifyContent: "center" }}>
 
@@ -190,27 +160,26 @@ export const ProfilePage = ({ userId, setUserId, setRecipe }) => {
 
           </View>
 
-          {/* Preferences Display */}
-          {preferences && Object.keys(preferences).length > 0 && (
+            {/* Preferences Display */}
+            {preferences && Object.keys(preferences).length > 0 && (
             <View style={profileStyles.preferencesDisplay}>
               <Text style={profileStyles.preferencesTitle}>Active Dietary Preferences:</Text>
               <Text style={profileStyles.preferencesText}>
-                {Object.entries(preferences)
-                  .filter(([key, value]) => value === true)
-                  .map(([key]) => key.replace('is_', '').replace('_', ' '))
-                  .map(pref => pref.charAt(0).toUpperCase() + pref.slice(1))
-                  .join(', ') || 'None'}
+              {Object.entries(preferences)
+                .filter(([key, value]) => value === true)
+                .map(([key]) => key.charAt(0).toUpperCase() + key.slice(1))
+                .join(', ') || 'None'}
               </Text>
               <TouchableOpacity
-                style={{ position: 'absolute', top: 10, right: 10 }}
-                onPress={handlePreferencesPress}
+              style={{ position: 'absolute', top: 10, right: 10 }}
+              onPress={handlePreferencesPress}
               >
-                <AntDesign name="edit" size={24} color="#52B788" />
+              <AntDesign name="edit" size={24} color="#52B788" />
               </TouchableOpacity>
             </View>
-          )}
+            )}
 
-          {/* Recipes */}
+            {/* Recipes */}
           <View style={{ maxHeight: windowHeight * 0.5 }}>
             <Text h4 style={profileStyles.header}>
               Suggested Recipes:
@@ -266,9 +235,8 @@ export const ProfilePage = ({ userId, setUserId, setRecipe }) => {
           /> */}
 
         </View>
-      )}
     </View>
   );
 };
 
-export default ProfilePage;
+export default HomePage;

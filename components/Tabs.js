@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { ProfilePage } from "../pages/ProfilePage";
+import { LandingPage } from "../pages/LandingPage";
+import { HomePage } from "../pages/HomePage";
 import { EntriesPage } from "../pages/EntriesPage";
 import { CameraPage } from "../pages/CameraPage";
 import { ScannerPage } from "../pages/ScannerPage";
@@ -23,9 +24,9 @@ const ProfileStack = ({
   setRecipe,
 }) => (
   <Stack.Navigator screenOptions={{ headerShown: false }}>
-    <Stack.Screen name="ProfileMain">
+    <Stack.Screen name="Landing">
       {(props) => (
-        <ProfilePage
+        <LandingPage
           {...props}
           userId={userId}
           setUserId={setUserId}
@@ -42,6 +43,11 @@ const ProfileStack = ({
     <Stack.Screen name="Login">
       {(props) => (
         <LoginPage {...props} userId={userId} setUserId={setUserId} />
+      )}
+    </Stack.Screen>
+    <Stack.Screen name="Home">
+      {(props) => (
+        <HomePage {...props} userId={userId} setUserId={setUserId} />
       )}
     </Stack.Screen>
     <Stack.Screen name="Camera">
