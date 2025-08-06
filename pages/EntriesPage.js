@@ -271,11 +271,6 @@ export const EntriesPage = ({ userId }) => {
                                         <Text style={entriesStyles.quantity}>
                                             Quantity: {item.quantity}
                                         </Text>
-                                        {item.barcode && (
-                                            <Text style={entriesStyles.barcode}>
-                                                Barcode: {item.barcode}
-                                            </Text>
-                                        )}
                                         {item.formatted_expiry_date && (
                                             <Text style={[entriesStyles.expiry, { color: getExpiryColor(item) }]}>
                                                 Expires: {item.formatted_expiry_date}

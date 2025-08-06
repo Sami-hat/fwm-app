@@ -13,7 +13,7 @@ const apiRequest = async (url, options = {}) => {
 
     if (!response.ok) {
       const errorData = await response.json();
-      throw new Error(errorData.error || `HTTP ${response.status}`);
+      throw new Error(errorData.error || errorData.message || `HTTP ${response.status}`);
     }
 
     return await response.json();
@@ -58,14 +58,16 @@ export const inventoryService = {
   },
 
   add: async (userId, name, quantity, barcode, expiry_date) => {
-    const url = buildApiUrl(API_ENDPOINTS.INVENTORY_ADD, {
-      user: userId,
-      name,
-      quantity,
-      barcode,
-      expiry_date
+    return apiRequest(`${API_BASE_URL}${API_ENDPOINTS.INVENTORY_ADD}`, {
+      method: 'POST',
+      body: JSON.stringify({
+        user: userId,
+        name,
+        quantity,
+        barcode,
+        expiry_date
+      }),
     });
-    return apiRequest(url, { method: 'POST' });
   },
 
   delete: async (userId, itemId) => {
@@ -77,15 +79,17 @@ export const inventoryService = {
   },
 
   edit: async (userId, itemId, name, quantity, barcode, expiry_date) => {
-    const url = buildApiUrl(API_ENDPOINTS.INVENTORY_EDIT, {
-      user: userId,
-      id: itemId,
-      name,
-      quantity,
-      barcode,
-      expiry_date
+    return apiRequest(`${API_BASE_URL}${API_ENDPOINTS.INVENTORY_EDIT}`, {
+      method: 'PUT', 
+      body: JSON.stringify({
+        user: userId,
+        id: itemId,
+        name,
+        quantity,
+        barcode,
+        expiry_date
+      }),
     });
-    return apiRequest(url, { method: 'POST' });
   },
 };
 

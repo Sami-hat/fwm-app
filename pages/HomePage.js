@@ -166,8 +166,13 @@ export const HomePage = ({ userId, setRecipe }) => {
               <Text style={profileStyles.preferencesTitle}>Active Dietary Preferences:</Text>
               <Text style={profileStyles.preferencesText}>
               {Object.entries(preferences)
-                .filter(([key, value]) => value === true)
-                .map(([key]) => key.charAt(0).toUpperCase() + key.slice(1))
+                .filter(([_, value]) => value === true)
+                .map(([key]) => key
+                  .replace(/^is_|^is|_/g, ' ')
+                  .trim()
+                  .split(' ')
+                  .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+                  .join(' '))
                 .join(', ') || 'None'}
               </Text>
               <TouchableOpacity
