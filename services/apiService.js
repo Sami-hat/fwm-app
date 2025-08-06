@@ -80,7 +80,7 @@ export const inventoryService = {
 
   edit: async (userId, itemId, name, quantity, barcode, expiry_date) => {
     return apiRequest(`${API_BASE_URL}${API_ENDPOINTS.INVENTORY_EDIT}`, {
-      method: 'PUT', 
+      method: 'PUT',
       body: JSON.stringify({
         user: userId,
         id: itemId,
@@ -128,16 +128,16 @@ export const preferencesService = {
 
 // Barcode Services
 export const barcodeService = {
-  
+
   // Open Food Facts
   searchOpenFoodFacts: async (barcode) => {
     try {
       const response = await fetch(
         `https://world.openfoodfacts.org/api/v0/product/${barcode}.json`
       );
-      
+
       if (!response.ok) throw new Error('OpenFoodFacts API failed');
-      
+
       const result = await response.json();
       if (result.status === 1 && result.product) {
         return {
@@ -152,7 +152,7 @@ export const barcodeService = {
             categories: result.product.categories,
             ingredients: result.product.ingredients_text,
             nutriscore: result.product.nutriscore_grade,
-            stores: result.product.stores, 
+            stores: result.product.stores,
           }
         };
       }
@@ -168,9 +168,9 @@ export const barcodeService = {
       const response = await fetch(
         `https://api.upcitemdb.com/prod/trial/lookup?upc=${barcode}`
       );
-      
+
       if (!response.ok) throw new Error('UPCItemDB API failed');
-      
+
       const result = await response.json();
       if (result.code === 'OK' && result.items && result.items.length > 0) {
         const product = result.items[0];
@@ -197,19 +197,19 @@ export const barcodeService = {
   // Main search function
   search: async (barcode) => {
     console.log(`Searching for barcode: ${barcode} across UK databases...`);
-    
+
     const startTime = Date.now();
-    
+
     try {
       // Priority order
       const searchPromises = [
-        barcodeService.searchOpenFoodFacts(barcode),  
-        barcodeService.searchUPCItemDB(barcode),        
+        barcodeService.searchOpenFoodFacts(barcode),
+        barcodeService.searchUPCItemDB(barcode),
       ];
 
       // Run searches concurrently
       const results = await Promise.allSettled(searchPromises);
-      
+
       const searchTime = Date.now() - startTime;
       console.log(`Barcode searches completed in ${searchTime}ms`);
 
@@ -222,7 +222,7 @@ export const barcodeService = {
           // Score results
           let score = 0;
           const product = result.value.product;
-          
+
           if (result.value.source === 'OpenFoodFacts') score += 30;
           else if (result.value.source === 'BarcodeLookup') score += 25;
           else if (result.value.source === 'UPCItemDB') score += 20;

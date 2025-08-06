@@ -28,11 +28,12 @@ export const ScannerPage = ({ userId }) => {
       if (result.found && result.product) {
         const name = result.product.product_name || "Unknown Product";
         const quantity = result.product.quantity || "1";
+        const expriation_date = result.product.expriation_date || "";
         
-        console.log(`Found product: ${name}, quantity: ${quantity}`);
+        console.log(`Found product: ${name}, quantity: ${quantity}, expiration date: ${expriation_date}`);
         
         // Add to inventory using API service
-        await inventoryService.add(userId, name, quantity, data);
+        await inventoryService.add(userId, name, quantity, data, expriation_date);
         
         Alert.alert(
           "Product Added", 
