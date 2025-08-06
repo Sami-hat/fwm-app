@@ -10,7 +10,7 @@ import Feather from "@expo/vector-icons/Feather";
 import AntDesign from '@expo/vector-icons/AntDesign';
 import { Alert } from 'react-native';
 
-
+// Home Page, User is signed in
 export const HomePage = ({ userId, setRecipe }) => {
   const windowHeight = Dimensions.get("window").height;
   const navigation = useNavigation();
@@ -98,7 +98,7 @@ export const HomePage = ({ userId, setRecipe }) => {
     }
   }, [userId]);
 
-  // Generate recipes when ingredients OR preferences change
+  // Generate recipes when ingredients or preferences change
   useEffect(() => {
     if (ingredients.length > 0 && userId >= 1) {
       setRecipes([]); // Clear old recipes

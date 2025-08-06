@@ -1,8 +1,9 @@
 import { entriesStyles } from '../styles/EntriesPageStyles';
 
 import React, { useState, useEffect } from "react";
-import { FlatList, View, Alert } from "react-native";
+import { FlatList, View, Alert, Platform, TouchableOpacity } from "react-native";
 import { Button, Input, Text, Card } from "@rneui/themed";
+import DateTimePicker from '@react-native-community/datetimepicker';
 import { Header } from "../components/Header";
 import { inventoryService } from "../services/apiService";
 
@@ -16,7 +17,8 @@ export const EntriesPage = ({ userId }) => {
     const [name, setName] = useState("");
     const [quantity, setQuantity] = useState("");
     const [barcode, setBarcode] = useState("");
-    const [expiry, setExpiry] = useState("");
+    const [expiryDate, setExpiryDate] = useState(null);
+    const [showDatePicker, setShowDatePicker] = useState(false);
 
     // Get user's inventory
     useEffect(() => {
@@ -35,6 +37,24 @@ export const EntriesPage = ({ userId }) => {
             Alert.alert("Error", "Failed to load inventory");
         } finally {
             setLoading(false);
+        }
+    };
+
+    // Format date for display
+    const formatDate = (date) => {
+        if (!date) return '';
+        const d = new Date(date);
+        const day = d.getDate().toString().padStart(2, '0');
+        const month = (d.getMonth() + 1).toString().padStart(2, '0');
+        const year = d.getFullYear();
+        return `${day}/${month}/${year}`;
+    };
+
+    // Handle date picker change
+    const onDateChange = (event, selectedDate) => {
+        setShowDatePicker(Platform.OS === 'ios');
+        if (selectedDate) {
+            setExpiryDate(selectedDate);
         }
     };
 
@@ -71,7 +91,13 @@ export const EntriesPage = ({ userId }) => {
 
         try {
             setLoading(true);
-            await inventoryService.add(userId, name.trim(), quantity || "1", barcode || null, expiry || null);
+            await inventoryService.add(
+                userId,
+                name.trim(),
+                quantity || "1",
+                barcode || null,
+                expiryDate ? formatDate(expiryDate) : null
+            );
             await loadInventory(); // Refresh inventory
             clearEntry();
             setIsPosting(false);
@@ -93,7 +119,14 @@ export const EntriesPage = ({ userId }) => {
 
         try {
             setLoading(true);
-            await inventoryService.edit(userId, item, name.trim(), quantity || "1", barcode || null, expiry || null);
+            await inventoryService.edit(
+                userId,
+                item,
+                name.trim(),
+                quantity || "1",
+                barcode || null,
+                expiryDate ? formatDate(expiryDate) : null
+            );
             await loadInventory(); // Refresh inventory
             clearEntry();
             setIsPosting(false);
@@ -111,7 +144,21 @@ export const EntriesPage = ({ userId }) => {
         setName("");
         setQuantity("");
         setBarcode("");
-        setExpiry("");
+        setExpiryDate(null);
+    };
+
+    // Parse date from DD/MM/YYYY format
+    const parseDate = (dateString) => {
+        if (!dateString) return null;
+        const [day, month, year] = dateString.split('/');
+        return new Date(year, month - 1, day);
+    };
+
+    // Status color for expiry
+    const getExpiryColor = (item) => {
+        if (item.is_expired) return '#FF6B6B';
+        if (item.expires_soon) return '#FFA500';
+        return '#666';
     };
 
     return (
@@ -151,15 +198,26 @@ export const EntriesPage = ({ userId }) => {
                         inputContainerStyle={entriesStyles.inputContainer}
                     />
                     <Text h4 style={entriesStyles.inputLabel}>
-                        Expiry Date (DD/MM/YYYY):
+                        Expiry Date:
                     </Text>
-                    <Input
-                        placeholder={isEditing ? "Edit expiration date" : "Enter expiration date (optional)"}
-                        keyboardType="numeric"
-                        value={expiry}
-                        onChangeText={setExpiry}
-                        inputContainerStyle={entriesStyles.inputContainer}
-                    />
+                    <TouchableOpacity
+                        onPress={() => setShowDatePicker(true)}
+                        style={entriesStyles.datePickerButton}
+                    >
+                        <Text style={entriesStyles.datePickerText}>
+                            {expiryDate ? formatDate(expiryDate) : "Select expiry date (optional)"}
+                        </Text>
+                    </TouchableOpacity>
+
+                    {showDatePicker && (
+                        <DateTimePicker
+                            value={expiryDate || new Date()}
+                            mode="date"
+                            display={Platform.OS === 'ios' ? 'spinner' : 'default'}
+                            onChange={onDateChange}
+                            minimumDate={new Date()}
+                        />
+                    )}
 
                     <Button
                         title={isAdding ? "Add Item" : "Update Item"}
@@ -203,7 +261,10 @@ export const EntriesPage = ({ userId }) => {
                                 keyExtractor={(item) => item.id.toString()}
                                 style={entriesStyles.inventoryList}
                                 renderItem={({ item }) => (
-                                    <Card containerStyle={entriesStyles.entry}>
+                                    <Card containerStyle={[
+                                        entriesStyles.entry,
+                                        item.is_expired && { borderColor: '#FF6B6B', borderWidth: 2 }
+                                    ]}>
                                         <Text style={entriesStyles.item}>
                                             {item.name.charAt(0).toUpperCase() + item.name.slice(1)}
                                         </Text>
@@ -213,6 +274,19 @@ export const EntriesPage = ({ userId }) => {
                                         {item.barcode && (
                                             <Text style={entriesStyles.barcode}>
                                                 Barcode: {item.barcode}
+                                            </Text>
+                                        )}
+                                        {item.formatted_expiry_date && (
+                                            <Text style={[entriesStyles.expiry, { color: getExpiryColor(item) }]}>
+                                                Expires: {item.formatted_expiry_date}
+                                                {item.is_expired && " (EXPIRED)"}
+                                                {!item.is_expired && item.expires_soon && " (Soon)"}
+                                            </Text>
+                                        )}
+                                        {item.formatted_date_added && (
+                                            <Text style={entriesStyles.dateAdded}>
+                                                Added: {item.formatted_date_added}
+                                                {item.days_in_inventory && ` (${Math.floor(item.days_in_inventory)} days ago)`}
                                             </Text>
                                         )}
                                         <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 2 }}>
@@ -231,7 +305,7 @@ export const EntriesPage = ({ userId }) => {
                                                     setName(item.name);
                                                     setQuantity(item.quantity?.toString() || "");
                                                     setBarcode(item.barcode?.toString() || "");
-                                                    setExpiry(item.expiry_date?.toString() || "");
+                                                    setExpiryDate(parseDate(item.formatted_expiry_date));
                                                 }}
                                             />
                                         </View>

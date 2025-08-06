@@ -2,7 +2,7 @@ import { StyleSheet, Dimensions } from "react-native";
 
 const { width: windowWidth, height: windowHeight } = Dimensions.get("window");
 
-export const profileStyles  = StyleSheet.create({
+export const profileStyles = StyleSheet.create({
   container: {
     justifyContent: "center",
     alignItems: "center",
@@ -45,10 +45,10 @@ export const profileStyles  = StyleSheet.create({
     fontSize: 18,
     color: "#FFFFFF",
   },
-    statisticsTitleBlack: {
-      textAlign: "center",
-      marginTop: 20,
-      marginBottom: 10,
+  statisticsTitleBlack: {
+    textAlign: "center",
+    marginTop: 20,
+    marginBottom: 10,
   },
   banner: {
     width: "110%",

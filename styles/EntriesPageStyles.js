@@ -12,6 +12,7 @@ export const entriesStyles = StyleSheet.create({
         alignItems: "center",
         paddingHorizontal: 20,
         justifyContent: "flex-start",
+        paddingTop: 20,
     },
     title: {
         fontSize: 24,
@@ -32,7 +33,7 @@ export const entriesStyles = StyleSheet.create({
         marginBottom: 20,
     },
     inputLabel: {
-        marginTop: 10,
+        marginTop: 20,
         marginBottom: 5,
         paddingHorizontal: 15,
         alignSelf: "flex-start",
@@ -64,11 +65,7 @@ export const entriesStyles = StyleSheet.create({
         fontSize: 18,
         fontWeight: "bold",
     },
-    quantity: {
-        fontSize: 16,
-        color: "#555",
-        marginVertical: 5,
-    },
+
     barcode: {
         fontSize: 14,
         color: "#777",
@@ -88,4 +85,61 @@ export const entriesStyles = StyleSheet.create({
     editButton: {
         backgroundColor: "#FFB300",
     },
+    datePickerButton: {
+    backgroundColor: '#f0f0f0',
+    padding: 15,
+    borderRadius: 5,
+    marginBottom: 20,
+    marginHorizontal: 10,
+    borderWidth: 1,
+    borderColor: '#ddd',
+  },
+  
+  datePickerText: {
+    fontSize: 16,
+    color: '#333',
+  },
+  
+  expiry: {
+    fontSize: 14,
+    marginTop: 5,
+    fontWeight: '500',
+  },
+  
+  dateAdded: {
+    fontSize: 12,
+    marginTop: 3,
+    color: '#888',
+    fontStyle: 'italic',
+  },
+  
+  inputContainer: {
+    borderBottomWidth: 1,
+    borderColor: '#ddd',
+  },
+  
+  inputLabel: {
+    marginLeft: 10,
+    marginBottom: 5,
+    color: '#333',
+  },
+  
+  entry: {
+    marginBottom: 10,
+    borderRadius: 8,
+    padding: 15,
+  },
+  
+  item: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 5,
+  },
+  
+  quantity: {
+    fontSize: 14,
+    color: '#666',
+    marginBottom: 3,
+  },
+  
 });

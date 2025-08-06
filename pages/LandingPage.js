@@ -4,6 +4,7 @@ import { useNavigation } from "@react-navigation/native";
 import { View } from "react-native";
 import { Button, Text } from "@rneui/themed";
 
+// Landing Page, User is not signed in 
 export const LandingPage = ({ userId }) => {
 
     React.useEffect(() => {
@@ -13,7 +14,7 @@ export const LandingPage = ({ userId }) => {
     }, [userId]);
 
     const navigation = useNavigation();
-    // Displayed if user not signed in
+
     return (
         <View style={{ alignItems: "center", justifyContent: "center" }}>
             <View style={profileStyles.banner}>

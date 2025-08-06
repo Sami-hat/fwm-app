@@ -7,14 +7,14 @@ export const Header = ({ onLogout, showMenu }) => {
 
   return (
     <View style={headerStyle(dimensions.width, dimensions.height)}>
-      <Text style={styles.text}>ShopTracker</Text>
+      <Text style={styles.text}>Shelfie</Text>
     </View>
   );
 };
 
 const headerStyle = (windowWidth, windowHeight) => ({
   width: windowWidth,
-  height: windowHeight * 0.10,
+  height: windowHeight * 0.08,
   backgroundColor: "#52B788",
   justifyContent: "center",
   alignItems: "center",
@@ -28,5 +28,6 @@ const styles = StyleSheet.create({
     color: "white",
     fontSize: 24,
     marginTop: "8%",
+    // paddingBottom: "5%"
   },
 });
