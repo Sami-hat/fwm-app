@@ -28,7 +28,8 @@ components/            # Reusable UI components
    Header.js           # App header component
    Tabs.js             # Main tab navigation
 pages/                 # Screen components
-   ProfilePage.js      # Main profile and recipe suggestions
+   LandingPage.js      # Signed out screen
+   HomePage.js         # Main profile and recipe suggestions
    EntriesPage.js      # Inventory management
    CameraPage.js       # Photo capture and processing
    ScannerPage.js      # Barcode scanning
@@ -36,6 +37,7 @@ pages/                 # Screen components
    PreferencesPage.js  # Dietary preferences
    LoginPage.js        # User authentication
    SignUpPage.js       # User registration
+   SettingsPage.js     # User details view 
 services/              # API service layer
    apiService.js       # Centralised API calls
 config/                # Configuration files
