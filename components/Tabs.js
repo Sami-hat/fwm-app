@@ -1,18 +1,18 @@
 import React, { useState, useEffect } from "react";
-import { LandingPage } from "../pages/LandingPage";
-import { HomePage } from "../pages/HomePage";
-import { EntriesPage } from "../pages/EntriesPage";
-import { CameraPage } from "../pages/CameraPage";
-import { ScannerPage } from "../pages/ScannerPage";
-import { PreferencesPage } from "../pages/PreferencesPage";
-import { SignUpPage } from "../pages/SignUpPage";
-import { LoginPage } from "../pages/LoginPage";
+import LandingPage from "../pages/LandingPage";
+import HomePage from "../pages/HomePage";
+import EntriesPage from "../pages/EntriesPage";
+import CameraPage from "../pages/CameraPage";
+import ScannerPage from "../pages/ScannerPage";
+import PreferencesPage from "../pages/PreferencesPage";
+import SignUpPage from "../pages/SignUpPage";
+import LoginPage from "../pages/LoginPage";
+import RecipePage from "../pages/RecipePage";
+import SettingsPage from "../pages/SettingsPage";
 import { createStackNavigator } from "@react-navigation/stack";
 import { NavigationContainer } from "@react-navigation/native";
 import { TabView, TabBar } from "react-native-tab-view";
 import { useWindowDimensions } from "react-native";
-import { RecipePage } from "../pages/RecipePage";
-import { SettingsPage } from "../pages/SettingsPage";
 
 const Stack = createStackNavigator();
 

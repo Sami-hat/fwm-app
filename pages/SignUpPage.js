@@ -6,7 +6,7 @@ import { SafeAreaView, Alert } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { Button, Input, Text } from "@rneui/themed";
 
-export const SignUpPage = ({ setUserId }) => {
+const SignUpPage = ({ setUserId }) => {
   const navigation = useNavigation();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");

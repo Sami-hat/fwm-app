@@ -6,7 +6,7 @@ import { View } from "react-native";
 import { Button, Text } from "@rneui/themed";
 
 // Landing Page, User is not signed in
-export const LandingPage = ({ userId }) => {
+const LandingPage = ({ userId }) => {
   React.useEffect(() => {
     if (userId >= 1) {
       navigation.navigate("Home");

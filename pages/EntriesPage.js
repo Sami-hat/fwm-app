@@ -13,7 +13,7 @@ import { Button, Input, Text, Card } from "@rneui/themed";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { Header } from "../components/Header";
 
-export const EntriesPage = ({ userId }) => {
+const EntriesPage = ({ userId }) => {
   const [inventory, setInventory] = useState([]);
   const [isPosting, setIsPosting] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
@@ -341,7 +341,7 @@ export const EntriesPage = ({ userId }) => {
                 )}
               />
             </>
-          )};
+          )}
           <Button
             title="Add Groceries Manually"
             onPress={() => {

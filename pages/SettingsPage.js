@@ -6,7 +6,7 @@ import { View } from "react-native";
 import { Button, Text } from "@rneui/themed";
 import Feather from "@expo/vector-icons/Feather";
 
-export const SettingsPage = ({ userId, setUserId, setIndex }) => {
+const SettingsPage = ({ userId, setUserId, setIndex }) => {
   const handleLogout = async () => {
     setUserId(0);
     setIndex(0);

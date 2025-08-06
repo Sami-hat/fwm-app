@@ -21,7 +21,7 @@ import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 
 import { recipeService } from "../services/apiService";
 
-export const CameraPage = ({ userId }) => {
+const CameraPage = ({ userId }) => {
   const navigation = useNavigation();
   const [facing, setFacing] = useState("back");
   const [permission, setPermission] = useCameraPermissions();

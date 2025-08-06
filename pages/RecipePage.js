@@ -8,7 +8,7 @@ import { Button, Text, Input, Icon } from "@rneui/themed";
 import * as Sharing from "expo-sharing";
 import * as FileSystem from "expo-file-system";
 
-export const RecipePage = ({ userId, recipe }) => {
+const RecipePage = ({ userId, recipe }) => {
   const navigation = useNavigation();
   const [email, setEmail] = useState("");
   const [modalVisible, setModalVisible] = useState(false);

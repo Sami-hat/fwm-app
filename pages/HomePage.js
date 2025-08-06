@@ -15,7 +15,7 @@ import AntDesign from "@expo/vector-icons/AntDesign";
 import { Alert } from "react-native";
 
 // Home Page, User is signed in
-export const HomePage = ({ userId, setRecipe }) => {
+const HomePage = ({ userId, setRecipe }) => {
   const windowHeight = Dimensions.get("window").height;
   const navigation = useNavigation();
   const [ingredients, setIngredients] = useState([]);

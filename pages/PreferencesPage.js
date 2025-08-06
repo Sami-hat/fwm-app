@@ -6,7 +6,7 @@ import { SafeAreaView, Alert } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { Button, Text, CheckBox, TextInput } from "@rneui/themed";
 
-export const PreferencesPage = ({ userId }) => {
+const PreferencesPage = ({ userId }) => {
   const navigation = useNavigation();
   const [loading, setLoading] = useState(false);
   const [preferences, setPreferences] = useState({
