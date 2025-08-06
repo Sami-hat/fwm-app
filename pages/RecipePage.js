@@ -159,7 +159,7 @@ export const RecipePage = ({ userId, recipe }) => {
       <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', padding: 10 }}>
         <Button
           icon={<Icon name="arrow-back" type="material" color="black" />}
-          onPress={() => navigation.navigate("ProfileMain")}
+          onPress={() => navigation.navigate("Home")}
           buttonStyle={recipeStyles.iconButton}
         />
 

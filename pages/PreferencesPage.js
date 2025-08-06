@@ -5,7 +5,7 @@ import { preferencesService } from '../services/apiService';
 import React, { useState, useEffect } from "react";
 import { SafeAreaView, Alert } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import { Button, Text, CheckBox } from "@rneui/themed";
+import { Button, Text, CheckBox, TextInput } from "@rneui/themed";
 
 export const PreferencesPage = ({ userId }) => {
   const navigation = useNavigation();
@@ -18,6 +18,7 @@ export const PreferencesPage = ({ userId }) => {
     is_nut_free: false,
     is_high_protein: false,
     is_low_carb: false,
+    is_custom: false,
   });
 
   // Load current preferences
@@ -113,6 +114,24 @@ export const PreferencesPage = ({ userId }) => {
         containerStyle={preferencesStyles.checkboxContainer}
         textStyle={preferencesStyles.checkboxText}
       />
+
+      <CheckBox
+        title="Custom"
+        checked={preferences.is_custom}
+        onPress={() => updatePreference('is_custom', !preferences.is_custom)}
+        containerStyle={preferencesStyles.checkboxContainer}
+        textStyle={preferencesStyles.checkboxText}
+      />
+      {/* 
+      {preferences.is_custom && (
+        <TextInput
+          style={preferencesStyles.customInput}
+          placeholder="Enter custom dietary preferences"
+          value={preferences.custom_text || ''}
+          onChangeText={(text) => updatePreference('custom_text', text)}
+          multiline
+        />
+      )} */}
 
       <Button
         title="Save Preferences"

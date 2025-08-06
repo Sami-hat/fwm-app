@@ -1,10 +1,10 @@
 import { loginStyles } from '../styles/LoginPageStyles';
+import { authService } from "../services/apiService";
 
 import React, { useState } from "react";
 import { SafeAreaView } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { Button, Input, Text } from "@rneui/themed";
-import { authService } from "../services/apiService";
 
 export const LoginPage = ({ userId, setUserId }) => {
   const navigation = useNavigation();
@@ -17,12 +17,12 @@ export const LoginPage = ({ userId, setUserId }) => {
     if (!email.trim()) {
       setError("Please enter your email");
       return;
-    }
+    };
 
     if (!password.trim()) {
       setError("Please enter your password");
       return;
-    }
+    };
 
     try {
       setLoading(true);
@@ -35,7 +35,7 @@ export const LoginPage = ({ userId, setUserId }) => {
         navigation.navigate('Home');
       } else {
         setError("Login failed. Please try again.");
-      }
+      };
     } catch (error) {
       console.error("Login error:", error);
 
@@ -50,7 +50,7 @@ export const LoginPage = ({ userId, setUserId }) => {
       }
     } finally {
       setLoading(false);
-    }
+    };
   };
 
   return (

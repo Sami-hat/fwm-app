@@ -1,11 +1,11 @@
 import { entriesStyles } from '../styles/EntriesPageStyles';
+import { inventoryService } from "../services/apiService";
 
 import React, { useState, useEffect } from "react";
 import { FlatList, View, Alert, Platform, TouchableOpacity } from "react-native";
 import { Button, Input, Text, Card } from "@rneui/themed";
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { Header } from "../components/Header";
-import { inventoryService } from "../services/apiService";
 
 export const EntriesPage = ({ userId }) => {
     const [inventory, setInventory] = useState([]);

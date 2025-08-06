@@ -1,11 +1,11 @@
 import { scannerStyles } from '../styles/ScannerPageStyles';
+import { inventoryService, barcodeService } from "../services/apiService";
 
 import React, { useState } from "react";
 import { Text, View, Button, StyleSheet, TouchableOpacity, Alert } from "react-native";
 import { CameraView, useCameraPermissions } from "expo-camera";
 import { useNavigation } from "@react-navigation/native";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import { inventoryService, barcodeService } from "../services/apiService";
 
 export const ScannerPage = ({ userId }) => {
   const navigation = useNavigation();

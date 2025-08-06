@@ -47,7 +47,7 @@ const ProfileStack = ({
     </Stack.Screen>
     <Stack.Screen name="Home">
       {(props) => (
-        <HomePage {...props} userId={userId} setUserId={setUserId} />
+        <HomePage {...props} userId={userId} setUserId={setUserId} setRecipe={setRecipe} />
       )}
     </Stack.Screen>
     <Stack.Screen name="Camera">

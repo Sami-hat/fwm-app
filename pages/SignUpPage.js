@@ -1,10 +1,10 @@
 import { signUpStyles } from '../styles/SignUpPageStyles';
+import { authService } from "../services/apiService";
 
 import React, { useState } from "react";
 import { SafeAreaView, Alert } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { Button, Input, Text } from "@rneui/themed";
-import { authService } from "../services/apiService";
 
 export const SignUpPage = ({ setUserId }) => {
   const navigation = useNavigation();

@@ -63,7 +63,7 @@ export const CameraPage = ({ userId }) => {
 
   if (!permission) {
     return <View />;
-  }
+  };
 
   if (!permission.granted) {
     return (
@@ -74,11 +74,11 @@ export const CameraPage = ({ userId }) => {
         <Button onPress={() => setPermission(true)} title="Grant Permission" />
       </View>
     );
-  }
+  };
 
   function toggleCameraFacing() {
     setFacing((current) => (current === "back" ? "front" : "back"));
-  }
+  };
 
   const takePicture = async () => {
     try {

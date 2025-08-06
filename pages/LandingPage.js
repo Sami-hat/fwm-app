@@ -1,4 +1,5 @@
 import { profileStyles } from '../styles/ProfilePageStyles';
+
 import React, { useEffect, useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { View } from "react-native";
