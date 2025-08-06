@@ -1,6 +1,5 @@
-
-import { preferencesStyles } from '../styles/PreferencesPageStyles';
-import { preferencesService } from '../services/apiService';
+import { preferencesStyles } from "../styles/PreferencesPageStyles";
+import { preferencesService } from "../services/apiService";
 
 import React, { useState, useEffect } from "react";
 import { SafeAreaView, Alert } from "react-native";
@@ -47,9 +46,9 @@ export const PreferencesPage = ({ userId }) => {
   };
 
   const updatePreference = (key, value) => {
-    setPreferences(prev => ({
+    setPreferences((prev) => ({
       ...prev,
-      [key]: value
+      [key]: value,
     }));
   };
 
@@ -62,7 +61,7 @@ export const PreferencesPage = ({ userId }) => {
       <CheckBox
         title="Vegan"
         checked={preferences.is_vegan}
-        onPress={() => updatePreference('is_vegan', !preferences.is_vegan)}
+        onPress={() => updatePreference("is_vegan", !preferences.is_vegan)}
         containerStyle={preferencesStyles.checkboxContainer}
         textStyle={preferencesStyles.checkboxText}
       />
@@ -70,7 +69,9 @@ export const PreferencesPage = ({ userId }) => {
       <CheckBox
         title="Vegetarian"
         checked={preferences.is_vegetarian}
-        onPress={() => updatePreference('is_vegetarian', !preferences.is_vegetarian)}
+        onPress={() =>
+          updatePreference("is_vegetarian", !preferences.is_vegetarian)
+        }
         containerStyle={preferencesStyles.checkboxContainer}
         textStyle={preferencesStyles.checkboxText}
       />
@@ -78,7 +79,9 @@ export const PreferencesPage = ({ userId }) => {
       <CheckBox
         title="Gluten Free"
         checked={preferences.is_gluten_free}
-        onPress={() => updatePreference('is_gluten_free', !preferences.is_gluten_free)}
+        onPress={() =>
+          updatePreference("is_gluten_free", !preferences.is_gluten_free)
+        }
         containerStyle={preferencesStyles.checkboxContainer}
         textStyle={preferencesStyles.checkboxText}
       />
@@ -86,7 +89,9 @@ export const PreferencesPage = ({ userId }) => {
       <CheckBox
         title="Dairy Free"
         checked={preferences.is_dairy_free}
-        onPress={() => updatePreference('is_dairy_free', !preferences.is_dairy_free)}
+        onPress={() =>
+          updatePreference("is_dairy_free", !preferences.is_dairy_free)
+        }
         containerStyle={preferencesStyles.checkboxContainer}
         textStyle={preferencesStyles.checkboxText}
       />
@@ -94,7 +99,9 @@ export const PreferencesPage = ({ userId }) => {
       <CheckBox
         title="Nut Free"
         checked={preferences.is_nut_free}
-        onPress={() => updatePreference('is_nut_free', !preferences.is_nut_free)}
+        onPress={() =>
+          updatePreference("is_nut_free", !preferences.is_nut_free)
+        }
         containerStyle={preferencesStyles.checkboxContainer}
         textStyle={preferencesStyles.checkboxText}
       />
@@ -102,7 +109,9 @@ export const PreferencesPage = ({ userId }) => {
       <CheckBox
         title="High Protein"
         checked={preferences.is_high_protein}
-        onPress={() => updatePreference('is_high_protein', !preferences.is_high_protein)}
+        onPress={() =>
+          updatePreference("is_high_protein", !preferences.is_high_protein)
+        }
         containerStyle={preferencesStyles.checkboxContainer}
         textStyle={preferencesStyles.checkboxText}
       />
@@ -110,7 +119,9 @@ export const PreferencesPage = ({ userId }) => {
       <CheckBox
         title="Low Carb"
         checked={preferences.is_low_carb}
-        onPress={() => updatePreference('is_low_carb', !preferences.is_low_carb)}
+        onPress={() =>
+          updatePreference("is_low_carb", !preferences.is_low_carb)
+        }
         containerStyle={preferencesStyles.checkboxContainer}
         textStyle={preferencesStyles.checkboxText}
       />
@@ -118,7 +129,7 @@ export const PreferencesPage = ({ userId }) => {
       <CheckBox
         title="Custom"
         checked={preferences.is_custom}
-        onPress={() => updatePreference('is_custom', !preferences.is_custom)}
+        onPress={() => updatePreference("is_custom", !preferences.is_custom)}
         containerStyle={preferencesStyles.checkboxContainer}
         textStyle={preferencesStyles.checkboxText}
       />

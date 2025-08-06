@@ -1,4 +1,4 @@
-import { signUpStyles } from '../styles/SignUpPageStyles';
+import { signUpStyles } from "../styles/SignUpPageStyles";
 import { authService } from "../services/apiService";
 
 import React, { useState } from "react";
@@ -48,7 +48,7 @@ export const SignUpPage = ({ setUserId }) => {
 
       if (data.userId) {
         setUserId(data.userId);
-        navigation.navigate('Home');
+        navigation.navigate("Home");
       } else {
         setError("Signup failed. Please try again.");
       }

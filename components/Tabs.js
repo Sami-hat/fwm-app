@@ -16,13 +16,7 @@ import { SettingsPage } from "../pages/SettingsPage";
 
 const Stack = createStackNavigator();
 
-const ProfileStack = ({
-  userId,
-  setUserId,
-  setIndex,
-  recipe,
-  setRecipe,
-}) => (
+const ProfileStack = ({ userId, setUserId, setIndex, recipe, setRecipe }) => (
   <Stack.Navigator screenOptions={{ headerShown: false }}>
     <Stack.Screen name="Landing">
       {(props) => (
@@ -47,7 +41,12 @@ const ProfileStack = ({
     </Stack.Screen>
     <Stack.Screen name="Home">
       {(props) => (
-        <HomePage {...props} userId={userId} setUserId={setUserId} setRecipe={setRecipe} />
+        <HomePage
+          {...props}
+          userId={userId}
+          setUserId={setUserId}
+          setRecipe={setRecipe}
+        />
       )}
     </Stack.Screen>
     <Stack.Screen name="Camera">
@@ -60,9 +59,7 @@ const ProfileStack = ({
       {(props) => <PreferencesPage {...props} userId={userId} />}
     </Stack.Screen>
     <Stack.Screen name="Recipe">
-      {(props) => (
-        <RecipePage {...props} userId={userId} recipe={recipe} />
-      )}
+      {(props) => <RecipePage {...props} userId={userId} recipe={recipe} />}
     </Stack.Screen>
     <Stack.Screen name="AddEntry">
       {(props) => <AddEntry {...props} userId={userId} />}
@@ -101,11 +98,7 @@ export const Tabs = ({ ip }) => {
           />
         );
       case "entries":
-        return (
-          <EntriesPage
-            userId={userId}
-          />
-        );
+        return <EntriesPage userId={userId} />;
       case "settings":
         return (
           <SettingsPage
@@ -113,10 +106,10 @@ export const Tabs = ({ ip }) => {
             setUserId={setUserId}
             setIndex={setIndex}
           />
-        )
+        );
       default:
         return null;
-    }
+    };
   };
 
   const renderTabBar = (props) => {
@@ -125,7 +118,11 @@ export const Tabs = ({ ip }) => {
       <TabBar
         {...props}
         indicatorStyle={{ backgroundColor: "#52B788" }}
-        style={{ backgroundColor: "#52B788", fontSize: 50, height: dimensions.height * 0.06 }}
+        style={{
+          backgroundColor: "#52B788",
+          fontSize: 50,
+          height: dimensions.height * 0.06,
+        }}
       />
     );
   };

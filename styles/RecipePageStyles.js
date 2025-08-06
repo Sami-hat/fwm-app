@@ -7,7 +7,7 @@ export const recipeStyles = StyleSheet.create({
     flex: 1,
     backgroundColor: "white",
     height: windowHeight,
-    overflow: "hidden"
+    overflow: "hidden",
   },
   recipeContainer: {
     backgroundColor: "white",
@@ -105,5 +105,5 @@ export const recipeStyles = StyleSheet.create({
     width: "100%",
     alignItems: "center",
     marginTop: 10,
-  }
+  },
 });

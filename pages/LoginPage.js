@@ -1,4 +1,4 @@
-import { loginStyles } from '../styles/LoginPageStyles';
+import { loginStyles } from "../styles/LoginPageStyles";
 import { authService } from "../services/apiService";
 
 import React, { useState } from "react";
@@ -17,12 +17,12 @@ export const LoginPage = ({ userId, setUserId }) => {
     if (!email.trim()) {
       setError("Please enter your email");
       return;
-    };
+    }
 
     if (!password.trim()) {
       setError("Please enter your password");
       return;
-    };
+    }
 
     try {
       setLoading(true);
@@ -32,16 +32,18 @@ export const LoginPage = ({ userId, setUserId }) => {
 
       if (data.userId) {
         setUserId(data.userId);
-        navigation.navigate('Home');
+        navigation.navigate("Home");
       } else {
         setError("Login failed. Please try again.");
-      };
+      }
     } catch (error) {
       console.error("Login error:", error);
 
       // Handle specific error messages
-      if (error.message.includes("Invalid credential") ||
-        error.message.includes("Invalid credentials")) {
+      if (
+        error.message.includes("Invalid credential") ||
+        error.message.includes("Invalid credentials")
+      ) {
         setError("Invalid email or password");
       } else if (error.message.includes("Network")) {
         setError("Network error. Please check your connection.");
@@ -50,7 +52,7 @@ export const LoginPage = ({ userId, setUserId }) => {
       }
     } finally {
       setLoading(false);
-    };
+    }
   };
 
   return (

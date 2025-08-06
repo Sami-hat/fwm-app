@@ -62,7 +62,7 @@ export const profileStyles = StyleSheet.create({
     fontSize: 22,
     textAlign: "center",
     color: "#FFFFFF",
-    marginTop: 15
+    marginTop: 15,
   },
   header: {
     fontSize: 30,

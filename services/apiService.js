@@ -1,11 +1,11 @@
-import { API_BASE_URL, API_ENDPOINTS, buildApiUrl } from '../config/api';
+import { API_BASE_URL, API_ENDPOINTS, buildApiUrl } from "../config/api";
 
 // Base fetch function with error handling
 const apiRequest = async (url, options = {}) => {
   try {
     const response = await fetch(url, {
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
         ...options.headers,
       },
       ...options,
@@ -13,12 +13,14 @@ const apiRequest = async (url, options = {}) => {
 
     if (!response.ok) {
       const errorData = await response.json();
-      throw new Error(errorData.error || errorData.message || `HTTP ${response.status}`);
+      throw new Error(
+        errorData.error || errorData.message || `HTTP ${response.status}`
+      );
     }
 
     return await response.json();
   } catch (error) {
-    console.error('API Request failed:', error);
+    console.error("API Request failed:", error);
     throw error;
   }
 };
@@ -27,14 +29,14 @@ const apiRequest = async (url, options = {}) => {
 export const authService = {
   login: async (email, password) => {
     return apiRequest(`${API_BASE_URL}${API_ENDPOINTS.LOGIN}`, {
-      method: 'POST',
+      method: "POST",
       body: JSON.stringify({ email, password }),
     });
   },
 
   signup: async (email, password) => {
     return apiRequest(`${API_BASE_URL}${API_ENDPOINTS.SIGNUP}`, {
-      method: 'POST',
+      method: "POST",
       body: JSON.stringify({ email, password }),
     });
   },
@@ -59,13 +61,13 @@ export const inventoryService = {
 
   add: async (userId, name, quantity, barcode, expiry_date) => {
     return apiRequest(`${API_BASE_URL}${API_ENDPOINTS.INVENTORY_ADD}`, {
-      method: 'POST',
+      method: "POST",
       body: JSON.stringify({
         user: userId,
         name,
         quantity,
         barcode,
-        expiry_date
+        expiry_date,
       }),
     });
   },
@@ -73,21 +75,21 @@ export const inventoryService = {
   delete: async (userId, itemId) => {
     const url = buildApiUrl(API_ENDPOINTS.INVENTORY_DELETE, {
       user: userId,
-      id: itemId
+      id: itemId,
     });
-    return apiRequest(url, { method: 'DELETE' });
+    return apiRequest(url, { method: "DELETE" });
   },
 
   edit: async (userId, itemId, name, quantity, barcode, expiry_date) => {
     return apiRequest(`${API_BASE_URL}${API_ENDPOINTS.INVENTORY_EDIT}`, {
-      method: 'PUT',
+      method: "PUT",
       body: JSON.stringify({
         user: userId,
         id: itemId,
         name,
         quantity,
         barcode,
-        expiry_date
+        expiry_date,
       }),
     });
   },
@@ -97,14 +99,14 @@ export const inventoryService = {
 export const recipeService = {
   generate: async (ingredients, userId) => {
     return apiRequest(`${API_BASE_URL}${API_ENDPOINTS.RECIPES}`, {
-      method: 'POST',
+      method: "POST",
       body: JSON.stringify({ ingredients, userId }),
     });
   },
 
   analyzeImage: async (imageUri) => {
     return apiRequest(`${API_BASE_URL}${API_ENDPOINTS.LOGMEAL}`, {
-      method: 'POST',
+      method: "POST",
       body: JSON.stringify({ imageUri }),
     });
   },
@@ -120,7 +122,7 @@ export const preferencesService = {
   update: async (userId, preferences) => {
     const url = buildApiUrl(API_ENDPOINTS.PREFERENCES, { user: userId });
     return apiRequest(url, {
-      method: 'PUT',
+      method: "PUT",
       body: JSON.stringify(preferences),
     });
   },
@@ -128,7 +130,6 @@ export const preferencesService = {
 
 // Barcode Services
 export const barcodeService = {
-
   // Open Food Facts
   searchOpenFoodFacts: async (barcode) => {
     try {
@@ -136,16 +137,17 @@ export const barcodeService = {
         `https://world.openfoodfacts.org/api/v0/product/${barcode}.json`
       );
 
-      if (!response.ok) throw new Error('OpenFoodFacts API failed');
+      if (!response.ok) throw new Error("OpenFoodFacts API failed");
 
       const result = await response.json();
       if (result.status === 1 && result.product) {
         return {
-          source: 'OpenFoodFacts',
+          source: "OpenFoodFacts",
           found: true,
-          confidence: 'high',
+          confidence: "high",
           product: {
-            product_name: result.product.product_name || result.product.product_name_en,
+            product_name:
+              result.product.product_name || result.product.product_name_en,
             quantity: result.product.quantity,
             brand: result.product.brands,
             image_url: result.product.image_url,
@@ -153,10 +155,10 @@ export const barcodeService = {
             ingredients: result.product.ingredients_text,
             nutriscore: result.product.nutriscore_grade,
             stores: result.product.stores,
-          }
+          },
         };
       }
-      return { source: 'OpenFoodFacts', found: false };
+      return { source: "OpenFoodFacts", found: false };
     } catch (error) {
       throw new Error(`OpenFoodFacts: ${error.message}`);
     }
@@ -169,15 +171,15 @@ export const barcodeService = {
         `https://api.upcitemdb.com/prod/trial/lookup?upc=${barcode}`
       );
 
-      if (!response.ok) throw new Error('UPCItemDB API failed');
+      if (!response.ok) throw new Error("UPCItemDB API failed");
 
       const result = await response.json();
-      if (result.code === 'OK' && result.items && result.items.length > 0) {
+      if (result.code === "OK" && result.items && result.items.length > 0) {
         const product = result.items[0];
         return {
-          source: 'UPCItemDB',
+          source: "UPCItemDB",
           found: true,
-          confidence: 'medium',
+          confidence: "medium",
           product: {
             product_name: product.title,
             quantity: product.size,
@@ -185,10 +187,10 @@ export const barcodeService = {
             image_url: product.images?.[0],
             categories: product.category,
             description: product.description,
-          }
+          },
         };
       }
-      return { source: 'UPCItemDB', found: false };
+      return { source: "UPCItemDB", found: false };
     } catch (error) {
       throw new Error(`UPCItemDB: ${error.message}`);
     }
@@ -218,14 +220,14 @@ export const barcodeService = {
       let highestScore = 0;
 
       for (const result of results) {
-        if (result.status === 'fulfilled' && result.value.found) {
+        if (result.status === "fulfilled" && result.value.found) {
           // Score results
           let score = 0;
           const product = result.value.product;
 
-          if (result.value.source === 'OpenFoodFacts') score += 30;
-          else if (result.value.source === 'BarcodeLookup') score += 25;
-          else if (result.value.source === 'UPCItemDB') score += 20;
+          if (result.value.source === "OpenFoodFacts") score += 30;
+          else if (result.value.source === "BarcodeLookup") score += 25;
+          else if (result.value.source === "UPCItemDB") score += 20;
           else score += 15;
 
           if (product.product_name) score += 10;
@@ -242,28 +244,34 @@ export const barcodeService = {
       }
 
       if (bestResult) {
-        console.log(`Best result from ${bestResult.source} (score: ${highestScore})`);
+        console.log(
+          `Best result from ${bestResult.source} (score: ${highestScore})`
+        );
         return bestResult;
       }
 
       // Log failures for debugging
       results.forEach((result, index) => {
-        const sources = ['OpenFoodFacts', 'UPCItemDB', 'BarcodeLookup', 'EAN Data'];
-        if (result.status === 'rejected') {
+        const sources = [
+          "OpenFoodFacts",
+          "UPCItemDB",
+          "BarcodeLookup",
+          "EAN Data",
+        ];
+        if (result.status === "rejected") {
           console.log(`${sources[index]} failed:`, result.reason.message);
         }
       });
 
       return {
-        source: 'None',
+        source: "None",
         found: false,
         product: null,
-        searchTime: searchTime
+        searchTime: searchTime,
       };
-
     } catch (error) {
-      console.error('Barcode search error:', error);
-      throw new Error('Failed to search barcode databases');
+      console.error("Barcode search error:", error);
+      throw new Error("Failed to search barcode databases");
     }
-  }
+  },
 };

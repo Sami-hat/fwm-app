@@ -1,4 +1,4 @@
-import { cameraStyles } from '../styles/CameraPageStyles';
+import { cameraStyles } from "../styles/CameraPageStyles";
 
 import { useState, useRef } from "react";
 import { Button, Text, TouchableOpacity, View } from "react-native";
@@ -8,7 +8,12 @@ import { Alert } from "react-native";
 
 import { Camera, CameraView, useCameraPermissions } from "expo-camera";
 import { Image } from "expo-image";
-import { useSharedValue, withTiming, useAnimatedStyle, Easing } from "react-native-reanimated";
+import {
+  useSharedValue,
+  withTiming,
+  useAnimatedStyle,
+  Easing,
+} from "react-native-reanimated";
 
 import Ionicons from "@expo/vector-icons/Ionicons";
 import Entypo from "@expo/vector-icons/Entypo";
@@ -38,11 +43,12 @@ export const CameraPage = ({ userId }) => {
     try {
       const result = await recipeService.analyzeImage(imageUri);
 
-      if (result.segmentation_results &&
+      if (
+        result.segmentation_results &&
         result.segmentation_results[0] &&
         result.segmentation_results[0].recognition_results &&
-        result.segmentation_results[0].recognition_results[0]) {
-
+        result.segmentation_results[0].recognition_results[0]
+      ) {
         const name = result.segmentation_results[0].recognition_results[0].name;
         Alert.alert(
           "Image Processed",
@@ -145,11 +151,7 @@ export const CameraPage = ({ userId }) => {
   const renderCamera = () => {
     return (
       <View style={cameraStyles.container}>
-        <CameraView
-          style={cameraStyles.camera}
-          facing={facing}
-          ref={cameraRef}
-        >
+        <CameraView style={cameraStyles.camera} facing={facing} ref={cameraRef}>
           <View style={cameraStyles.buttonContainer}>
             <TouchableOpacity
               style={cameraStyles.back_button}
@@ -158,7 +160,10 @@ export const CameraPage = ({ userId }) => {
               <Ionicons name="arrow-back" size={24} color="white" />
             </TouchableOpacity>
             <View style={cameraStyles.shutterContainer}>
-              <TouchableOpacity style={cameraStyles.button} onPress={takePicture}>
+              <TouchableOpacity
+                style={cameraStyles.button}
+                onPress={takePicture}
+              >
                 <Entypo name="circle" size={60} color="white" />
               </TouchableOpacity>
             </View>

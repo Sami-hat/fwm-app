@@ -1,5 +1,9 @@
-import { profileStyles } from '../styles/ProfilePageStyles';
-import { recipeService, inventoryService, preferencesService } from '../services/apiService';
+import { profileStyles } from "../styles/ProfilePageStyles";
+import {
+  recipeService,
+  inventoryService,
+  preferencesService,
+} from "../services/apiService";
 
 import React, { useState, useEffect } from "react";
 import { Header } from "../components/Header";
@@ -7,8 +11,8 @@ import { useNavigation } from "@react-navigation/native";
 import { View, FlatList, Dimensions, TouchableOpacity } from "react-native";
 import { Button, Text, ListItem } from "@rneui/themed";
 import Feather from "@expo/vector-icons/Feather";
-import AntDesign from '@expo/vector-icons/AntDesign';
-import { Alert } from 'react-native';
+import AntDesign from "@expo/vector-icons/AntDesign";
+import { Alert } from "react-native";
 
 // Home Page, User is signed in
 export const HomePage = ({ userId, setRecipe }) => {
@@ -25,7 +29,6 @@ export const HomePage = ({ userId, setRecipe }) => {
     }
   }, [userId]);
 
-
   // Create recipes based on inventory and preferences
   const generateRecipes = async () => {
     if (!ingredients || ingredients.length === 0) {
@@ -37,9 +40,12 @@ export const HomePage = ({ userId, setRecipe }) => {
       const recipesList = await recipeService.generate(ingredients, userId);
       setRecipes(recipesList);
     } catch (error) {
-      console.error('Recipe generation error:', error);
+      console.error("Recipe generation error:", error);
 
-      if (error.message.includes("overloaded") || error.message.includes("503")) {
+      if (
+        error.message.includes("overloaded") ||
+        error.message.includes("503")
+      ) {
         Alert.alert(
           "Service Busy",
           "The recipe service is temporarily busy. Please try again in a minute.",
@@ -49,12 +55,15 @@ export const HomePage = ({ userId, setRecipe }) => {
               text: "Retry",
               onPress: () => {
                 setTimeout(() => generateRecipes(), 5000);
-              }
-            }
+              },
+            },
           ]
         );
       } else {
-        Alert.alert("Error", "Failed to generate recipes. Please try again later.");
+        Alert.alert(
+          "Error",
+          "Failed to generate recipes. Please try again later."
+        );
       }
     }
   };
@@ -75,7 +84,8 @@ export const HomePage = ({ userId, setRecipe }) => {
   // Get users inventory
   useEffect(() => {
     if (userId >= 1) {
-      inventoryService.getNames(userId)
+      inventoryService
+        .getNames(userId)
         .then((data) => {
           const ingredientsString = data.join(", ");
           setIngredients(ingredientsString);
@@ -110,12 +120,12 @@ export const HomePage = ({ userId, setRecipe }) => {
 
   // Listen for navigation focus to reload preferences
   useEffect(() => {
-    const unsubscribe = navigation.addListener('focus', () => {
+    const unsubscribe = navigation.addListener("focus", () => {
       // Reload preferences when returning from preferences screen
       if (userId >= 1) {
         loadPreferences().then(() => {
           // Increment version to trigger recipe regeneration
-          setPreferencesVersion(prev => prev + 1);
+          setPreferencesVersion((prev) => prev + 1);
         });
       }
     });
@@ -124,7 +134,7 @@ export const HomePage = ({ userId, setRecipe }) => {
   }, [navigation, userId]);
 
   const handlePreferencesPress = () => {
-    navigation.navigate('Preferences');
+    navigation.navigate("Preferences");
   };
 
   return (
@@ -132,7 +142,6 @@ export const HomePage = ({ userId, setRecipe }) => {
       <Header />
       <View>
         <View style={{ alignItems: "center", justifyContent: "center" }}>
-
           {/* Scan Barcode */}
           <Button
             title="Scan Barcode     "
@@ -157,26 +166,29 @@ export const HomePage = ({ userId, setRecipe }) => {
             }}
             titleStyle={profileStyles.buttonText}
           />
-
         </View>
 
         {/* Preferences Display */}
         {preferences && Object.keys(preferences).length > 0 && (
           <View style={profileStyles.preferencesDisplay}>
-            <Text style={profileStyles.preferencesTitle}>Active Dietary Preferences:</Text>
+            <Text style={profileStyles.preferencesTitle}>
+              Active Dietary Preferences:
+            </Text>
             <Text style={profileStyles.preferencesText}>
               {Object.entries(preferences)
                 .filter(([_, value]) => value === true)
-                .map(([key]) => key
-                  .replace(/^is_|^is|_/g, ' ')
-                  .trim()
-                  .split(' ')
-                  .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-                  .join(' '))
-                .join(', ') || 'None'}
+                .map(([key]) =>
+                  key
+                    .replace(/^is_|^is|_/g, " ")
+                    .trim()
+                    .split(" ")
+                    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+                    .join(" ")
+                )
+                .join(", ") || "None"}
             </Text>
             <TouchableOpacity
-              style={{ position: 'absolute', top: 10, right: 10 }}
+              style={{ position: "absolute", top: 10, right: 10 }}
               onPress={handlePreferencesPress}
             >
               <AntDesign name="edit" size={24} color="#52B788" />
