@@ -83,7 +83,7 @@ const PreferencesPage = ({ userId }) => {
         setPreferences((prev) => ({
             ...prev,
             is_custom: newValue,
-            custom_text: newValue ? prev.custom_text : "", 
+            custom_text: newValue ? prev.custom_text : "",
         }));
     };
 
