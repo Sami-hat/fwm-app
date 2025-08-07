@@ -5,7 +5,7 @@ const apiRequest = async (url, options = {}) => {
   try {
     const response = await fetch(url, {
       headers: {
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
         ...options.headers,
       },
       ...options,
@@ -13,14 +13,12 @@ const apiRequest = async (url, options = {}) => {
 
     if (!response.ok) {
       const errorData = await response.json();
-      throw new Error(
-        errorData.error || errorData.message || `HTTP ${response.status}`
-      );
+      throw new Error(errorData.error || errorData.message || `HTTP ${response.status}`);
     }
 
     return await response.json();
   } catch (error) {
-    console.error("API Request failed:", error);
+    console.error('API Request failed:', error);
     throw error;
   }
 };
@@ -121,8 +119,9 @@ export const preferencesService = {
 
   update: async (userId, preferences) => {
     const url = buildApiUrl(API_ENDPOINTS.PREFERENCES, { user: userId });
+    
     return apiRequest(url, {
-      method: "PUT",
+      method: 'PUT',
       body: JSON.stringify(preferences),
     });
   },

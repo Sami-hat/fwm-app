@@ -176,10 +176,10 @@ const HomePage = ({ userId, setRecipe }) => {
                         </Text>
                         <Text style={profileStyles.preferencesText}>
                             {Object.entries(preferences)
-                                .filter(([_, value]) => value === true)
+                                .filter(([key, value]) => value === true && key.startsWith('is_'))
                                 .map(([key]) =>
                                     key
-                                        .replace(/^is_|^is|_/g, " ")
+                                        .replace(/^is_|_/g, " ")
                                         .trim()
                                         .split(" ")
                                         .map((word) => word.charAt(0).toUpperCase() + word.slice(1))

@@ -29,12 +29,14 @@ const PreferencesPage = ({ userId }) => {
         try {
             setLoading(true);
             const data = await preferencesService.get(userId);
+
             setPreferences({
                 ...data,
                 custom_text: data.custom_text || "",
             });
         } catch (error) {
             console.error("Error loading preferences:", error);
+
             setPreferences({
                 is_vegan: false,
                 is_vegetarian: false,
@@ -198,7 +200,7 @@ const PreferencesPage = ({ userId }) => {
                             maxLength={500}
                         />
                         <Text style={preferencesStyles.characterCount}>
-                            {preferences.custom_text.length}/500
+                            {`${preferences.custom_text.length}/500`}
                         </Text>
                     </View>
                 )}

@@ -70,7 +70,7 @@ export const preferencesStyles = StyleSheet.create({
     backgroundColor: "#52B788",
     borderRadius: 25,
     marginTop: 30,
-    marginBottom: 10,
+    marginBottom: 2,
   },
   buttonTitle: {
     fontSize: 18,
@@ -79,5 +79,6 @@ export const preferencesStyles = StyleSheet.create({
   cancelText: {
     color: "#5295B7",
     fontSize: 16,
+    // marginBottom: 20,
   },
 });
