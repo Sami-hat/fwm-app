@@ -2,7 +2,7 @@ import { recipeStyles } from "../styles/RecipePageStyles";
 
 import React, { useState } from "react";
 import { Header } from "../components/Header";
-import { SafeAreaView, ScrollView, Modal, View } from "react-native";
+import { SafeAreaView, ScrollView, Modal, View, Alert } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { Button, Text, Input, Icon } from "@rneui/themed";
 import * as Sharing from "expo-sharing";
@@ -176,13 +176,14 @@ const RecipePage = ({ userId, recipe }) => {
           buttonStyle={recipeStyles.iconButton}
         />
 
-        <Button title="Consume Ingredients" buttonStyle={recipeStyles.button} />
+        <Button title="Consume Ingredients" buttonStyle={recipeStyles.button} 
+          onPress={() => Alert.alert('TBC')}
+        /> 
 
         <Button
-          icon={<Icon name="share" type="material" color="black" />}
+          icon={<Icon name="share" type="material" color="black" size={24} />}
           onPress={async () => {
             await shareText(
-              `${recipe.recipe_name}`,
               `Ingredients\n\n${formatIngredients(
                 getString(recipe.ingredients_needed)
               )}\n\nMethod\n\n${formatMethod(
