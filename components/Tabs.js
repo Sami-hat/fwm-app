@@ -121,7 +121,7 @@ export const Tabs = ({ ip }) => {
         style={{
           backgroundColor: "#52B788",
           fontSize: 50,
-          height: dimensions.height * 0.06,
+          height: dimensions.height * 0.08,
         }}
       />
     );

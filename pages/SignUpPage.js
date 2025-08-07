@@ -97,7 +97,7 @@ const SignUpPage = ({ setUserId }) => {
             />
 
             <Input
-                placeholder="Password (min 6 characters)"
+                placeholder="Password (min 8 characters)"
                 secureTextEntry
                 value={password}
                 leftIcon={{
@@ -136,3 +136,5 @@ const SignUpPage = ({ setUserId }) => {
         </SafeAreaView>
     );
 };
+
+export default SignUpPage;

@@ -4,22 +4,15 @@ const { width: windowWidth, height: windowHeight } = Dimensions.get("window");
 
 export const profileStyles = StyleSheet.create({
   container: {
+    paddingTop: 60,
     justifyContent: "center",
     alignItems: "center",
   },
   button: {
     width: Dimensions.get("window").width * 0.85,
-    backgroundColor: "#52B788",
-    height: Dimensions.get("window").height * 0.08,
-    margin: "3%",
-    alignItems: "center",
-    borderRadius: 10,
-    justifyContent: "center",
-  },
-  loggedInButton: {
-    width: Dimensions.get("window").width * 0.85,
     height: Dimensions.get("window").height * 0.07,
-    marginVertical: "3%",
+    marginTop: "6%",
+    marginBottom: "2%",
     borderRadius: 10,
   },
   buttonText: {
@@ -62,7 +55,9 @@ export const profileStyles = StyleSheet.create({
     fontSize: 22,
     textAlign: "center",
     color: "#FFFFFF",
-    marginTop: 15,
+    marginTop: 30,
+    paddingLeft: 5,
+    paddingRight: 5
   },
   header: {
     fontSize: 30,

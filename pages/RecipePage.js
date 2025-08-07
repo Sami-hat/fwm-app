@@ -13,6 +13,7 @@ const RecipePage = ({ userId, recipe }) => {
     const [email, setEmail] = useState("");
     const [modalVisible, setModalVisible] = useState(false);
     const [recipient, setRecipient] = useState("");
+    const [saved, setSaved] = useState(false);
 
     // Recipe States
     const [ingredients, setIngredients] = useState("");
@@ -123,7 +124,7 @@ const RecipePage = ({ userId, recipe }) => {
 
     return (
         <SafeAreaView style={recipeStyles.container}>
-            <Header />
+            {/* <Header /> */}
 
             <ScrollView contentContainerStyle={{ paddingBottom: 200 }}>
                 <View style={recipeStyles.recipeContainer}>
@@ -180,6 +181,12 @@ const RecipePage = ({ userId, recipe }) => {
                 />
 
                 <Button
+                    icon={<Icon name="star" type="material" color="black" />}
+                    onPress={() => navigation.navigate("Home")}
+                    buttonStyle={recipeStyles.iconButton}
+                />
+
+                <Button
                     icon={<Icon name="share" type="material" color="black" />}
                     onPress={async () => {
                         await shareText(
@@ -188,7 +195,9 @@ const RecipePage = ({ userId, recipe }) => {
                                 getString(recipe.ingredients_needed)
                             )}\n\nMethod\n\n${formatMethod(
                                 getString(recipe.instructions)
-                            )}\n\n`
+                            )}\n\nServings\n\n${formatServings(
+                                getString(recipe.servings)
+                            )}`
                         );
                     }}
                     buttonStyle={recipeStyles.iconButton}

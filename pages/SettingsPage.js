@@ -14,7 +14,7 @@ const SettingsPage = ({ userId, setUserId, setIndex }) => {
 
     return (
         <View style={profileStyles.container}>
-            <Header />
+            {/* <Header /> */}
             <Text h3 style={profileStyles.statisticsTitleBlack}>
                 Your Settings
             </Text>
@@ -25,7 +25,7 @@ const SettingsPage = ({ userId, setUserId, setIndex }) => {
                 iconRight
                 onPress={() => handleLogout()}
                 buttonStyle={{
-                    ...profileStyles.loggedInButton,
+                    ...profileStyles.button,
                     backgroundColor: "#5295B7FF",
                 }}
                 titleStyle={profileStyles.buttonText}

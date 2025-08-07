@@ -111,7 +111,7 @@ const HomePage = ({ userId, setRecipe }) => {
     // Generate recipes when ingredients or preferences change
     useEffect(() => {
         if (ingredients.length > 0 && userId >= 1) {
-            setRecipes([]); // Clear old recipes
+            setRecipes([]);
             generateRecipes();
         } else {
             setRecipes([]);
@@ -139,7 +139,7 @@ const HomePage = ({ userId, setRecipe }) => {
 
     return (
         <View style={profileStyles.container}>
-            <Header />
+            {/* <Header /> */}
             <View>
                 <View style={{ alignItems: "center", justifyContent: "center" }}>
                     {/* Scan Barcode */}
@@ -149,7 +149,7 @@ const HomePage = ({ userId, setRecipe }) => {
                         icon={<Feather name="grid" size={18} color="white" />}
                         onPress={() => navigation.navigate("Scanner")}
                         buttonStyle={{
-                            ...profileStyles.loggedInButton,
+                            ...profileStyles.button,
                             backgroundColor: "#B8528A",
                         }}
                         titleStyle={profileStyles.buttonText}
@@ -161,7 +161,7 @@ const HomePage = ({ userId, setRecipe }) => {
                         iconRight
                         onPress={() => navigation.navigate("Camera")}
                         buttonStyle={{
-                            ...profileStyles.loggedInButton,
+                            ...profileStyles.button,
                             backgroundColor: "#D8A052",
                         }}
                         titleStyle={profileStyles.buttonText}
@@ -196,8 +196,8 @@ const HomePage = ({ userId, setRecipe }) => {
                     </View>
                 )}
 
-                {/* Recipes */}
-                <View style={{ maxHeight: windowHeight * 0.5 }}>
+                {/* Suggested Recipes */}
+                <View style={{ maxHeight: windowHeight * 0.3 }}>
                     <Text h4 style={profileStyles.header}>
                         Suggested Recipes:
                     </Text>
@@ -225,6 +225,34 @@ const HomePage = ({ userId, setRecipe }) => {
                         )
                     ) : (
                         <Text>No ingredients in inventory.</Text>
+                    )}
+                </View>
+
+                {/* Saved Recipes */}
+                <View style={{ maxHeight: windowHeight * 0.3 }}>
+                    <Text h4 style={profileStyles.header}>
+                        Saved Recipes:
+                    </Text>
+                    {[] > 0 ? (
+                        <FlatList
+                            data={[]}
+                            keyExtractor={(item) => item.recipe_name}
+                            renderItem={({ item }) => (
+                                <ListItem
+                                    bottomDivider
+                                    onPress={() => {
+                                        setRecipe(item);
+                                        navigation.navigate("Recipe");
+                                    }}
+                                >
+                                    <ListItem.Content>
+                                        <ListItem.Title>{item.recipe_name}</ListItem.Title>
+                                    </ListItem.Content>
+                                </ListItem>
+                            )}
+                        />
+                    ) : (
+                        <Text>No Saved Recipes.</Text>
                     )}
                 </View>
             </View>

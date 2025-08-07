@@ -18,22 +18,31 @@ const LandingPage = ({ userId }) => {
   return (
     <View style={{ alignItems: "center", justifyContent: "center" }}>
       <View style={profileStyles.banner}>
-        <Text h4 style={profileStyles.welcomeText}>
-          Welcome! Please sign up or log in to access your profile.
+        <Text h3 style={profileStyles.welcomeText}>
+          Welcome to Shelfie!
+        </Text>
+        <Text h5 style={profileStyles.welcomeText}>
+          Please sign up or log in to access your profile.
         </Text>
       </View>
 
       <Button
         title="Sign Up"
         onPress={() => navigation.navigate("SignUp")}
-        buttonStyle={profileStyles.button}
+        buttonStyle={{
+          ...profileStyles.button,
+          backgroundColor: "#5295B7FF",
+        }}
         titleStyle={profileStyles.buttonText}
       />
 
       <Button
         title="Log In"
         onPress={() => navigation.navigate("Login")}
-        buttonStyle={profileStyles.button}
+        buttonStyle={{
+          ...profileStyles.button,
+          backgroundColor: "#5295B7FF",
+        }}
         titleStyle={profileStyles.buttonText}
       />
 

@@ -6,6 +6,7 @@ export const entriesStyles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#F5F5F5",
+    paddingTop: 60,
   },
   content: {
     flex: 1,
@@ -18,7 +19,7 @@ export const entriesStyles = StyleSheet.create({
     fontSize: 24,
     textAlign: "center",
     color: "black",
-    marginTop: 20,
+    // marginTop: 20,
     marginBottom: 10,
   },
   statisticsTitle: {

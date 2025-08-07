@@ -17,7 +17,7 @@ export const preferencesStyles = StyleSheet.create({
     backgroundColor: 'transparent',
     borderWidth: 0,
     marginHorizontal: 20,
-    paddingVertical: 10,
+    paddingVertical: 8,
   },
   
   checkboxText: {
@@ -50,7 +50,7 @@ export const preferencesStyles = StyleSheet.create({
     minHeight: 80,
     textAlignVertical: 'top',
     paddingTop: 10,
-    paddingBottom: 10,
+    // paddingBottom: 5,
   },
   
   customInputLabel: {

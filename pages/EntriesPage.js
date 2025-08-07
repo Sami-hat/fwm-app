@@ -169,7 +169,7 @@ const EntriesPage = ({ userId }) => {
 
   return (
     <View style={entriesStyles.container}>
-      <Header />
+      {/* <Header /> */}
 
       {/* Main Content Section */}
       {isPosting ? (

@@ -8,6 +8,7 @@ export const recipeStyles = StyleSheet.create({
     backgroundColor: "white",
     height: windowHeight,
     overflow: "hidden",
+    paddingTop: 60,
   },
   recipeContainer: {
     backgroundColor: "white",
