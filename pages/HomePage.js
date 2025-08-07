@@ -9,7 +9,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { Header } from "../components/Header";
 import { useNavigation } from "@react-navigation/native";
 import { View, FlatList, Dimensions, TouchableOpacity, ActivityIndicator } from "react-native";
-import { Button, Text, ListItem } from "@rneui/themed";
+import { Button, Text, ListItem, Icon } from "@rneui/themed";
 import Feather from "@expo/vector-icons/Feather";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import { Alert } from "react-native";
@@ -20,8 +20,10 @@ const HomePage = ({ userId, setRecipe }) => {
     const navigation = useNavigation();
     const [ingredients, setIngredients] = useState([]);
     const [recipes, setRecipes] = useState([]);
+    const [savedRecipes, setSavedRecipes] = useState([]);
     const [preferences, setPreferences] = useState(null);
     const [isLoadingRecipes, setIsLoadingRecipes] = useState(false);
+    const [isLoadingSaved, setIsLoadingSaved] = useState(false);
     const [hasLoadedInitialData, setHasLoadedInitialData] = useState(false);
 
     const shouldGenerateRecipes = useRef(false);
@@ -111,14 +113,41 @@ const HomePage = ({ userId, setRecipe }) => {
         return false;
     };
 
+    // Load saved recipes
+    const loadSavedRecipes = async () => {
+        if (userId >= 1) {
+            try {
+                setIsLoadingSaved(true);
+                const saved = await recipeService.getSaved(userId);
+                // Parse JSON strings back to arrays/objects
+                const parsedRecipes = saved.map(recipe => ({
+                    ...recipe,
+                    ingredients_needed: typeof recipe.ingredients_needed === 'string'
+                        ? JSON.parse(recipe.ingredients_needed)
+                        : recipe.ingredients_needed,
+                    instructions: typeof recipe.instructions === 'string'
+                        ? JSON.parse(recipe.instructions)
+                        : recipe.instructions
+                }));
+                setSavedRecipes(parsedRecipes);
+            } catch (error) {
+                console.error("Error loading saved recipes:", error);
+                setSavedRecipes([]);
+            } finally {
+                setIsLoadingSaved(false);
+            }
+        }
+    };
+
     // Initial data load
     useEffect(() => {
         if (userId >= 1 && !hasLoadedInitialData) {
             const loadInitialData = async () => {
-                // Load both inventory and preferences
+                // Load inventory, preferences, and saved recipes
                 const [hasInventory, hasPreferences] = await Promise.all([
                     loadInventory(),
-                    loadPreferences()
+                    loadPreferences(),
+                    loadSavedRecipes()
                 ]);
 
                 setHasLoadedInitialData(true);
@@ -145,7 +174,8 @@ const HomePage = ({ userId, setRecipe }) => {
                 const reloadData = async () => {
                     const [hasInventory] = await Promise.all([
                         loadInventory(),
-                        loadPreferences()
+                        loadPreferences(),
+                        loadSavedRecipes() // Reload saved recipes too
                     ]);
 
                     // Regenerate recipes if inventory changed
@@ -231,7 +261,7 @@ const HomePage = ({ userId, setRecipe }) => {
                     </Text>
                     {ingredients.length > 0 ? (
                         isLoadingRecipes ? (
-                            <View style={{ padding: 10, alignItems: 'center' }}>
+                            <View>
                                 <ActivityIndicator size="large" color="#52B788" />
                                 <Text style={{ marginTop: 10 }}>Finding recipes...</Text>
                             </View>
@@ -274,7 +304,37 @@ const HomePage = ({ userId, setRecipe }) => {
                     <Text h4 style={profileStyles.header}>
                         Saved Recipes:
                     </Text>
-                    <Text>No saved recipes yet.</Text>
+                    {isLoadingSaved ? (
+                        <View>
+                            <ActivityIndicator size="large" color="#52B788" />
+                        </View>
+                    ) : savedRecipes.length > 0 ? (
+                        <FlatList
+                            data={savedRecipes}
+                            keyExtractor={(item, index) => `saved-${item.id || index}`}
+                            renderItem={({ item }) => (
+                                <ListItem
+                                    bottomDivider
+                                    onPress={() => {
+                                        setRecipe(item);
+                                        navigation.navigate("Recipe");
+                                    }}
+                                >
+                                    <Icon
+                                        name="star"
+                                        type="material"
+                                        color="#FFD700"
+                                        size={20}
+                                    />
+                                    <ListItem.Content>
+                                        <ListItem.Title>{item.recipe_name}</ListItem.Title>
+                                    </ListItem.Content>
+                                </ListItem>
+                            )}
+                        />
+                    ) : (
+                        <Text>No saved recipes yet. Star recipes to save them!</Text>
+                    )}
                 </View>
             </View>
         </View>

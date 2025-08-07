@@ -1,8 +1,9 @@
 import { recipeStyles } from "../styles/RecipePageStyles";
+import { recipeService } from "../services/apiService";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Header } from "../components/Header";
-import { SafeAreaView, ScrollView, Modal, View, Alert } from "react-native";
+import { SafeAreaView, ScrollView, Modal, View, Alert, ActivityIndicator } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { Button, Text, Input, Icon } from "@rneui/themed";
 import * as Sharing from "expo-sharing";
@@ -14,9 +15,64 @@ const RecipePage = ({ userId, recipe }) => {
     const [modalVisible, setModalVisible] = useState(false);
     const [recipient, setRecipient] = useState("");
     const [saved, setSaved] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
 
     // Recipe States
     const [ingredients, setIngredients] = useState("");
+
+    useEffect(() => {
+        checkIfSaved();
+    }, [recipe]);
+
+    const checkIfSaved = async () => {
+        try {
+            const savedRecipes = await recipeService.getSaved(userId);
+            const isSaved = savedRecipes.some(r => r.recipe_name === recipe.recipe_name);
+            setSaved(isSaved);
+        } catch (error) {
+            console.error("Error checking saved status:", error);
+        }
+    };
+
+    const handleSaveToggle = async () => {
+        setIsLoading(true);
+        try {
+            if (saved) {
+                // Find the saved recipe ID
+                const savedRecipes = await recipeService.getSaved(userId);
+                const savedRecipe = savedRecipes.find(r => r.recipe_name === recipe.recipe_name);
+
+                if (savedRecipe) {
+                    await recipeService.removeSaved(userId, savedRecipe.id);
+                    setSaved(false);
+                    Alert.alert("Success", "Recipe removed from favorites");
+                }
+            } else {
+                // Save the recipe
+                await recipeService.save(userId, {
+                    recipe_name: recipe.recipe_name,
+                    ingredients_needed: recipe.ingredients_needed,
+                    instructions: recipe.instructions,
+                    cooking_time: recipe.cooking_time || "Not specified",
+                    prep_time: recipe.prep_time || "Not specified",
+                    servings: recipe.servings || "Not specified",
+                    difficulty: recipe.difficulty || "Not specified"
+                });
+                setSaved(true);
+                Alert.alert("Success", "Recipe saved to favorites!");
+            }
+        } catch (error) {
+            console.error("Error toggling save:", error);
+            if (error.message.includes("already saved")) {
+                setSaved(true);
+                Alert.alert("Info", "This recipe is already in your favorites");
+            } else {
+                Alert.alert("Error", "Failed to update favorites");
+            }
+        } finally {
+            setIsLoading(false);
+        }
+    };
 
     // Convert JSON to String
     const getString = (data) => {
@@ -104,7 +160,6 @@ const RecipePage = ({ userId, recipe }) => {
         setModalVisible(false);
     };
 
-    // Called on cancel
     const handleCancel = () => {
         setRecipient("");
         setModalVisible(false);
@@ -181,9 +236,20 @@ const RecipePage = ({ userId, recipe }) => {
                 />
 
                 <Button
-                    icon={<Icon name="star" type="material" color="black" />}
-                    onPress={() => navigation.navigate("Home")}
+                    icon={
+                        isLoading ? (
+                            <ActivityIndicator size="small" color="black" />
+                        ) : (
+                            <Icon
+                                name={saved ? "star" : "star-outline"}
+                                type="material"
+                                color={saved ? "#FFD700" : "black"}
+                            />
+                        )
+                    }
+                    onPress={handleSaveToggle}
                     buttonStyle={recipeStyles.iconButton}
+                    disabled={isLoading}
                 />
 
                 <Button

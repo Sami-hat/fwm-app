@@ -55,6 +55,7 @@ export const API_ENDPOINTS = {
   // Recipes & AI
   RECIPES: "/recipes",
   LOGMEAL: "/logmeal",
+  SAVED_RECIPES: '/saved-recipes',
 };
 
 // Helper function to build full URLs

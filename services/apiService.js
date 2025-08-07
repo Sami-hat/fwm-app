@@ -108,6 +108,27 @@ export const recipeService = {
       body: JSON.stringify({ imageUri }),
     });
   },
+
+  getSaved: async (userId) => {
+    const url = buildApiUrl(API_ENDPOINTS.SAVED_RECIPES, { user: userId });
+    return apiRequest(url);
+  },
+
+  save: async (userId, recipe) => {
+    const url = buildApiUrl(API_ENDPOINTS.SAVED_RECIPES, { user: userId });
+    return apiRequest(url, {
+      method: "POST",
+      body: JSON.stringify(recipe),
+    });
+  },
+
+  removeSaved: async (userId, recipeId) => {
+    const url = buildApiUrl(API_ENDPOINTS.SAVED_RECIPES, { user: userId });
+    return apiRequest(url, {
+      method: "DELETE",
+      body: JSON.stringify({ recipeId }),
+    });
+  },
 };
 
 // Preferences Services
@@ -119,7 +140,7 @@ export const preferencesService = {
 
   update: async (userId, preferences) => {
     const url = buildApiUrl(API_ENDPOINTS.PREFERENCES, { user: userId });
-    
+
     return apiRequest(url, {
       method: 'PUT',
       body: JSON.stringify(preferences),
