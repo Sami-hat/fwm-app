@@ -136,6 +136,7 @@ export const Tabs = ({ }) => {
         initialLayout={{ width: dimensions.width }}
         renderTabBar={renderTabBar}
         tabBarPosition="bottom"
+        swipeEnabled={!!userId}
       />
     </NavigationContainer>
   );

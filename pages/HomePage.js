@@ -5,10 +5,10 @@ import {
     preferencesService,
 } from "../services/apiService";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Header } from "../components/Header";
 import { useNavigation } from "@react-navigation/native";
-import { View, FlatList, Dimensions, TouchableOpacity } from "react-native";
+import { View, FlatList, Dimensions, TouchableOpacity, ActivityIndicator } from "react-native";
 import { Button, Text, ListItem } from "@rneui/themed";
 import Feather from "@expo/vector-icons/Feather";
 import AntDesign from "@expo/vector-icons/AntDesign";
@@ -21,7 +21,11 @@ const HomePage = ({ userId, setRecipe }) => {
     const [ingredients, setIngredients] = useState([]);
     const [recipes, setRecipes] = useState([]);
     const [preferences, setPreferences] = useState(null);
-    const [preferencesVersion, setPreferencesVersion] = useState(0);
+    const [isLoadingRecipes, setIsLoadingRecipes] = useState(false);
+    const [hasLoadedInitialData, setHasLoadedInitialData] = useState(false);
+
+    const shouldGenerateRecipes = useRef(false);
+    const isGenerating = useRef(false);
 
     React.useEffect(() => {
         if (userId == 0) {
@@ -31,12 +35,15 @@ const HomePage = ({ userId, setRecipe }) => {
 
     // Create recipes based on inventory and preferences
     const generateRecipes = async () => {
-        if (!ingredients || ingredients.length === 0) {
-            setRecipes([]);
+        if (isGenerating.current || !ingredients || ingredients.length === 0) {
             return;
         }
 
+        isGenerating.current = true;
+        setIsLoadingRecipes(true);
+
         try {
+            console.log("Generating recipes for ingredients:", ingredients);
             const recipesList = await recipeService.generate(ingredients, userId);
             setRecipes(recipesList);
         } catch (error) {
@@ -60,10 +67,14 @@ const HomePage = ({ userId, setRecipe }) => {
                     ]
                 );
             } else {
-                console.log(
-                    "Error\nFailed to generate recipes. Please try again later."
+                Alert.alert(
+                    "Error",
+                    "Failed to generate recipes. Please try again later."
                 );
             }
+        } finally {
+            setIsLoadingRecipes(false);
+            isGenerating.current = false;
         }
     };
 
@@ -73,64 +84,82 @@ const HomePage = ({ userId, setRecipe }) => {
             try {
                 const userPrefs = await preferencesService.get(userId);
                 setPreferences(userPrefs);
+                return true;
             } catch (error) {
                 console.log("Error loading preferences:", error);
                 setPreferences({});
+                return false;
             }
         }
+        return false;
     };
 
     // Get users inventory
-    useEffect(() => {
+    const loadInventory = async () => {
         if (userId >= 1) {
-            inventoryService
-                .getNames(userId)
-                .then((data) => {
-                    const ingredientsString = data.join(", ");
-                    setIngredients(ingredientsString);
-                })
-                .catch((error) => {
-                    console.error("Error fetching inventory names:", error);
-                    setIngredients([]);
-                });
-        } else {
-            setIngredients([]);
+            try {
+                const data = await inventoryService.getNames(userId);
+                const ingredientsString = data.join(", ");
+                setIngredients(ingredientsString);
+                return ingredientsString.length > 0;
+            } catch (error) {
+                console.error("Error fetching inventory names:", error);
+                setIngredients([]);
+                return false;
+            }
+        }
+        return false;
+    };
+
+    // Initial data load
+    useEffect(() => {
+        if (userId >= 1 && !hasLoadedInitialData) {
+            const loadInitialData = async () => {
+                // Load both inventory and preferences
+                const [hasInventory, hasPreferences] = await Promise.all([
+                    loadInventory(),
+                    loadPreferences()
+                ]);
+
+                setHasLoadedInitialData(true);
+
+                // Only generate recipes if we have inventory
+                if (hasInventory) {
+                    shouldGenerateRecipes.current = true;
+                    await generateRecipes();
+                }
+            };
+
+            loadInitialData();
         }
     }, [userId]);
 
-    // Load preferences when user changes
-    useEffect(() => {
-        if (userId >= 1) {
-            loadPreferences();
-        } else {
-            setPreferences(null);
-        }
-    }, [userId]);
-
-    // Generate recipes when ingredients or preferences change
-    useEffect(() => {
-        if (ingredients.length > 0 && userId >= 1) {
-            setRecipes([]);
-            generateRecipes();
-        } else {
-            setRecipes([]);
-        }
-    }, [ingredients, preferences, preferencesVersion]);
-
-    // Listen for navigation focus to reload preferences
+    // Listen for navigation focus to reload data
     useEffect(() => {
         const unsubscribe = navigation.addListener("focus", () => {
-            // Reload preferences when returning from preferences screen
+            // Skip the initial load
+            if (!hasLoadedInitialData) return;
+
+            // Reload data when returning to the screen
             if (userId >= 1) {
-                loadPreferences().then(() => {
-                    // Increment version to trigger recipe regeneration
-                    setPreferencesVersion((prev) => prev + 1);
-                });
+                const reloadData = async () => {
+                    const [hasInventory] = await Promise.all([
+                        loadInventory(),
+                        loadPreferences()
+                    ]);
+
+                    // Regenerate recipes if inventory changed
+                    if (hasInventory && shouldGenerateRecipes.current) {
+                        await generateRecipes();
+                    }
+                };
+
+                reloadData();
             }
         });
 
         return unsubscribe;
-    }, [navigation, userId]);
+    }, [navigation, userId, hasLoadedInitialData]);
 
     const handlePreferencesPress = () => {
         navigation.navigate("Preferences");
@@ -201,10 +230,15 @@ const HomePage = ({ userId, setRecipe }) => {
                         Suggested Recipes:
                     </Text>
                     {ingredients.length > 0 ? (
-                        recipes.length > 0 ? (
+                        isLoadingRecipes ? (
+                            <View style={{ padding: 10, alignItems: 'center' }}>
+                                <ActivityIndicator size="large" color="#52B788" />
+                                <Text style={{ marginTop: 10 }}>Finding recipes...</Text>
+                            </View>
+                        ) : recipes.length > 0 ? (
                             <FlatList
                                 data={recipes}
-                                keyExtractor={(item) => item.recipe_name}
+                                keyExtractor={(item, index) => `${item.recipe_name}-${index}`}
                                 renderItem={({ item }) => (
                                     <ListItem
                                         bottomDivider
@@ -220,7 +254,15 @@ const HomePage = ({ userId, setRecipe }) => {
                                 )}
                             />
                         ) : (
-                            <Text>Finding recipes...</Text>
+                            <View style={{ paddingBottom: 10 }}>
+                                <Text>No recipes found. Try adding more ingredients!</Text>
+                                <Button
+                                    title="Retry"
+                                    onPress={generateRecipes}
+                                    buttonStyle={{ marginTop: 10, paddingBottom: 10 }}
+                                    type="outline"
+                                />
+                            </View>
                         )
                     ) : (
                         <Text>No ingredients in inventory.</Text>
@@ -232,27 +274,7 @@ const HomePage = ({ userId, setRecipe }) => {
                     <Text h4 style={profileStyles.header}>
                         Saved Recipes:
                     </Text>
-                    {[] > 0 ? (
-                        <FlatList
-                            data={[]}
-                            keyExtractor={(item) => item.recipe_name}
-                            renderItem={({ item }) => (
-                                <ListItem
-                                    bottomDivider
-                                    onPress={() => {
-                                        setRecipe(item);
-                                        navigation.navigate("Recipe");
-                                    }}
-                                >
-                                    <ListItem.Content>
-                                        <ListItem.Title>{item.recipe_name}</ListItem.Title>
-                                    </ListItem.Content>
-                                </ListItem>
-                            )}
-                        />
-                    ) : (
-                        <Text>No Saved Recipes.</Text>
-                    )}
+                    <Text>No saved recipes yet.</Text>
                 </View>
             </View>
         </View>

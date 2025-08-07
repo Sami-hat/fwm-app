@@ -11,7 +11,7 @@ import {
 import { Text } from "@rneui/themed";
 import { useNavigation } from "@react-navigation/native";
 
-import { Camera, CameraType } from "expo-camera";
+import { CameraView, useCameraPermissions } from "expo-camera";
 import { Image } from "expo-image";
 
 import Ionicons from "@expo/vector-icons/Ionicons";
@@ -23,9 +23,9 @@ import { recipeService, inventoryService } from "../services/apiService";
 
 const CameraPage = ({ userId }) => {
     const navigation = useNavigation();
-    const [type, setType] = useState(CameraType.back);
+    const [type, setType] = useState('back');
     const [hasPermission, setHasPermission] = useState(null);
-    const [photoUri, setPhotoUri] = useState(null);
+    const [photoData, setPhotoData] = useState(null);
     const [isProcessing, setIsProcessing] = useState(false);
     const cameraRef = useRef(null);
 
@@ -40,7 +40,7 @@ const CameraPage = ({ userId }) => {
     const processImage = async (imageUri) => {
         setIsProcessing(true);
         try {
-            const result = await recipeService.analyseImage(imageUri);
+            const result = await recipeService.analyzeImage(imageUri);
 
             if (
                 result.segmentation_results &&
@@ -87,7 +87,7 @@ const CameraPage = ({ userId }) => {
         } finally {
             setIsProcessing(false);
         }
-    }
+    };
 
     const addItemsToInventory = async (items) => {
         try {
@@ -105,7 +105,7 @@ const CameraPage = ({ userId }) => {
             console.error("Error adding to inventory:", error);
             Alert.alert("Error", "Failed to add items to inventory");
         }
-    }
+    };
 
     if (hasPermission === null) {
         return <View style={cameraStyles.container} />;
@@ -141,11 +141,11 @@ const CameraPage = ({ userId }) => {
                     </TouchableOpacity>
                 </View>
             </SafeAreaView>
-        )
+        );
     }
 
     const toggleCameraType = () => {
-        setType(current => (current === CameraType.back ? CameraType.front : CameraType.back));
+        setType(current => (current === 'back' ? 'front' : 'back'));
     };
 
     const takePicture = async () => {
@@ -167,7 +167,7 @@ const CameraPage = ({ userId }) => {
         } else {
             console.error("Camera ref not available");
         }
-    }
+    };
 
     const renderPhotoPreview = () => {
         return (
@@ -175,7 +175,7 @@ const CameraPage = ({ userId }) => {
                 <View style={cameraStyles.previewHeader}>
                     <TouchableOpacity
                         style={cameraStyles.headerButton}
-                        onPress={() => setPhotoUri(null)}
+                        onPress={() => setPhotoData(null)}
                     >
                         <Ionicons name="arrow-back" size={28} color="white" />
                     </TouchableOpacity>
@@ -184,7 +184,7 @@ const CameraPage = ({ userId }) => {
                 </View>
 
                 <Image
-                    source={{ uri: photoUri }}
+                    source={{ uri: photoData.uri }}
                     contentFit="contain"
                     style={cameraStyles.previewImage}
                 />
@@ -192,7 +192,7 @@ const CameraPage = ({ userId }) => {
                 <View style={cameraStyles.previewActions}>
                     <TouchableOpacity
                         style={[cameraStyles.actionButton, cameraStyles.retakeButton]}
-                        onPress={() => setPhotoUri(null)}
+                        onPress={() => setPhotoData(null)}
                         disabled={isProcessing}
                     >
                         <MaterialCommunityIcons name="camera-retake" size={24} color="white" />
@@ -201,7 +201,7 @@ const CameraPage = ({ userId }) => {
 
                     <TouchableOpacity
                         style={[cameraStyles.actionButton, cameraStyles.processButton]}
-                        onPress={() => processImage(photoUri)}
+                        onPress={() => processImage(photoData)}
                         disabled={isProcessing}
                     >
                         {isProcessing ? (
@@ -215,8 +215,8 @@ const CameraPage = ({ userId }) => {
                     </TouchableOpacity>
                 </View>
             </SafeAreaView>
-        )
-    }
+        );
+    };
 
     const renderCamera = () => {
         return (
@@ -284,10 +284,10 @@ const CameraPage = ({ userId }) => {
                     </SafeAreaView>
                 </Camera>
             </View>
-        )
+        );
     };
 
-    return photoUri ? renderPhotoPreview() : renderCamera();
+    return photoData ? renderPhotoPreview() : renderCamera();
 };
 
 export default CameraPage;
