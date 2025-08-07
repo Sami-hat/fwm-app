@@ -102,7 +102,7 @@ export const recipeService = {
     });
   },
 
-  analyzeImage: async (imageUri) => {
+  analyseImage: async (imageUri) => {
     return apiRequest(`${API_BASE_URL}${API_ENDPOINTS.LOGMEAL}`, {
       method: "POST",
       body: JSON.stringify({ imageUri }),

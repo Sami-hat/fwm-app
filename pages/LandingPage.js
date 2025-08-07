@@ -1,4 +1,4 @@
-import { profileStyles } from "../styles/ProfilePageStyles";
+import { landingStyles } from "../styles/LandingPageStyles";
 
 import React, { useEffect, useState } from "react";
 import { useNavigation } from "@react-navigation/native";
@@ -17,11 +17,11 @@ const LandingPage = ({ userId }) => {
 
   return (
     <View style={{ alignItems: "center", justifyContent: "center" }}>
-      <View style={profileStyles.banner}>
-        <Text h3 style={profileStyles.welcomeText}>
+      <View style={landingStyles.banner}>
+        <Text h3 style={landingStyles.welcomeText}>
           Welcome to Shelfie!
         </Text>
-        <Text h5 style={profileStyles.welcomeText}>
+        <Text h5 style={landingStyles.welcomeText}>
           Please sign up or log in to access your profile.
         </Text>
       </View>
@@ -30,27 +30,27 @@ const LandingPage = ({ userId }) => {
         title="Sign Up"
         onPress={() => navigation.navigate("SignUp")}
         buttonStyle={{
-          ...profileStyles.button,
+          ...landingStyles.button,
           backgroundColor: "#5295B7FF",
         }}
-        titleStyle={profileStyles.buttonText}
+        titleStyle={landingStyles.buttonText}
       />
 
       <Button
         title="Log In"
         onPress={() => navigation.navigate("Login")}
         buttonStyle={{
-          ...profileStyles.button,
+          ...landingStyles.button,
           backgroundColor: "#5295B7FF",
         }}
-        titleStyle={profileStyles.buttonText}
+        titleStyle={landingStyles.buttonText}
       />
 
-      <View style={profileStyles.statisticsBox}>
-        <Text h3 style={profileStyles.statisticsTitle}>
+      <View style={landingStyles.statisticsBox}>
+        <Text h3 style={landingStyles.statisticsTitle}>
           Your Statistics
         </Text>
-        <Text style={profileStyles.statisticsText}>
+        <Text style={landingStyles.statisticsText}>
           Sign in to access your grocery list, make amendments, and find out to
           effectively use the food products you own!
         </Text>

@@ -1,4 +1,5 @@
 import { scannerStyles } from "../styles/ScannerPageStyles";
+import { cameraStyles } from "../styles/CameraPageStyles";
 import { inventoryService, barcodeService } from "../services/apiService";
 
 import React, { useState } from "react";
@@ -9,6 +10,7 @@ import {
     StyleSheet,
     TouchableOpacity,
     Alert,
+    SafeAreaView,
 } from "react-native";
 import { CameraView, useCameraPermissions } from "expo-camera";
 import { useNavigation } from "@react-navigation/native";
@@ -109,12 +111,13 @@ const ScannerPage = ({ userId }) => {
                 </Text>
                 <Button onPress={requestPermission} title="Grant Permission" />
             </View>
-        );
+        )
     }
 
     // Camera permissions are granted
     return (
         <View style={scannerStyles.container}>
+
             <CameraView
                 onBarcodeScanned={scanned ? undefined : handleBarcodeScanned}
                 style={StyleSheet.absoluteFillObject}
@@ -133,15 +136,32 @@ const ScannerPage = ({ userId }) => {
                 }}
             />
 
-            {/* Back button */}
-            <View style={scannerStyles.buttonContainer}>
-                <TouchableOpacity
-                    style={scannerStyles.back_button}
-                    onPress={() => navigation.goBack()}
-                >
-                    <Ionicons name="arrow-back" size={24} color="white" />
-                </TouchableOpacity>
-            </View>
+            <SafeAreaView style={cameraStyles.cameraOverlay}>
+                {/* Top Bar */}
+                <View style={cameraStyles.topBar}>
+                    <TouchableOpacity
+                        style={cameraStyles.topButton}
+                        onPress={() => navigation.goBack()}
+                    >
+                        <Ionicons name="arrow-back" size={28} color="white" />
+                    </TouchableOpacity>
+
+                    <View style={cameraStyles.cameraGuide}>
+                        <Text style={cameraStyles.guideText}>
+                            Center barcode in frame
+                        </Text>
+                    </View>
+
+                </View>
+
+                {/* Focus Guide */}
+                <View style={cameraStyles.focusArea}>
+                    <View style={[cameraStyles.focusCorner, { top: 0, left: 0 }]} />
+                    <View style={[cameraStyles.focusCorner, { top: 0, right: 0, transform: [{ rotate: '90deg' }] }]} />
+                    <View style={[cameraStyles.focusCorner, { bottom: 0, left: 0, transform: [{ rotate: '-90deg' }] }]} />
+                    <View style={[cameraStyles.focusCorner, { bottom: 0, right: 0, transform: [{ rotate: '180deg' }] }]} />
+                </View>
+            </SafeAreaView>
 
             {/* Processing overlay */}
             {processing && (

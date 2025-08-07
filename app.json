@@ -8,12 +8,18 @@
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.sami.hat.fwmapp"
+      "bundleIdentifier": "com.sami.hat.fwmapp",
+      "infoPlist": {
+        "NSCameraUsageDescription": "This app uses the camera to take photos of food items for inventory management.",
+        "NSPhotoLibraryUsageDescription": "This app needs access to photo library to save food images."
+      }
     },
     "android": {
       "permissions": [
         "android.permission.CAMERA",
-        "android.permission.CAMERA"
+        "android.permission.CAMERA",
+        "READ_EXTERNAL_STORAGE",
+        "WRITE_EXTERNAL_STORAGE"
       ],
       "package": "com.sami.hat.fwmapp"
     },

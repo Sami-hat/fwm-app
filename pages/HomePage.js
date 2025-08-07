@@ -60,9 +60,8 @@ const HomePage = ({ userId, setRecipe }) => {
                     ]
                 );
             } else {
-                Alert.alert(
-                    "Error",
-                    "Failed to generate recipes. Please try again later."
+                console.log(
+                    "Error\nFailed to generate recipes. Please try again later."
                 );
             }
         }
@@ -75,7 +74,7 @@ const HomePage = ({ userId, setRecipe }) => {
                 const userPrefs = await preferencesService.get(userId);
                 setPreferences(userPrefs);
             } catch (error) {
-                console.error("Error loading preferences:", error);
+                console.log("Error loading preferences:", error);
                 setPreferences({});
             }
         }
@@ -156,7 +155,7 @@ const HomePage = ({ userId, setRecipe }) => {
                     />
                     {/* Take Image */}
                     <Button
-                        title="Take Image     "
+                        title="Take Image        "
                         icon={<Feather name="camera" size={18} color="white" />}
                         iconRight
                         onPress={() => navigation.navigate("Camera")}

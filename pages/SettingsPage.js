@@ -13,12 +13,10 @@ const SettingsPage = ({ userId, setUserId, setIndex }) => {
     };
 
     return (
-        <View style={profileStyles.container}>
-            {/* <Header /> */}
+        <View style={{ ...profileStyles.container, backgroundColor: 'white'}}>
             <Text h3 style={profileStyles.statisticsTitleBlack}>
                 Your Settings
             </Text>
-            {/* Log Out */}
             <Button
                 title="Log Out     "
                 icon={<Feather name="log-out" size={18} color="white" />}

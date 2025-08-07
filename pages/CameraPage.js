@@ -11,7 +11,7 @@ import {
 import { Text } from "@rneui/themed";
 import { useNavigation } from "@react-navigation/native";
 
-import { CameraView, useCameraPermissions } from "expo-camera";
+import { Camera, CameraType } from "expo-camera";
 import { Image } from "expo-image";
 
 import Ionicons from "@expo/vector-icons/Ionicons";
@@ -23,16 +23,24 @@ import { recipeService, inventoryService } from "../services/apiService";
 
 const CameraPage = ({ userId }) => {
     const navigation = useNavigation();
-    const [facing, setFacing] = useState("back");
-    const [permission, requestPermission] = useCameraPermissions();
+    const [type, setType] = useState(CameraType.back);
+    const [hasPermission, setHasPermission] = useState(null);
     const [photoUri, setPhotoUri] = useState(null);
     const [isProcessing, setIsProcessing] = useState(false);
     const cameraRef = useRef(null);
 
+    // Request permissions on mount
+    React.useEffect(() => {
+        (async () => {
+            const { status } = await Camera.requestCameraPermissionsAsync();
+            setHasPermission(status === 'granted');
+        })();
+    }, []);
+
     const processImage = async (imageUri) => {
         setIsProcessing(true);
         try {
-            const result = await recipeService.analyzeImage(imageUri);
+            const result = await recipeService.analyseImage(imageUri);
 
             if (
                 result.segmentation_results &&
@@ -79,7 +87,7 @@ const CameraPage = ({ userId }) => {
         } finally {
             setIsProcessing(false);
         }
-    };
+    }
 
     const addItemsToInventory = async (items) => {
         try {
@@ -97,13 +105,13 @@ const CameraPage = ({ userId }) => {
             console.error("Error adding to inventory:", error);
             Alert.alert("Error", "Failed to add items to inventory");
         }
-    };
-
-    if (!permission) {
-        return <View />;
     }
 
-    if (!permission.granted) {
+    if (hasPermission === null) {
+        return <View style={cameraStyles.container} />;
+    }
+
+    if (hasPermission === false) {
         return (
             <SafeAreaView style={cameraStyles.permissionContainer}>
                 <View style={cameraStyles.permissionContent}>
@@ -116,7 +124,10 @@ const CameraPage = ({ userId }) => {
                     </Text>
                     <TouchableOpacity
                         style={cameraStyles.permissionButton}
-                        onPress={requestPermission}
+                        onPress={async () => {
+                            const { status } = await Camera.requestCameraPermissionsAsync();
+                            setHasPermission(status === 'granted');
+                        }}
                     >
                         <Text style={cameraStyles.permissionButtonText}>
                             Grant Permission
@@ -130,29 +141,33 @@ const CameraPage = ({ userId }) => {
                     </TouchableOpacity>
                 </View>
             </SafeAreaView>
-        );
+        )
     }
 
-    const toggleCameraFacing = () => {
-        setFacing((current) => (current === "back" ? "front" : "back"));
+    const toggleCameraType = () => {
+        setType(current => (current === CameraType.back ? CameraType.front : CameraType.back));
     };
 
     const takePicture = async () => {
         if (cameraRef.current) {
             try {
-                const photo = await cameraRef.current.takePictureAsync({
+                const options = {
                     quality: 0.8,
                     base64: false,
-                    exif: false
-                });
+                    skipProcessing: true,
+                };
+
+                const photo = await cameraRef.current.takePictureAsync(options);
                 console.log("Photo taken:", photo.uri);
                 setPhotoUri(photo.uri);
             } catch (error) {
                 console.error("Error taking picture:", error);
                 Alert.alert("Camera Error", "Failed to take picture. Please try again.");
             }
+        } else {
+            console.error("Camera ref not available");
         }
-    };
+    }
 
     const renderPhotoPreview = () => {
         return (
@@ -200,16 +215,17 @@ const CameraPage = ({ userId }) => {
                     </TouchableOpacity>
                 </View>
             </SafeAreaView>
-        );
-    };
+        )
+    }
 
     const renderCamera = () => {
         return (
             <View style={cameraStyles.container}>
-                <CameraView
+                <Camera
                     style={cameraStyles.camera}
-                    facing={facing}
+                    type={type}
                     ref={cameraRef}
+                    ratio="16:9"
                 >
                     <SafeAreaView style={cameraStyles.cameraOverlay}>
                         {/* Top Bar */}
@@ -229,7 +245,7 @@ const CameraPage = ({ userId }) => {
 
                             <TouchableOpacity
                                 style={cameraStyles.topButton}
-                                onPress={toggleCameraFacing}
+                                onPress={toggleCameraType}
                             >
                                 <MaterialCommunityIcons
                                     name="camera-flip-outline"
@@ -241,10 +257,10 @@ const CameraPage = ({ userId }) => {
 
                         {/* Focus Guide */}
                         <View style={cameraStyles.focusArea}>
-                            <View style={cameraStyles.focusCorner} />
-                            <View style={[cameraStyles.focusCorner, { transform: [{ rotate: '90deg' }] }]} />
-                            <View style={[cameraStyles.focusCorner, { transform: [{ rotate: '180deg' }] }]} />
-                            <View style={[cameraStyles.focusCorner, { transform: [{ rotate: '270deg' }] }]} />
+                            <View style={[cameraStyles.focusCorner, { top: 0, left: 0 }]} />
+                            <View style={[cameraStyles.focusCorner, { top: 0, right: 0, transform: [{ rotate: '90deg' }] }]} />
+                            <View style={[cameraStyles.focusCorner, { bottom: 0, left: 0, transform: [{ rotate: '-90deg' }] }]} />
+                            <View style={[cameraStyles.focusCorner, { bottom: 0, right: 0, transform: [{ rotate: '180deg' }] }]} />
                         </View>
 
                         {/* Bottom Controls */}
@@ -255,6 +271,7 @@ const CameraPage = ({ userId }) => {
                                 <TouchableOpacity
                                     style={cameraStyles.shutterButton}
                                     onPress={takePicture}
+                                    activeOpacity={0.7}
                                 >
                                     <View style={cameraStyles.shutterOuter}>
                                         <View style={cameraStyles.shutterInner} />
@@ -265,9 +282,9 @@ const CameraPage = ({ userId }) => {
                             </View>
                         </View>
                     </SafeAreaView>
-                </CameraView>
+                </Camera>
             </View>
-        );
+        )
     };
 
     return photoUri ? renderPhotoPreview() : renderCamera();

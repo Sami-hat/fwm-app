@@ -73,7 +73,7 @@ const routes = [
   { key: "settings", title: "Settings" },
 ];
 
-export const Tabs = ({ ip }) => {
+export const Tabs = ({ }) => {
   const dimensions = useWindowDimensions();
   const [index, setIndex] = React.useState(0);
   const [userId, setUserId] = React.useState(null);
