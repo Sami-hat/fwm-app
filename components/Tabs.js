@@ -25,7 +25,6 @@ const ProfileStack = ({ userId, setUserId, setIndex, recipe, setRecipe }) => (
           userId={userId}
           setUserId={setUserId}
           setIndex={setIndex}
-          setRecipe={setRecipe}
         />
       )}
     </Stack.Screen>
@@ -92,8 +91,6 @@ export const Tabs = ({ }) => {
             setRecipe={setRecipe}
             item={item}
             setItem={setItem}
-            itemUri={itemUri}
-            setItemUri={setItemUri}
             setIndex={setIndex}
           />
         );

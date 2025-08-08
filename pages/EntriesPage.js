@@ -11,7 +11,6 @@ import {
 } from "react-native";
 import { Button, Input, Text, Card } from "@rneui/themed";
 import DateTimePicker from "@react-native-community/datetimepicker";
-import { Header } from "../components/Header";
 
 const EntriesPage = ({ userId }) => {
   const [inventory, setInventory] = useState([]);
@@ -65,27 +64,38 @@ const EntriesPage = ({ userId }) => {
   };
 
   // Delete entry
-  const deleteEntry = async (id) => {
-    Alert.alert(
-      "Confirm Delete",
-      "Are you sure you want to delete this item?",
-      [
-        { text: "Cancel", style: "cancel" },
-        {
-          text: "Delete",
-          style: "destructive",
-          onPress: async () => {
-            try {
-              await inventoryService.delete(userId, id);
-              setInventory(inventory.filter((item) => item.id !== id));
-            } catch (error) {
-              console.error("Error deleting entry:", error);
-              Alert.alert("Error", "Failed to delete item");
-            }
+  const deleteEntry = async (id, expired) => {
+    // Quick delete if product expired
+    if (expired) {
+      try {
+        await inventoryService.delete(userId, id);
+        setInventory(inventory.filter((item) => item.id !== id));
+      } catch (error) {
+        console.error("Error deleting entry:", error);
+        Alert.alert("Error", "Failed to delete item");
+      }
+    } else {
+      Alert.alert(
+        "Confirm Delete",
+        "Are you sure you want to delete this item?",
+        [
+          { text: "Cancel", style: "cancel" },
+          {
+            text: "Delete",
+            style: "destructive",
+            onPress: async () => {
+              try {
+                await inventoryService.delete(userId, id);
+                setInventory(inventory.filter((item) => item.id !== id));
+              } catch (error) {
+                console.error("Error deleting entry:", error);
+                Alert.alert("Error", "Failed to delete item");
+              }
+            },
           },
-        },
-      ]
-    );
+        ]
+      );
+    }
   };
 
   // Add entry
@@ -318,7 +328,7 @@ const EntriesPage = ({ userId }) => {
                           entriesStyles.subButton,
                           entriesStyles.deleteButton,
                         ]}
-                        onPress={() => deleteEntry(item.id)}
+                        onPress={() => deleteEntry(item.id, item.is_expired)}
                       />
                       <Button
                         title="Edit"

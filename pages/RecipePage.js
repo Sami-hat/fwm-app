@@ -11,14 +11,10 @@ import * as FileSystem from "expo-file-system";
 
 const RecipePage = ({ userId, recipe }) => {
     const navigation = useNavigation();
-    const [email, setEmail] = useState("");
     const [modalVisible, setModalVisible] = useState(false);
     const [recipient, setRecipient] = useState("");
     const [saved, setSaved] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
-
-    // Recipe States
-    const [ingredients, setIngredients] = useState("");
 
     useEffect(() => {
         checkIfSaved();
@@ -128,8 +124,7 @@ const RecipePage = ({ userId, recipe }) => {
         const hours = Math.floor(cookingTime / 60);
         const minutes = cookingTime % 60;
         if (minutes === 0) return `${hours} hour${hours > 1 ? "s" : ""}`;
-        return `${hours} hour${hours > 1 ? "s" : ""} ${minutes} minute${minutes > 1 ? "s" : ""
-            }`;
+        return `${hours} hour${hours > 1 ? "s" : ""} ${minutes} minute${minutes > 1 ? "s" : ""}`;
     };
 
     // Parse the servings

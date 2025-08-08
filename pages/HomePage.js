@@ -18,10 +18,12 @@ import { Alert } from "react-native";
 const HomePage = ({ userId, setRecipe }) => {
     const windowHeight = Dimensions.get("window").height;
     const navigation = useNavigation();
+
     const [ingredients, setIngredients] = useState([]);
     const [recipes, setRecipes] = useState([]);
     const [savedRecipes, setSavedRecipes] = useState([]);
     const [preferences, setPreferences] = useState(null);
+
     const [isLoadingRecipes, setIsLoadingRecipes] = useState(false);
     const [isLoadingSaved, setIsLoadingSaved] = useState(false);
     const [hasLoadedInitialData, setHasLoadedInitialData] = useState(false);
@@ -39,6 +41,7 @@ const HomePage = ({ userId, setRecipe }) => {
     // Create recipes based on inventory and preferences
     const generateRecipes = async () => {
         if (isGenerating.current || !ingredients || ingredients.length === 0) {
+            setHasAttemptedRecipeGeneration(true);
             return;
         }
 
@@ -105,7 +108,7 @@ const HomePage = ({ userId, setRecipe }) => {
             try {
                 const data = await inventoryService.getNames(userId);
                 const ingredientsString = data.join(", ");
-                setIngredients(ingredientsString.trim());
+                setIngredients(ingredientsString);
                 return ingredientsString.length > 0;
             } catch (error) {
                 console.error("Error fetching inventory names:", error);
@@ -123,10 +126,9 @@ const HomePage = ({ userId, setRecipe }) => {
                 setIsLoadingSaved(true);
                 const saved = await recipeService.getSaved(userId);
 
-                // Parse saved recipes for IDs
-                const parsedRecipes = saved.map((recipe, index) => ({
+                const parsedRecipes = saved.map((recipe) => ({
                     ...recipe,
-                    id: recipe.id || `temp-${index}`, // Fallback if ID is missing
+                    id: recipe.id,
                     ingredients_needed: typeof recipe.ingredients_needed === 'string'
                         ? JSON.parse(recipe.ingredients_needed)
                         : recipe.ingredients_needed,
@@ -157,7 +159,7 @@ const HomePage = ({ userId, setRecipe }) => {
 
                 setHasLoadedInitialData(true);
 
-                // Only generate recipes if inventory populated
+                // Only generate recipes if we have inventory
                 if (hasInventory) {
                     shouldGenerateRecipes.current = true;
                     await generateRecipes();
@@ -180,7 +182,7 @@ const HomePage = ({ userId, setRecipe }) => {
                     const [hasInventory] = await Promise.all([
                         loadInventory(),
                         loadPreferences(),
-                        loadSavedRecipes()
+                        loadSavedRecipes() 
                     ]);
 
                     // Regenerate recipes if inventory changed
@@ -283,7 +285,6 @@ const HomePage = ({ userId, setRecipe }) => {
                         ) : recipes.length > 0 ? (
                             <FlatList
                                 data={recipes}
-                                keyExtractor={(item) => `saved-${item.id}`}
                                 renderItem={({ item }) => (
                                     <ListItem
                                         bottomDivider
@@ -299,10 +300,10 @@ const HomePage = ({ userId, setRecipe }) => {
                                 )}
                             />
                         ) : (
-                            <Text style={{ paddingVertical: 10 }}>Loading recipes...</Text>
+                            <Text></Text>
                         )
                     ) : (
-                        <Text style={{ paddingVertical: 10 }}>No ingredients in inventory.</Text>
+                        <Text>No ingredients in inventory.</Text>
                     )}
                 </View>
 
@@ -340,7 +341,7 @@ const HomePage = ({ userId, setRecipe }) => {
                             )}
                         />
                     ) : (
-                        <Text style={{ paddingVertical: 20 }}>No saved recipes yet. Star recipes to save them!</Text>
+                        <Text>No saved recipes yet. Star recipes to save them!</Text>
                     )}
                 </View>
             </View>
