@@ -209,9 +209,9 @@ const HomePage = ({ userId, setRecipe }) => {
                 <View style={{ alignItems: "center", justifyContent: "center" }}>
                     {/* Scan Barcode */}
                     <Button
-                        title="Scan Barcode     "
+                        title="Scan Barcode"
                         iconRight
-                        icon={<Feather name="grid" size={18} color="white" />}
+                        icon={<Feather name="grid" size={24} color="white" position="absolute" right="20"/>}
                         onPress={() => navigation.navigate("Scanner")}
                         buttonStyle={{
                             ...homeStyles.button,
@@ -221,8 +221,8 @@ const HomePage = ({ userId, setRecipe }) => {
                     />
                     {/* Take Image */}
                     <Button
-                        title="Take Image        "
-                        icon={<Feather name="camera" size={18} color="white" />}
+                        title="Take Image"
+                        icon={<Feather name="camera" size={24} color="white" position="absolute" right="20"/>}
                         iconRight
                         onPress={() => navigation.navigate("Camera")}
                         buttonStyle={{
@@ -319,7 +319,7 @@ const HomePage = ({ userId, setRecipe }) => {
                     ) : savedRecipes.length > 0 ? (
                         <FlatList
                             data={savedRecipes}
-                            keyExtractor={(item) => `saved-${item.id}`}
+                            keyExtractor={(item) => `saved-${item.id}-${userId}`}
                             renderItem={({ item }) => (
                                 <ListItem
                                     bottomDivider

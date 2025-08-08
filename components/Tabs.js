@@ -1,5 +1,5 @@
-import notificationService from './services/notificationService';
-import { inventoryService } from './services/apiService';
+import notificationService from '../services/notificationService';
+import { inventoryService } from '../services/apiService';
 
 import React, { useState, useEffect } from "react";
 import LandingPage from "../pages/LandingPage";

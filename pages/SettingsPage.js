@@ -1,7 +1,6 @@
 import { settingsStyles } from "../styles/SettingsPageStyles";
 
 import { React, useState, useEffect } from "react";
-import { Header } from "../components/Header";
 import { View } from "react-native";
 import { Button, Text } from "@rneui/themed";
 import Feather from "@expo/vector-icons/Feather";
@@ -18,8 +17,8 @@ const SettingsPage = ({ userId, setUserId, setIndex }) => {
                 Your Settings
             </Text>
             <Button
-                title="Log Out          "
-                icon={<Feather name="log-out" size={18} color="white" />}
+                title="Log Out"
+                icon={<Feather name="log-out" size={24} color="white" position="absolute" right="20" />}
                 iconRight
                 onPress={() => handleLogout()}
                 buttonStyle={{
@@ -29,8 +28,8 @@ const SettingsPage = ({ userId, setUserId, setIndex }) => {
                 titleStyle={settingsStyles.buttonText}
             />
             <Button
-                title="Notifications     "
-                icon={<Feather name="log-out" size={18} color="white" />}
+                title="Notifications"
+                icon={<Feather name="bell" size={24} color="white" position="absolute" right="20"/>}
                 iconRight
                 onPress={() => handleLogout()}
                 buttonStyle={{

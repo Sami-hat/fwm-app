@@ -1,7 +1,7 @@
 const getBaseApiUrl = () => {
   // Use env var if available
   if (process.env.EXPO_PUBLIC_API_URL) {
-    return process.env.EXPO_PUBLIC_API_URL;
+    return `${process.env.EXPO_PUBLIC_API_URL}/api`;
   }
 
   // Development fallback

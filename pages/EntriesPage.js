@@ -1,6 +1,6 @@
 import { entriesStyles } from "../styles/EntriesPageStyles";
 import { inventoryService } from "../services/apiService";
-import notificationService from './services/notificationService';
+import notificationService from '../services/notificationService';
 
 import React, { useState, useEffect } from "react";
 import {
