@@ -56,6 +56,9 @@ export const API_ENDPOINTS = {
   RECIPES: "/recipes",
   LOGMEAL: "/logmeal",
   SAVED_RECIPES: '/saved-recipes',
+
+  // Notifications
+  NOTIFICATIONS: "/notifications",
 };
 
 // Helper function to build full URLs

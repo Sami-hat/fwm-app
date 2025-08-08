@@ -182,7 +182,7 @@ const HomePage = ({ userId, setRecipe }) => {
                     const [hasInventory] = await Promise.all([
                         loadInventory(),
                         loadPreferences(),
-                        loadSavedRecipes() 
+                        loadSavedRecipes(),
                     ]);
 
                     // Regenerate recipes if inventory changed

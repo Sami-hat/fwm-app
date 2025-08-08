@@ -1,5 +1,6 @@
 import { entriesStyles } from "../styles/EntriesPageStyles";
 import { inventoryService } from "../services/apiService";
+import notificationService from './services/notificationService';
 
 import React, { useState, useEffect } from "react";
 import {
@@ -36,6 +37,10 @@ const EntriesPage = ({ userId }) => {
     try {
       setLoading(true);
       const data = await inventoryService.getAll(userId);
+
+      // Check expiry for notifications
+      await notificationService.checkExpiringItems(inventory);
+
       setInventory(data);
     } catch (error) {
       console.error("Error fetching inventory:", error);
@@ -55,7 +60,7 @@ const EntriesPage = ({ userId }) => {
     return `${day}/${month}/${year}`;
   };
 
-  // Handle date picker change
+  // Handle date picker 
   const onDateChange = (event, selectedDate) => {
     setShowDatePicker(Platform.OS === "ios");
     if (selectedDate) {

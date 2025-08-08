@@ -1,3 +1,6 @@
+import notificationService from './services/notificationService';
+import { inventoryService } from './services/apiService';
+
 import React, { useState, useEffect } from "react";
 import LandingPage from "../pages/LandingPage";
 import HomePage from "../pages/HomePage";
@@ -9,6 +12,7 @@ import SignUpPage from "../pages/SignUpPage";
 import LoginPage from "../pages/LoginPage";
 import RecipePage from "../pages/RecipePage";
 import SettingsPage from "../pages/SettingsPage";
+
 import { createStackNavigator } from "@react-navigation/stack";
 import { NavigationContainer } from "@react-navigation/native";
 import { TabView, TabBar } from "react-native-tab-view";
@@ -43,7 +47,6 @@ const ProfileStack = ({ userId, setUserId, setIndex, recipe, setRecipe }) => (
         <HomePage
           {...props}
           userId={userId}
-          setUserId={setUserId}
           setRecipe={setRecipe}
         />
       )}
@@ -79,6 +82,37 @@ export const Tabs = ({ }) => {
   const [recipe, setRecipe] = React.useState(null);
   const [item, setItem] = React.useState(null);
   const [itemUri, setItemUri] = React.useState(null);
+
+  useEffect(() => {
+    if (userId && userId >= 1) {
+      setupNotifications();
+    }
+
+    return () => {
+      // Clean up listeners
+      notificationService.removeNotificationListeners();
+    };
+  }, [userId]);
+
+  const setupNotifications = async () => {
+    // Register for push notifications
+    await notificationService.registerForPushNotifications(userId);
+
+    // Set up notification listeners
+    notificationService.setupNotificationListeners(navigation);
+
+    // Check for expiring items on app launch
+    checkExpiringItems();
+  };
+
+  const checkExpiringItems = async () => {
+    try {
+      const inventory = await inventoryService.getAll(userId);
+      await notificationService.checkExpiringItems(inventory);
+    } catch (error) {
+      console.error('Error checking expiring items:', error);
+    }
+  };
 
   const renderScene = ({ route }) => {
     switch (route.key) {

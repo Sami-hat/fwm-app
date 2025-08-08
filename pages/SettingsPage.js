@@ -18,7 +18,18 @@ const SettingsPage = ({ userId, setUserId, setIndex }) => {
                 Your Settings
             </Text>
             <Button
-                title="Log Out     "
+                title="Log Out          "
+                icon={<Feather name="log-out" size={18} color="white" />}
+                iconRight
+                onPress={() => handleLogout()}
+                buttonStyle={{
+                    ...settingsStyles.button,
+                    backgroundColor: "#5295B7FF",
+                }}
+                titleStyle={settingsStyles.buttonText}
+            />
+            <Button
+                title="Notifications     "
                 icon={<Feather name="log-out" size={18} color="white" />}
                 iconRight
                 onPress={() => handleLogout()}
