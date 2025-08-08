@@ -19,7 +19,6 @@ export const entriesStyles = StyleSheet.create({
     fontSize: 24,
     textAlign: "center",
     color: "black",
-    // marginTop: 20,
     marginBottom: 10,
   },
   statisticsTitle: {
@@ -66,7 +65,6 @@ export const entriesStyles = StyleSheet.create({
     fontSize: 18,
     fontWeight: "bold",
   },
-
   barcode: {
     fontSize: 14,
     color: "#777",

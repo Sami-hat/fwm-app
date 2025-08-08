@@ -45,7 +45,6 @@ const RecipePage = ({ userId, recipe }) => {
                 if (savedRecipe) {
                     await recipeService.removeSaved(userId, savedRecipe.id);
                     setSaved(false);
-                    Alert.alert("Success", "Recipe removed from favorites");
                 }
             } else {
                 // Save the recipe
@@ -59,7 +58,6 @@ const RecipePage = ({ userId, recipe }) => {
                     difficulty: recipe.difficulty || "Not specified"
                 });
                 setSaved(true);
-                Alert.alert("Success", "Recipe saved to favorites!");
             }
         } catch (error) {
             console.error("Error toggling save:", error);
@@ -231,9 +229,9 @@ const RecipePage = ({ userId, recipe }) => {
                     buttonStyle={recipeStyles.iconButton}
                 />
 
-                <Button title="Consume Ingredients" buttonStyle={recipeStyles.button}
+                {/* <Button title="Consume Ingredients" buttonStyle={recipeStyles.button}
                     onPress={() => Alert.alert('TBC')}
-                />
+                /> */}
 
                 <Button
                     icon={

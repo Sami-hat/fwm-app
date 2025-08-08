@@ -1,4 +1,4 @@
-import { profileStyles } from "../styles/ProfilePageStyles";
+import { settingsStyles } from "../styles/SettingsPageStyles";
 
 import { React, useState, useEffect } from "react";
 import { Header } from "../components/Header";
@@ -13,8 +13,8 @@ const SettingsPage = ({ userId, setUserId, setIndex }) => {
     };
 
     return (
-        <View style={{ ...profileStyles.container, backgroundColor: 'white'}}>
-            <Text h3 style={profileStyles.statisticsTitleBlack}>
+        <View style={{ ...settingsStyles.container, backgroundColor: 'white'}}>
+            <Text h3 style={settingsStyles.titleBlack}>
                 Your Settings
             </Text>
             <Button
@@ -23,10 +23,10 @@ const SettingsPage = ({ userId, setUserId, setIndex }) => {
                 iconRight
                 onPress={() => handleLogout()}
                 buttonStyle={{
-                    ...profileStyles.button,
+                    ...settingsStyles.button,
                     backgroundColor: "#5295B7FF",
                 }}
-                titleStyle={profileStyles.buttonText}
+                titleStyle={settingsStyles.buttonText}
             />
         </View>
     );

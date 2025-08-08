@@ -58,10 +58,6 @@ export const recipeStyles = StyleSheet.create({
     backgroundColor: "white",
     alignItems: "center",
     borderRadius: 5,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.1,
-    shadowRadius: 5,
     marginBottom: 12,
   },
   buttonText: {

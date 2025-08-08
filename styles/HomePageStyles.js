@@ -2,7 +2,7 @@ import { StyleSheet, Dimensions } from "react-native";
 
 const { width: windowWidth, height: windowHeight } = Dimensions.get("window");
 
-export const profileStyles = StyleSheet.create({
+export const homeStyles = StyleSheet.create({
   container: {
     paddingTop: 60,
     justifyContent: "center",
@@ -19,29 +19,6 @@ export const profileStyles = StyleSheet.create({
     fontSize: 20,
     textAlign: "center",
     color: "white",
-  },
-  statisticsBox: {
-    width: "85%",
-    backgroundColor: "#52B788",
-    padding: "5%",
-    marginTop: "5%",
-    borderRadius: 10,
-    alignItems: "center",
-  },
-  statisticsTitle: {
-    fontSize: 22,
-    fontWeight: "bold",
-    marginBottom: "5%",
-    color: "#FFFFFF",
-  },
-  statisticsText: {
-    fontSize: 18,
-    color: "#FFFFFF",
-  },
-  statisticsTitleBlack: {
-    textAlign: "center",
-    marginTop: 20,
-    marginBottom: 10,
   },
   banner: {
     width: "110%",

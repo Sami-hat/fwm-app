@@ -1,4 +1,4 @@
-import { profileStyles } from "../styles/ProfilePageStyles";
+import { homeStyles } from "../styles/HomePageStyles";
 import {
     recipeService,
     inventoryService,
@@ -25,13 +25,14 @@ const HomePage = ({ userId, setRecipe }) => {
     const [isLoadingRecipes, setIsLoadingRecipes] = useState(false);
     const [isLoadingSaved, setIsLoadingSaved] = useState(false);
     const [hasLoadedInitialData, setHasLoadedInitialData] = useState(false);
+    const [hasAttemptedRecipeGeneration, setHasAttemptedRecipeGeneration] = useState(false);
 
     const shouldGenerateRecipes = useRef(false);
     const isGenerating = useRef(false);
 
     React.useEffect(() => {
         if (userId == 0) {
-            navigation.goBack();
+            navigation.navigate("Landing");
         }
     }, [userId]);
 
@@ -48,8 +49,10 @@ const HomePage = ({ userId, setRecipe }) => {
             console.log("Generating recipes for ingredients:", ingredients);
             const recipesList = await recipeService.generate(ingredients, userId);
             setRecipes(recipesList);
+            setHasAttemptedRecipeGeneration(true);
         } catch (error) {
             console.error("Recipe generation error:", error);
+            setHasAttemptedRecipeGeneration(true);
 
             if (
                 error.message.includes("overloaded") ||
@@ -102,7 +105,7 @@ const HomePage = ({ userId, setRecipe }) => {
             try {
                 const data = await inventoryService.getNames(userId);
                 const ingredientsString = data.join(", ");
-                setIngredients(ingredientsString);
+                setIngredients(ingredientsString.trim());
                 return ingredientsString.length > 0;
             } catch (error) {
                 console.error("Error fetching inventory names:", error);
@@ -119,9 +122,11 @@ const HomePage = ({ userId, setRecipe }) => {
             try {
                 setIsLoadingSaved(true);
                 const saved = await recipeService.getSaved(userId);
-                // Parse JSON strings back to arrays/objects
-                const parsedRecipes = saved.map(recipe => ({
+
+                // Parse saved recipes for IDs
+                const parsedRecipes = saved.map((recipe, index) => ({
                     ...recipe,
+                    id: recipe.id || `temp-${index}`, // Fallback if ID is missing
                     ingredients_needed: typeof recipe.ingredients_needed === 'string'
                         ? JSON.parse(recipe.ingredients_needed)
                         : recipe.ingredients_needed,
@@ -152,7 +157,7 @@ const HomePage = ({ userId, setRecipe }) => {
 
                 setHasLoadedInitialData(true);
 
-                // Only generate recipes if we have inventory
+                // Only generate recipes if inventory populated
                 if (hasInventory) {
                     shouldGenerateRecipes.current = true;
                     await generateRecipes();
@@ -175,7 +180,7 @@ const HomePage = ({ userId, setRecipe }) => {
                     const [hasInventory] = await Promise.all([
                         loadInventory(),
                         loadPreferences(),
-                        loadSavedRecipes() // Reload saved recipes too
+                        loadSavedRecipes()
                     ]);
 
                     // Regenerate recipes if inventory changed
@@ -196,7 +201,7 @@ const HomePage = ({ userId, setRecipe }) => {
     };
 
     return (
-        <View style={profileStyles.container}>
+        <View style={homeStyles.container}>
             {/* <Header /> */}
             <View>
                 <View style={{ alignItems: "center", justifyContent: "center" }}>
@@ -207,10 +212,10 @@ const HomePage = ({ userId, setRecipe }) => {
                         icon={<Feather name="grid" size={18} color="white" />}
                         onPress={() => navigation.navigate("Scanner")}
                         buttonStyle={{
-                            ...profileStyles.button,
+                            ...homeStyles.button,
                             backgroundColor: "#B8528A",
                         }}
-                        titleStyle={profileStyles.buttonText}
+                        titleStyle={homeStyles.buttonText}
                     />
                     {/* Take Image */}
                     <Button
@@ -219,20 +224,20 @@ const HomePage = ({ userId, setRecipe }) => {
                         iconRight
                         onPress={() => navigation.navigate("Camera")}
                         buttonStyle={{
-                            ...profileStyles.button,
+                            ...homeStyles.button,
                             backgroundColor: "#D8A052",
                         }}
-                        titleStyle={profileStyles.buttonText}
+                        titleStyle={homeStyles.buttonText}
                     />
                 </View>
 
                 {/* Preferences Display */}
                 {preferences && Object.keys(preferences).length > 0 && (
-                    <View style={profileStyles.preferencesDisplay}>
-                        <Text style={profileStyles.preferencesTitle}>
+                    <View style={homeStyles.preferencesDisplay}>
+                        <Text style={homeStyles.preferencesTitle}>
                             Active Dietary Preferences:
                         </Text>
-                        <Text style={profileStyles.preferencesText}>
+                        <Text style={homeStyles.preferencesText}>
                             {Object.entries(preferences)
                                 .filter(([key, value]) => value === true && key.startsWith('is_'))
                                 .map(([key]) =>
@@ -256,7 +261,7 @@ const HomePage = ({ userId, setRecipe }) => {
 
                 {/* Suggested Recipes */}
                 <View style={{ maxHeight: windowHeight * 0.3 }}>
-                    <Text h4 style={profileStyles.header}>
+                    <Text h4 style={homeStyles.header}>
                         Suggested Recipes:
                     </Text>
                     {ingredients.length > 0 ? (
@@ -265,10 +270,20 @@ const HomePage = ({ userId, setRecipe }) => {
                                 <ActivityIndicator size="large" color="#52B788" />
                                 <Text style={{ marginTop: 10 }}>Finding recipes...</Text>
                             </View>
+                        ) : hasAttemptedRecipeGeneration && recipes.length === 0 ? (
+                            <View style={{ paddingBottom: 10 }}>
+                                <Text>No recipes found. Try adding more ingredients!</Text>
+                                <Button
+                                    title="Retry"
+                                    onPress={generateRecipes}
+                                    buttonStyle={{ marginTop: 10, paddingBottom: 10 }}
+                                    type="outline"
+                                />
+                            </View>
                         ) : recipes.length > 0 ? (
                             <FlatList
                                 data={recipes}
-                                keyExtractor={(item, index) => `${item.recipe_name}-${index}`}
+                                keyExtractor={(item) => `saved-${item.id}`}
                                 renderItem={({ item }) => (
                                     <ListItem
                                         bottomDivider
@@ -284,24 +299,16 @@ const HomePage = ({ userId, setRecipe }) => {
                                 )}
                             />
                         ) : (
-                            <View style={{ paddingBottom: 10 }}>
-                                <Text>No recipes found. Try adding more ingredients!</Text>
-                                <Button
-                                    title="Retry"
-                                    onPress={generateRecipes}
-                                    buttonStyle={{ marginTop: 10, paddingBottom: 10 }}
-                                    type="outline"
-                                />
-                            </View>
+                            <Text style={{ paddingVertical: 10 }}>Loading recipes...</Text>
                         )
                     ) : (
-                        <Text>No ingredients in inventory.</Text>
+                        <Text style={{ paddingVertical: 10 }}>No ingredients in inventory.</Text>
                     )}
                 </View>
 
                 {/* Saved Recipes */}
                 <View style={{ maxHeight: windowHeight * 0.3 }}>
-                    <Text h4 style={profileStyles.header}>
+                    <Text h4 style={homeStyles.header}>
                         Saved Recipes:
                     </Text>
                     {isLoadingSaved ? (
@@ -311,7 +318,7 @@ const HomePage = ({ userId, setRecipe }) => {
                     ) : savedRecipes.length > 0 ? (
                         <FlatList
                             data={savedRecipes}
-                            keyExtractor={(item, index) => `saved-${item.id || index}`}
+                            keyExtractor={(item) => `saved-${item.id}`}
                             renderItem={({ item }) => (
                                 <ListItem
                                     bottomDivider
@@ -333,7 +340,7 @@ const HomePage = ({ userId, setRecipe }) => {
                             )}
                         />
                     ) : (
-                        <Text>No saved recipes yet. Star recipes to save them!</Text>
+                        <Text style={{ paddingVertical: 20 }}>No saved recipes yet. Star recipes to save them!</Text>
                     )}
                 </View>
             </View>
