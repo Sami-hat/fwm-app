@@ -1,4 +1,3 @@
-import notificationService from '../services/notificationService';
 import { inventoryService } from '../services/apiService';
 
 import React, { useState, useEffect } from "react";
@@ -81,38 +80,6 @@ export const Tabs = ({ }) => {
   const [userId, setUserId] = React.useState(null);
   const [recipe, setRecipe] = React.useState(null);
   const [item, setItem] = React.useState(null);
-  const [itemUri, setItemUri] = React.useState(null);
-
-  useEffect(() => {
-    if (userId && userId >= 1) {
-      setupNotifications();
-    }
-
-    return () => {
-      // Clean up listeners
-      notificationService.removeNotificationListeners();
-    };
-  }, [userId]);
-
-  const setupNotifications = async () => {
-    // Register for push notifications
-    await notificationService.registerForPushNotifications(userId);
-
-    // Set up notification listeners
-    notificationService.setupNotificationListeners(navigation);
-
-    // Check for expiring items on app launch
-    checkExpiringItems();
-  };
-
-  const checkExpiringItems = async () => {
-    try {
-      const inventory = await inventoryService.getAll(userId);
-      await notificationService.checkExpiringItems(inventory);
-    } catch (error) {
-      console.error('Error checking expiring items:', error);
-    }
-  };
 
   const renderScene = ({ route }) => {
     switch (route.key) {

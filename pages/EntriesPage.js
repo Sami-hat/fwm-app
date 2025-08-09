@@ -1,6 +1,5 @@
 import { entriesStyles } from "../styles/EntriesPageStyles";
 import { inventoryService } from "../services/apiService";
-import notificationService from '../services/notificationService';
 
 import React, { useState, useEffect } from "react";
 import {
@@ -37,9 +36,6 @@ const EntriesPage = ({ userId }) => {
     try {
       setLoading(true);
       const data = await inventoryService.getAll(userId);
-
-      // Check expiry for notifications
-      await notificationService.checkExpiringItems(inventory);
 
       setInventory(data);
     } catch (error) {

@@ -47,18 +47,22 @@ export const authService = {
 
 // Inventory Services
 export const inventoryService = {
+
   getAll: async (userId) => {
     const url = buildApiUrl(API_ENDPOINTS.INVENTORY, { user: userId });
     return apiRequest(url);
   },
 
   getNames: async (userId) => {
-    const url = buildApiUrl(API_ENDPOINTS.INVENTORY_NAMES, { user: userId });
+    const url = buildApiUrl(API_ENDPOINTS.INVENTORY, {
+      user: userId,
+      names: true
+    });
     return apiRequest(url);
   },
 
   add: async (userId, name, quantity, barcode, expiry_date) => {
-    return apiRequest(`${API_BASE_URL}${API_ENDPOINTS.INVENTORY_ADD}`, {
+    return apiRequest(`${API_BASE_URL}${API_ENDPOINTS.INVENTORY}`, {
       method: "POST",
       body: JSON.stringify({
         user: userId,
@@ -70,16 +74,8 @@ export const inventoryService = {
     });
   },
 
-  delete: async (userId, itemId) => {
-    const url = buildApiUrl(API_ENDPOINTS.INVENTORY_DELETE, {
-      user: userId,
-      id: itemId,
-    });
-    return apiRequest(url, { method: "DELETE" });
-  },
-
   edit: async (userId, itemId, name, quantity, barcode, expiry_date) => {
-    return apiRequest(`${API_BASE_URL}${API_ENDPOINTS.INVENTORY_EDIT}`, {
+    return apiRequest(`${API_BASE_URL}${API_ENDPOINTS.INVENTORY}`, {
       method: "PUT",
       body: JSON.stringify({
         user: userId,
@@ -88,6 +84,16 @@ export const inventoryService = {
         quantity,
         barcode,
         expiry_date,
+      }),
+    });
+  },
+
+  delete: async (userId, itemId) => {
+    return apiRequest(`${API_BASE_URL}${API_ENDPOINTS.INVENTORY}`, {
+      method: "DELETE",
+      body: JSON.stringify({
+        user: userId,
+        id: itemId,
       }),
     });
   },
