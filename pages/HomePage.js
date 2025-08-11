@@ -319,9 +319,10 @@ const HomePage = ({ userId, setRecipe }) => {
                     ) : savedRecipes.length > 0 ? (
                         <FlatList
                             data={savedRecipes}
-                            keyExtractor={(item) => `saved-${item.id}-${userId}`}
+                            // keyExtractor={(item) => `saved-${item.id}-${userId}`}
                             renderItem={({ item }) => (
                                 <ListItem
+                                    key={`saved-${item.id}-${userId}`}
                                     bottomDivider
                                     onPress={() => {
                                         setRecipe(item);

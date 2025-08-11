@@ -47,23 +47,29 @@ export const authService = {
 
 // Inventory Services
 export const inventoryService = {
-
+  // GET all inventory items
   getAll: async (userId) => {
     const url = buildApiUrl(API_ENDPOINTS.INVENTORY, { user: userId });
-    return apiRequest(url);
+    return apiRequest(url, { 
+      method: "GET"  
+    });
   },
 
+  // GET inventory names only
   getNames: async (userId) => {
     const url = buildApiUrl(API_ENDPOINTS.INVENTORY, {
       user: userId,
-      names: true
+      names: 'true'
     });
-    return apiRequest(url);
+    return apiRequest(url, { 
+      method: "GET"  
+    });
   },
 
+  // POST new inventory item
   add: async (userId, name, quantity, barcode, expiry_date) => {
     return apiRequest(`${API_BASE_URL}${API_ENDPOINTS.INVENTORY}`, {
-      method: "POST",
+      method: "POST",  
       body: JSON.stringify({
         user: userId,
         name,
@@ -74,9 +80,10 @@ export const inventoryService = {
     });
   },
 
+  // PUT inventory item
   edit: async (userId, itemId, name, quantity, barcode, expiry_date) => {
     return apiRequest(`${API_BASE_URL}${API_ENDPOINTS.INVENTORY}`, {
-      method: "PUT",
+      method: "PUT",  
       body: JSON.stringify({
         user: userId,
         id: itemId,
@@ -88,9 +95,10 @@ export const inventoryService = {
     });
   },
 
+  // DELETE inventory item
   delete: async (userId, itemId) => {
     return apiRequest(`${API_BASE_URL}${API_ENDPOINTS.INVENTORY}`, {
-      method: "DELETE",
+      method: "DELETE",  
       body: JSON.stringify({
         user: userId,
         id: itemId,

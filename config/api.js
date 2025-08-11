@@ -47,10 +47,6 @@ export const API_ENDPOINTS = {
 
   // Inventory
   INVENTORY: "/inventory",
-  INVENTORY_ADD: "/inventory/add",
-  INVENTORY_DELETE: "/inventory/delete",
-  INVENTORY_EDIT: "/inventory/edit",
-  INVENTORY_NAMES: "/inventory/names",
 
   // Recipes & AI
   RECIPES: "/recipes",
@@ -58,7 +54,10 @@ export const API_ENDPOINTS = {
   SAVED_RECIPES: '/saved-recipes',
 
   // Notifications
-  NOTIFICATIONS: "/notifications",
+  DEVICE_REGISTRATION: '/api/device-registration',
+  NOTIFICATION_STATUS: '/api/notification-status',
+  TEST_NOTIFICATION: '/api/test-notification',
+  TRIGGER_EXPIRY_CHECK: '/api/trigger-expiry-check',
 };
 
 // Helper function to build full URLs
