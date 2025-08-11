@@ -11,7 +11,7 @@ const getBaseApiUrl = () => {
 
   // Production fallback
   throw new Error(
-    "Base API URL not configured. Please set EXPO_PUBLIC_API_URL environment variable."
+    "Base API URL not configured. Please set EXPO_PUBLIC_API_URL environment variable.",
   );
 };
 
@@ -28,7 +28,7 @@ const getBarcodeApiUrl = () => {
 
   // Production fallback
   throw new Error(
-    "Barcode API URL not configured. Please set BARCODE_API_URL environment variable."
+    "Barcode API URL not configured. Please set BARCODE_API_URL environment variable.",
   );
 };
 
@@ -51,13 +51,13 @@ export const API_ENDPOINTS = {
   // Recipes & AI
   RECIPES: "/recipes",
   LOGMEAL: "/logmeal",
-  SAVED_RECIPES: '/saved-recipes',
+  SAVED_RECIPES: "/saved-recipes",
 
   // Notifications
-  DEVICE_REGISTRATION: '/api/device-registration',
-  NOTIFICATION_STATUS: '/api/notification-status',
-  TEST_NOTIFICATION: '/api/test-notification',
-  TRIGGER_EXPIRY_CHECK: '/api/trigger-expiry-check',
+  DEVICE_REGISTRATION: "/api/device-registration",
+  NOTIFICATION_STATUS: "/api/notification-status",
+  TEST_NOTIFICATION: "/api/test-notification",
+  TRIGGER_EXPIRY_CHECK: "/api/trigger-expiry-check",
 };
 
 // Helper function to build full URLs

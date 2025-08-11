@@ -5,7 +5,7 @@ const apiRequest = async (url, options = {}) => {
   try {
     const response = await fetch(url, {
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
         ...options.headers,
       },
       ...options,
@@ -13,12 +13,14 @@ const apiRequest = async (url, options = {}) => {
 
     if (!response.ok) {
       const errorData = await response.json();
-      throw new Error(errorData.error || errorData.message || `HTTP ${response.status}`);
+      throw new Error(
+        errorData.error || errorData.message || `HTTP ${response.status}`,
+      );
     }
 
     return await response.json();
   } catch (error) {
-    console.error('API Request failed:', error);
+    console.error("API Request failed:", error);
     throw error;
   }
 };
@@ -50,8 +52,8 @@ export const inventoryService = {
   // GET all inventory items
   getAll: async (userId) => {
     const url = buildApiUrl(API_ENDPOINTS.INVENTORY, { user: userId });
-    return apiRequest(url, { 
-      method: "GET"  
+    return apiRequest(url, {
+      method: "GET",
     });
   },
 
@@ -59,17 +61,17 @@ export const inventoryService = {
   getNames: async (userId) => {
     const url = buildApiUrl(API_ENDPOINTS.INVENTORY, {
       user: userId,
-      names: 'true'
+      names: "true",
     });
-    return apiRequest(url, { 
-      method: "GET"  
+    return apiRequest(url, {
+      method: "GET",
     });
   },
 
   // POST new inventory item
   add: async (userId, name, quantity, barcode, expiry_date) => {
     return apiRequest(`${API_BASE_URL}${API_ENDPOINTS.INVENTORY}`, {
-      method: "POST",  
+      method: "POST",
       body: JSON.stringify({
         user: userId,
         name,
@@ -83,7 +85,7 @@ export const inventoryService = {
   // PUT inventory item
   edit: async (userId, itemId, name, quantity, barcode, expiry_date) => {
     return apiRequest(`${API_BASE_URL}${API_ENDPOINTS.INVENTORY}`, {
-      method: "PUT",  
+      method: "PUT",
       body: JSON.stringify({
         user: userId,
         id: itemId,
@@ -98,7 +100,7 @@ export const inventoryService = {
   // DELETE inventory item
   delete: async (userId, itemId) => {
     return apiRequest(`${API_BASE_URL}${API_ENDPOINTS.INVENTORY}`, {
-      method: "DELETE",  
+      method: "DELETE",
       body: JSON.stringify({
         user: userId,
         id: itemId,
@@ -156,7 +158,7 @@ export const preferencesService = {
     const url = buildApiUrl(API_ENDPOINTS.PREFERENCES, { user: userId });
 
     return apiRequest(url, {
-      method: 'PUT',
+      method: "PUT",
       body: JSON.stringify(preferences),
     });
   },
@@ -168,7 +170,7 @@ export const barcodeService = {
   searchOpenFoodFacts: async (barcode) => {
     try {
       const response = await fetch(
-        `https://world.openfoodfacts.org/api/v0/product/${barcode}.json`
+        `https://world.openfoodfacts.org/api/v0/product/${barcode}.json`,
       );
 
       if (!response.ok) throw new Error("OpenFoodFacts API failed");
@@ -202,7 +204,7 @@ export const barcodeService = {
   searchUPCItemDB: async (barcode) => {
     try {
       const response = await fetch(
-        `https://api.upcitemdb.com/prod/trial/lookup?upc=${barcode}`
+        `https://api.upcitemdb.com/prod/trial/lookup?upc=${barcode}`,
       );
 
       if (!response.ok) throw new Error("UPCItemDB API failed");
@@ -279,7 +281,7 @@ export const barcodeService = {
 
       if (bestResult) {
         console.log(
-          `Best result from ${bestResult.source} (score: ${highestScore})`
+          `Best result from ${bestResult.source} (score: ${highestScore})`,
         );
         return bestResult;
       }

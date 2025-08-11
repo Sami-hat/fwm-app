@@ -7,10 +7,9 @@ export const landingStyles = StyleSheet.create({
     paddingTop: 60,
     justifyContent: "center",
     alignItems: "center",
-    width: '100%',
-    minHeight: '100%',
-    overflow: 'hidden',
-    
+    width: "100%",
+    minHeight: "100%",
+    overflow: "hidden",
   },
   button: {
     width: Dimensions.get("window").width * 0.85,
@@ -64,6 +63,6 @@ export const landingStyles = StyleSheet.create({
     color: "#FFFFFF",
     marginTop: 30,
     paddingLeft: 5,
-    paddingRight: 5
+    paddingRight: 5,
   },
 });

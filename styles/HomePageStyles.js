@@ -34,7 +34,7 @@ export const homeStyles = StyleSheet.create({
     color: "#FFFFFF",
     marginTop: 30,
     paddingLeft: 5,
-    paddingRight: 5
+    paddingRight: 5,
   },
   header: {
     fontSize: 30,

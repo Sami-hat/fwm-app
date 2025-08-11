@@ -56,7 +56,7 @@ const EntriesPage = ({ userId }) => {
     return `${day}/${month}/${year}`;
   };
 
-  // Handle date picker 
+  // Handle date picker
   const onDateChange = (event, selectedDate) => {
     setShowDatePicker(Platform.OS === "ios");
     if (selectedDate) {
@@ -94,7 +94,7 @@ const EntriesPage = ({ userId }) => {
               }
             },
           },
-        ]
+        ],
       );
     }
   };
@@ -113,7 +113,7 @@ const EntriesPage = ({ userId }) => {
         name.trim(),
         quantity || "1",
         barcode || null,
-        expiryDate ? formatDate(expiryDate) : null
+        expiryDate ? formatDate(expiryDate) : null,
       );
       await loadInventory(); // Refresh inventory
       clearEntry();
@@ -142,7 +142,7 @@ const EntriesPage = ({ userId }) => {
         name.trim(),
         quantity || "1",
         barcode || null,
-        expiryDate ? formatDate(expiryDate) : null
+        expiryDate ? formatDate(expiryDate) : null,
       );
       await loadInventory(); // Refresh inventory
       clearEntry();

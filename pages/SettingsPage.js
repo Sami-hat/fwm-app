@@ -6,40 +6,56 @@ import { Button, Text } from "@rneui/themed";
 import Feather from "@expo/vector-icons/Feather";
 
 const SettingsPage = ({ userId, setUserId, setIndex }) => {
-    const handleLogout = async () => {
-        setUserId(0);
-        setIndex(0);
-    };
+  const handleLogout = async () => {
+    setUserId(0);
+    setIndex(0);
+  };
 
-    return (
-        <View style={{ ...settingsStyles.container, backgroundColor: 'white'}}>
-            <Text h3 style={settingsStyles.titleBlack}>
-                Your Settings
-            </Text>
-            <Button
-                title="Log Out"
-                icon={<Feather name="log-out" size={24} color="white" position="absolute" right="20" />}
-                iconRight
-                onPress={() => handleLogout()}
-                buttonStyle={{
-                    ...settingsStyles.button,
-                    backgroundColor: "#5295B7FF",
-                }}
-                titleStyle={settingsStyles.buttonText}
-            />
-            <Button
-                title="Notifications"
-                icon={<Feather name="bell" size={24} color="white" position="absolute" right="20"/>}
-                iconRight
-                onPress={() => handleLogout()}
-                buttonStyle={{
-                    ...settingsStyles.button,
-                    backgroundColor: "#5295B7FF",
-                }}
-                titleStyle={settingsStyles.buttonText}
-            />
-        </View>
-    );
+  return (
+    <View style={{ ...settingsStyles.container, backgroundColor: "white" }}>
+      <Text h3 style={settingsStyles.titleBlack}>
+        Your Settings
+      </Text>
+      <Button
+        title="Log Out"
+        icon={
+          <Feather
+            name="log-out"
+            size={24}
+            color="white"
+            position="absolute"
+            right="20"
+          />
+        }
+        iconRight
+        onPress={() => handleLogout()}
+        buttonStyle={{
+          ...settingsStyles.button,
+          backgroundColor: "#5295B7FF",
+        }}
+        titleStyle={settingsStyles.buttonText}
+      />
+      <Button
+        title="Notifications"
+        icon={
+          <Feather
+            name="bell"
+            size={24}
+            color="white"
+            position="absolute"
+            right="20"
+          />
+        }
+        iconRight
+        onPress={() => handleLogout()}
+        buttonStyle={{
+          ...settingsStyles.button,
+          backgroundColor: "#5295B7FF",
+        }}
+        titleStyle={settingsStyles.buttonText}
+      />
+    </View>
+  );
 };
 
 export default SettingsPage;

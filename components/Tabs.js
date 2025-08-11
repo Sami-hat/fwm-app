@@ -1,4 +1,4 @@
-import { inventoryService } from '../services/apiService';
+import { inventoryService } from "../services/apiService";
 
 import React, { useState, useEffect } from "react";
 import LandingPage from "../pages/LandingPage";
@@ -42,13 +42,7 @@ const ProfileStack = ({ userId, setUserId, setIndex, recipe, setRecipe }) => (
       )}
     </Stack.Screen>
     <Stack.Screen name="Home">
-      {(props) => (
-        <HomePage
-          {...props}
-          userId={userId}
-          setRecipe={setRecipe}
-        />
-      )}
+      {(props) => <HomePage {...props} userId={userId} setRecipe={setRecipe} />}
     </Stack.Screen>
     <Stack.Screen name="Camera">
       {(props) => <CameraPage {...props} userId={userId} />}
@@ -74,7 +68,7 @@ const routes = [
   { key: "settings", title: "Settings" },
 ];
 
-export const Tabs = ({ }) => {
+export const Tabs = ({}) => {
   const dimensions = useWindowDimensions();
   const [index, setIndex] = React.useState(0);
   const [userId, setUserId] = React.useState(null);
@@ -107,7 +101,7 @@ export const Tabs = ({ }) => {
         );
       default:
         return null;
-    };
+    }
   };
 
   const renderTabBar = (props) => {

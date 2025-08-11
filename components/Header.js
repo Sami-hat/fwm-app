@@ -2,7 +2,7 @@ import { StyleSheet } from "react-native";
 import { View, Text } from "react-native";
 import { useWindowDimensions } from "react-native";
 
-export const Header = ({ }) => {
+export const Header = ({}) => {
   const dimensions = useWindowDimensions();
 
   return (
