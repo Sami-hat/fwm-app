@@ -42,7 +42,7 @@ export const authService = {
   },
 
   getUserEmail: async (userId) => {
-    const url = buildApiUrl(API_ENDPOINTS.EMAIL, { user: userId });
+    const url = buildApiUrl(API_ENDPOINTS.EMAIL, { userId });
     return apiRequest(url);
   },
 };
@@ -51,7 +51,7 @@ export const authService = {
 export const inventoryService = {
   // GET all inventory items
   getAll: async (userId) => {
-    const url = buildApiUrl(API_ENDPOINTS.INVENTORY, { user: userId });
+    const url = buildApiUrl(API_ENDPOINTS.INVENTORY, { userId });
     return apiRequest(url, {
       method: "GET",
     });
@@ -60,7 +60,7 @@ export const inventoryService = {
   // GET inventory names only
   getNames: async (userId) => {
     const url = buildApiUrl(API_ENDPOINTS.INVENTORY, {
-      user: userId,
+      userId: userId,
       names: "true",
     });
     return apiRequest(url, {
@@ -73,7 +73,7 @@ export const inventoryService = {
     return apiRequest(`${API_BASE_URL}${API_ENDPOINTS.INVENTORY}`, {
       method: "POST",
       body: JSON.stringify({
-        user: userId,
+        userId,
         name,
         quantity,
         barcode,
@@ -83,12 +83,12 @@ export const inventoryService = {
   },
 
   // PUT inventory item
-  edit: async (userId, itemId, name, quantity, barcode, expiry_date) => {
+  edit: async (userId, id, name, quantity, barcode, expiry_date) => {
     return apiRequest(`${API_BASE_URL}${API_ENDPOINTS.INVENTORY}`, {
       method: "PUT",
       body: JSON.stringify({
-        user: userId,
-        id: itemId,
+        userId,
+        id,
         name,
         quantity,
         barcode,
@@ -98,12 +98,12 @@ export const inventoryService = {
   },
 
   // DELETE inventory item
-  delete: async (userId, itemId) => {
+  delete: async (userId, id) => {
     return apiRequest(`${API_BASE_URL}${API_ENDPOINTS.INVENTORY}`, {
       method: "DELETE",
       body: JSON.stringify({
-        user: userId,
-        id: itemId,
+        userId,
+        id,
       }),
     });
   },
@@ -126,12 +126,12 @@ export const recipeService = {
   },
 
   getSaved: async (userId) => {
-    const url = buildApiUrl(API_ENDPOINTS.SAVED_RECIPES, { user: userId });
+    const url = buildApiUrl(API_ENDPOINTS.SAVED_RECIPES, { userId });
     return apiRequest(url);
   },
 
   save: async (userId, recipe) => {
-    const url = buildApiUrl(API_ENDPOINTS.SAVED_RECIPES, { user: userId });
+    const url = buildApiUrl(API_ENDPOINTS.SAVED_RECIPES, { userId });
     return apiRequest(url, {
       method: "POST",
       body: JSON.stringify(recipe),
@@ -139,7 +139,7 @@ export const recipeService = {
   },
 
   removeSaved: async (userId, recipeId) => {
-    const url = buildApiUrl(API_ENDPOINTS.SAVED_RECIPES, { user: userId });
+    const url = buildApiUrl(API_ENDPOINTS.SAVED_RECIPES, { userId });
     return apiRequest(url, {
       method: "DELETE",
       body: JSON.stringify({ recipeId }),
@@ -150,12 +150,12 @@ export const recipeService = {
 // Preferences Services
 export const preferencesService = {
   get: async (userId) => {
-    const url = buildApiUrl(API_ENDPOINTS.PREFERENCES, { user: userId });
+    const url = buildApiUrl(API_ENDPOINTS.PREFERENCES, { userId });
     return apiRequest(url);
   },
 
   update: async (userId, preferences) => {
-    const url = buildApiUrl(API_ENDPOINTS.PREFERENCES, { user: userId });
+    const url = buildApiUrl(API_ENDPOINTS.PREFERENCES, { userId });
 
     return apiRequest(url, {
       method: "PUT",
@@ -168,146 +168,79 @@ export const preferencesService = {
 export const barcodeService = {
   // Open Food Facts
   searchOpenFoodFacts: async (barcode) => {
-    try {
-      const response = await fetch(
-        `https://world.openfoodfacts.org/api/v0/product/${barcode}.json`,
-      );
+    const response = await fetch(
+      `https://world.openfoodfacts.org/api/v0/product/${barcode}.json`
+    );
+    if (!response.ok) throw new Error("OpenFoodFacts API failed");
 
-      if (!response.ok) throw new Error("OpenFoodFacts API failed");
-
-      const result = await response.json();
-      if (result.status === 1 && result.product) {
-        return {
-          source: "OpenFoodFacts",
-          found: true,
-          confidence: "high",
-          product: {
-            product_name:
-              result.product.product_name || result.product.product_name_en,
-            quantity: result.product.quantity,
-            brand: result.product.brands,
-            image_url: result.product.image_url,
-            categories: result.product.categories,
-            ingredients: result.product.ingredients_text,
-            nutriscore: result.product.nutriscore_grade,
-            stores: result.product.stores,
-          },
-        };
-      }
-      return { source: "OpenFoodFacts", found: false };
-    } catch (error) {
-      throw new Error(`OpenFoodFacts: ${error.message}`);
+    const result = await response.json();
+    if (result.status === 1 && result.product) {
+      return {
+        source: "OpenFoodFacts",
+        found: true,
+        product: {
+          product_name:
+            result.product.product_name || result.product.product_name_en,
+          quantity: result.product.quantity,
+          brand: result.product.brands,
+          image_url: result.product.image_url,
+          categories: result.product.categories,
+          ingredients: result.product.ingredients_text,
+          nutriscore: result.product.nutriscore_grade,
+          stores: result.product.stores,
+        },
+      };
     }
+    throw new Error("Not found in OpenFoodFacts");
   },
 
   // UPC Item DB
   searchUPCItemDB: async (barcode) => {
-    try {
-      const response = await fetch(
-        `https://api.upcitemdb.com/prod/trial/lookup?upc=${barcode}`,
-      );
+    const response = await fetch(
+      `https://api.upcitemdb.com/prod/trial/lookup?upc=${barcode}`
+    );
+    if (!response.ok) throw new Error("UPCItemDB API failed");
 
-      if (!response.ok) throw new Error("UPCItemDB API failed");
-
-      const result = await response.json();
-      if (result.code === "OK" && result.items && result.items.length > 0) {
-        const product = result.items[0];
-        return {
-          source: "UPCItemDB",
-          found: true,
-          confidence: "medium",
-          product: {
-            product_name: product.title,
-            quantity: product.size,
-            brand: product.brand,
-            image_url: product.images?.[0],
-            categories: product.category,
-            description: product.description,
-          },
-        };
-      }
-      return { source: "UPCItemDB", found: false };
-    } catch (error) {
-      throw new Error(`UPCItemDB: ${error.message}`);
+    const result = await response.json();
+    if (result.code === "OK" && result.items?.length > 0) {
+      const product = result.items[0];
+      return {
+        source: "UPCItemDB",
+        found: true,
+        product: {
+          product_name: product.title,
+          quantity: product.size,
+          brand: product.brand,
+          image_url: product.images?.[0],
+          categories: product.category,
+          description: product.description,
+        },
+      };
     }
+    throw new Error("Not found in UPCItemDB");
   },
 
   // Main search function
   search: async (barcode) => {
-    console.log(`Searching for barcode: ${barcode} across UK databases...`);
-
+    console.log(`Searching for barcode: ${barcode}...`);
     const startTime = Date.now();
 
     try {
-      // Priority order
-      const searchPromises = [
+      // Race APIs
+      const result = await Promise.any([
         barcodeService.searchOpenFoodFacts(barcode),
         barcodeService.searchUPCItemDB(barcode),
-      ];
-
-      // Run searches concurrently
-      const results = await Promise.allSettled(searchPromises);
+      ]);
 
       const searchTime = Date.now() - startTime;
-      console.log(`Barcode searches completed in ${searchTime}ms`);
+      console.log(
+        `Found product from ${result.source} in ${searchTime}ms`
+      );
 
-      // Find best result (prioritised by confidence and data completeness)
-      let bestResult = null;
-      let highestScore = 0;
-
-      for (const result of results) {
-        if (result.status === "fulfilled" && result.value.found) {
-          // Score results
-          let score = 0;
-          const product = result.value.product;
-
-          if (result.value.source === "OpenFoodFacts") score += 30;
-          else if (result.value.source === "BarcodeLookup") score += 25;
-          else if (result.value.source === "UPCItemDB") score += 20;
-          else score += 15;
-
-          if (product.product_name) score += 10;
-          if (product.brand) score += 5;
-          if (product.image_url) score += 5;
-          if (product.categories) score += 3;
-          if (product.quantity) score += 2;
-
-          if (score > highestScore) {
-            highestScore = score;
-            bestResult = result.value;
-          }
-        }
-      }
-
-      if (bestResult) {
-        console.log(
-          `Best result from ${bestResult.source} (score: ${highestScore})`,
-        );
-        return bestResult;
-      }
-
-      // Log failures for debugging
-      results.forEach((result, index) => {
-        const sources = [
-          "OpenFoodFacts",
-          "UPCItemDB",
-          "BarcodeLookup",
-          "EAN Data",
-        ];
-        if (result.status === "rejected") {
-          console.log(`${sources[index]} failed:`, result.reason.message);
-        }
-      });
-
-      return {
-        source: "None",
-        found: false,
-        product: null,
-        searchTime: searchTime,
-      };
+      return result;
     } catch (error) {
-      console.error("Barcode search error:", error);
-      throw new Error("Failed to search barcode databases");
+      console.error("All barcode APIs failed:", error);
+      return { source: "None", found: false, product: null };
     }
   },
 };
