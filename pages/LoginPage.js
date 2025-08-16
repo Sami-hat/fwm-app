@@ -39,7 +39,6 @@ const LoginPage = ({ userId, setUserId }) => {
     } catch (error) {
       console.error("Login error:", error);
 
-      // Handle specific error messages
       if (
         error.message.includes("Invalid credential") ||
         error.message.includes("Invalid credentials")

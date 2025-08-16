@@ -4,12 +4,8 @@ const { width: windowWidth, height: windowHeight } = Dimensions.get("window");
 
 export const landingStyles = StyleSheet.create({
   container: {
-    paddingTop: 60,
-    justifyContent: "center",
-    alignItems: "center",
     width: "100%",
     minHeight: "100%",
-    overflow: "hidden",
   },
   button: {
     width: Dimensions.get("window").width * 0.85,
@@ -32,12 +28,16 @@ export const landingStyles = StyleSheet.create({
     alignItems: "center",
   },
   banner: {
-    width: "110%",
+    width: "100%",
     backgroundColor: "#5295B7FF",
-    padding: "7%",
+    padding: "10%",
     alignItems: "center",
     justifyContent: "center",
     marginBottom: "5%",
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
   },
   statisticsTitle: {
     fontSize: 22,
@@ -49,14 +49,6 @@ export const landingStyles = StyleSheet.create({
     fontSize: 18,
     color: "#FFFFFF",
   },
-  banner: {
-    width: "110%",
-    backgroundColor: "#5295B7FF",
-    padding: "7%",
-    alignItems: "center",
-    justifyContent: "center",
-    marginBottom: "5%",
-  },
   welcomeText: {
     fontSize: 22,
     textAlign: "center",
@@ -64,5 +56,27 @@ export const landingStyles = StyleSheet.create({
     marginTop: 30,
     paddingLeft: 5,
     paddingRight: 5,
+  },
+  footer: {
+    position: "absolute",
+    bottom: 0,
+    left: 0,
+    right: 0,
+    backgroundColor: "#52B788",
+    paddingVertical: 5,
+    paddingHorizontal: 20,
+    borderTopWidth: 1,
+    borderTopColor: "#52B788",
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  footerTextLeft: {
+    fontSize: 10,
+    color: "#fffefeff",
+  },
+  footerTextRight: {
+    fontSize: 10,
+    color: "#fffefeff",
   },
 });

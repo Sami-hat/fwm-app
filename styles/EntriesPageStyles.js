@@ -7,13 +7,14 @@ export const entriesStyles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#F5F5F5",
     paddingTop: 60,
+    marginTop: 20,
   },
   content: {
     flex: 1,
     alignItems: "center",
     paddingHorizontal: 20,
     justifyContent: "flex-start",
-    paddingTop: 20,
+    // paddingTop: 20,
   },
   title: {
     fontSize: 24,

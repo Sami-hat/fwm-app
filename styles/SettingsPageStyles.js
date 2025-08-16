@@ -5,6 +5,7 @@ const { width: windowWidth, height: windowHeight } = Dimensions.get("window");
 export const settingsStyles = StyleSheet.create({
   container: {
     paddingTop: 60,
+    marginTop: 20,
     justifyContent: "center",
     alignItems: "center",
   },
@@ -28,7 +29,6 @@ export const settingsStyles = StyleSheet.create({
   },
   titleBlack: {
     textAlign: "center",
-    marginTop: 20,
     marginBottom: 10,
   },
 });

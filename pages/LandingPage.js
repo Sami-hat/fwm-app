@@ -14,9 +14,10 @@ const LandingPage = ({ userId }) => {
   }, [userId]);
 
   const navigation = useNavigation();
+  const currentYear = new Date().getFullYear();
 
   return (
-    <View style={{ alignItems: "center", justifyContent: "center" }}>
+    <View style={{ alignItems: "center", justifyContent: "center", flex: 1 }}>
       <View style={landingStyles.banner}>
         <Text h3 style={landingStyles.welcomeText}>
           Welcome to Shelfie!
@@ -55,6 +56,15 @@ const LandingPage = ({ userId }) => {
           effectively use the food products you own!
         </Text>
       </View>
+      <View style={landingStyles.footer}>
+        <Text style={landingStyles.footerTextLeft}>
+          © {currentYear} Shelfie.
+        </Text>
+        <Text style={landingStyles.footerTextRight}>
+          All rights reserved.
+        </Text>
+      </View>
+
     </View>
   );
 };

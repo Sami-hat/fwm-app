@@ -25,7 +25,7 @@ const HomePage = ({ userId, setRecipe }) => {
   const navigation = useNavigation();
 
   const [ingredients, setIngredients] = useState("");
-  const [recipes, setRecipes] = useState([]);
+  const [suggestedRecipes, setSuggestedRecipes] = useState([]);
   const [savedRecipes, setSavedRecipes] = useState([]);
   const [preferences, setPreferences] = useState(null);
   const [isLoadingRecipes, setIsLoadingRecipes] = useState(false);
@@ -67,7 +67,7 @@ const HomePage = ({ userId, setRecipe }) => {
       loadPreferences();
       loadSavedRecipes();
 
-      setRecipes([]);
+      setSuggestedRecipes([]);
       setHasGeneratedRecipes(false);
     }
   };
@@ -103,9 +103,9 @@ const HomePage = ({ userId, setRecipe }) => {
     setIsLoadingSaved(true);
     try {
       const saved = await recipeService.getSaved(userId);
-      const parsedRecipes = saved.map((recipe, index) => ({
+      const parsedRecipes = saved.map((recipe) => ({
         ...recipe,
-        itemId: `saved-${recipe.id || index}`,
+        itemId: `saved-${userId}-${recipe.id}`,
         ingredients_needed:
           typeof recipe.ingredients_needed === "string"
             ? JSON.parse(recipe.ingredients_needed)
@@ -134,32 +134,32 @@ const HomePage = ({ userId, setRecipe }) => {
         userId,
         ingredients,
         action,
-        action === "refresh" ? recipes.map(r => r.recipe_name) : []
+        action === "refresh" ? suggestedRecipes.map(r => r.recipe_name) : []
       );
 
       if (Array.isArray(recipesList)) {
         const recipesWithIds = recipesList.map((recipe, index) => ({
           ...recipe,
-          itemId: `generated-${recipe.id || index}-${Date.now()}`,
+          itemId: `suggested-${recipe.id || index}-${Date.now()}`,
         }));
 
         if (action === "add") {
           // Add new recipes to existing ones
-          setRecipes(prevRecipes => [...prevRecipes, ...recipesWithIds]);
+          setSuggestedRecipes(prevRecipes => [...prevRecipes, ...recipesWithIds]);
         } else {
           // Replace recipes
-          setRecipes(recipesWithIds);
+          setSuggestedRecipes(recipesWithIds);
         }
         setHasGeneratedRecipes(true);
       } else {
         if (action !== "add") {
-          setRecipes([]);
+          setSuggestedRecipes([]);
         }
       }
     } catch (error) {
       console.error("Recipe generation error:", error);
       if (action !== "add") {
-        setRecipes([]);
+        setSuggestedRecipes([]);
       }
     }
     setIsLoadingRecipes(false);
@@ -265,11 +265,11 @@ const HomePage = ({ userId, setRecipe }) => {
               <ActivityIndicator size="large" color="#52B788" />
               <Text style={{ marginTop: 10 }}>Finding recipes...</Text>
             </View>
-          ) : recipes.length > 0 ? (
+          ) : suggestedRecipes.length > 0 ? (
             <>
               <FlatList
-                data={recipes}
-                keyExtractor={(item) => item.uniqueId}
+                data={suggestedRecipes}
+                keyExtractor={(item) => item.itemId}
                 renderItem={({ item }) => (
                   <ListItem
                     bottomDivider
@@ -285,7 +285,7 @@ const HomePage = ({ userId, setRecipe }) => {
                 )}
               />
               <View style={{ flexDirection: 'row', margin: 10, gap: 10 }}>
-               <Button
+                <Button
                   title="Add 3 More"
                   onPress={handleAddMore}
                   buttonStyle={homeStyles.recipeActionButton}
@@ -357,34 +357,36 @@ const HomePage = ({ userId, setRecipe }) => {
           <Text h4 style={homeStyles.header}>
             Saved Recipes:
           </Text>
-          {isLoadingSaved ? (
-            <View style={{ alignItems: "center", padding: 20 }}>
-              <ActivityIndicator size="large" color="#52B788" />
-            </View>
-          ) : savedRecipes.length > 0 ? (
-            <FlatList
-              data={savedRecipes}
-              keyExtractor={(item) => item.itemId}
-              renderItem={({ item }) => (
-                <ListItem
-                  bottomDivider
-                  onPress={() => {
-                    setRecipe(item);
-                    navigation.navigate("Recipe");
-                  }}
-                >
-                  <Icon name="star" type="material" color="#FFD700" size={20} />
-                  <ListItem.Content>
-                    <ListItem.Title>{item.recipe_name}</ListItem.Title>
-                  </ListItem.Content>
-                </ListItem>
-              )}
-            />
-          ) : (
-            <View style={{ padding: 20 }}>
-              <Text>No saved recipes yet. Star recipes to save them!</Text>
-            </View>
-          )}
+          <FlatList
+            data={savedRecipes}
+            keyExtractor={(item) => item.itemId}
+            renderItem={({ item }) => (
+              <ListItem
+                bottomDivider
+                onPress={() => {
+                  setRecipe(item);
+                  navigation.navigate("Recipe");
+                }}
+              >
+                <Icon name="star" type="material" color="#FFD700" size={20} />
+                <ListItem.Content>
+                  <ListItem.Title>{item.recipe_name}</ListItem.Title>
+                </ListItem.Content>
+              </ListItem>
+            )}
+            ListEmptyComponent={() => (
+              <View style={{ padding: 20 }}>
+                <Text>No saved recipes yet. Star recipes to save them!</Text>
+              </View>
+            )}
+            ListHeaderComponent={
+              isLoadingSaved ? (
+                <View style={{ alignItems: "center", padding: 20 }}>
+                  <ActivityIndicator size="large" color="#52B788" />
+                </View>
+              ) : null
+            }
+          />
         </View>
       </View>
     </View>

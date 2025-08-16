@@ -5,14 +5,15 @@ const { width: windowWidth, height: windowHeight } = Dimensions.get("window");
 export const homeStyles = StyleSheet.create({
   container: {
     paddingTop: 60,
+    marginTop: 20,
     justifyContent: "center",
     alignItems: "center",
   },
   button: {
     width: Dimensions.get("window").width * 0.85,
     height: Dimensions.get("window").height * 0.07,
-    marginTop: "6%",
-    marginBottom: "2%",
+    // marginTop: "2%",
+    marginBottom: "3%",
     borderRadius: 10,
   },
   buttonText: {
