@@ -1,5 +1,6 @@
 import { inventoryService } from "../services/apiService";
 
+import { Footer } from "../components/Footer";
 import React, { useState, useEffect } from "react";
 import LandingPage from "../pages/LandingPage";
 import HomePage from "../pages/HomePage";
@@ -113,7 +114,7 @@ export const Tabs = ({}) => {
         style={{
           backgroundColor: "#52B788",
           fontSize: 50,
-          height: dimensions.height * 0.08,
+          height: dimensions.height * 0.065,
         }}
       />
     );
@@ -130,6 +131,7 @@ export const Tabs = ({}) => {
         tabBarPosition="bottom"
         swipeEnabled={!!userId}
       />
+    <Footer/>
     </NavigationContainer>
   );
 };

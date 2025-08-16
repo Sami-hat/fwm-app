@@ -61,4 +61,41 @@ export const homeStyles = StyleSheet.create({
     fontSize: 14,
     color: "#666",
   },
+  recipeActionButton: {
+    borderRadius: 25,
+    paddingVertical: 12,
+    paddingHorizontal: 30,
+    borderWidth: 2,
+    borderColor: "#E0E0E0",
+    backgroundColor: "white",
+  },
+  recipeActionButtonText: {
+    fontSize: 14,
+    fontWeight: "600",
+    color: "#333",
+  },
+  generateRecipeButton: {
+    backgroundColor: "#52B788",
+    borderRadius: 25,
+    paddingVertical: 14,
+    paddingHorizontal: 40,
+  },
+  generateRecipeButtonText: {
+    fontSize: 16,
+    fontWeight: "bold",
+    color: "white",
+  },
+  retryButton: {
+    borderColor: "#FF6B6B",
+    borderWidth: 2,
+    borderRadius: 25,
+    paddingVertical: 12,
+    paddingHorizontal: 30,
+    backgroundColor: "white",
+  },
+  retryButtonText: {
+    fontSize: 14,
+    fontWeight: "600",
+    color: "#FF6B6B",
+  },
 });

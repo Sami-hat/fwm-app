@@ -28,7 +28,8 @@ A comprehensive food waste management solution that helps you track groceries, d
 
 ```
 components/                # Reusable UI components
-   Header.js               # App header component
+   Header.js               # App header
+   Footer.js               # App footer 
    Tabs.js                 # Main tab navigation
    NotificationManager.js  # In-app alert management
 pages/                     # Screen components

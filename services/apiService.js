@@ -111,10 +111,16 @@ export const inventoryService = {
 
 // Recipe Services
 export const recipeService = {
-  generate: async (ingredients, userId) => {
+  generate: async (userId, ingredients, action, currentRecipes) => {
     return apiRequest(`${API_BASE_URL}${API_ENDPOINTS.RECIPES}`, {
-      method: "POST",
-      body: JSON.stringify({ ingredients, userId }),
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ 
+        ingredients, 
+        userId, 
+        action,
+        currentRecipes 
+      })
     });
   },
 
