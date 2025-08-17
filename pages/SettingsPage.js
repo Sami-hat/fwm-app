@@ -1,60 +1,75 @@
-import { settingsStyles } from "../styles/SettingsPageStyles";
+import { settingsStyles } from '../styles/SettingsPageStyles';
 
-import { React, useState, useEffect } from "react";
-import { View } from "react-native";
-import { Button, Text } from "@rneui/themed";
-import Feather from "@expo/vector-icons/Feather";
+import React from 'react';
+import { View, SafeAreaView, Alert } from 'react-native';
+import { Button, Text } from '@rneui/themed';
+import { useAuth } from '../contexts/AuthContext';
 
-const SettingsPage = ({ userId, setUserId, setIndex }) => {
+const SettingsPage = ({ setIndex }) => {
+  
+  const { user, logout, isEmailVerified } = useAuth();
+
   const handleLogout = async () => {
-    setUserId(0);
-    setIndex(0);
+    Alert.alert(
+      'Logout',
+      'Are you sure you want to logout?',
+      [
+        { text: 'Cancel', style: 'cancel' },
+        { 
+          text: 'Logout', 
+          style: 'destructive',
+          onPress: async () => {
+            await logout();
+            setIndex(0); // Navigate back to landing page
+          }
+        }
+      ]
+    );
+  };
+
+  const handleLogoutAllDevices = async () => {
+    Alert.alert(
+      'Logout from All Devices',
+      'This will log you out from all devices. Are you sure?',
+      [
+        { text: 'Cancel', style: 'cancel' },
+        { 
+          text: 'Logout All', 
+          style: 'destructive',
+          onPress: async () => {
+            await logout(true); // true = logout from all devices
+            setIndex(0);
+          }
+        }
+      ]
+    );
   };
 
   return (
-    <View style={{ ...settingsStyles.container, backgroundColor: "white" }}>
-      <Text h3 style={settingsStyles.titleBlack}>
-        Your Settings
-      </Text>
+    <SafeAreaView style={{ flex: 1, padding: 20 }}>
+      <Text h3 style={{ marginBottom: 20 }}>Settings</Text>
+      
+      {user && (
+        <View style={{ marginBottom: 20 }}>
+          <Text>Email: {user.email}</Text>
+          {!isEmailVerified && (
+            <Text style={{ color: 'orange' }}>Email not verified</Text>
+          )}
+        </View>
+      )}
+
       <Button
-        title="Log Out"
-        icon={
-          <Feather
-            name="log-out"
-            size={24}
-            color="white"
-            position="absolute"
-            right="20"
-          />
-        }
-        iconRight
-        onPress={() => handleLogout()}
-        buttonStyle={{
-          ...settingsStyles.button,
-          backgroundColor: "#5295B7FF",
-        }}
-        titleStyle={settingsStyles.buttonText}
+        title="Logout"
+        onPress={handleLogout}
+        buttonStyle={{ backgroundColor: '#d32f2f', marginBottom: 10 }}
       />
+      
       <Button
-        title="Notifications"
-        icon={
-          <Feather
-            name="bell"
-            size={24}
-            color="white"
-            position="absolute"
-            right="20"
-          />
-        }
-        iconRight
-        onPress={() => handleLogout()}
-        buttonStyle={{
-          ...settingsStyles.button,
-          backgroundColor: "#5295B7FF",
-        }}
-        titleStyle={settingsStyles.buttonText}
+        title="Logout from All Devices"
+        onPress={handleLogoutAllDevices}
+        buttonStyle={{ backgroundColor: '#b71c1c' }}
       />
-    </View>
+    </SafeAreaView>
   );
 };
 

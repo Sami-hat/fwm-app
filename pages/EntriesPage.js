@@ -12,12 +12,17 @@ import {
 import { Button, Input, Text, Card } from "@rneui/themed";
 import DateTimePicker from "@react-native-community/datetimepicker";
 
-const EntriesPage = ({ userId }) => {
+import { useAuth } from '../contexts/AuthContext';
+
+const EntriesPage = ({ }) => {
+  const { user } = useAuth();
+  const userId = user?.id;
+
   const [inventory, setInventory] = useState([]);
   const [isPosting, setIsPosting] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [isAdding, setIsAdding] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const [processing, setProcessing] = useState(false);
   const [item, setItem] = useState(null);
   const [name, setName] = useState("");
   const [quantity, setQuantity] = useState("");
@@ -34,7 +39,7 @@ const EntriesPage = ({ userId }) => {
 
   const loadInventory = async () => {
     try {
-      setLoading(true);
+      setProcessing(true);
       const data = await inventoryService.getAll(userId);
 
       setInventory(data);
@@ -42,7 +47,7 @@ const EntriesPage = ({ userId }) => {
       console.error("Error fetching inventory:", error);
       Alert.alert("Error", "Failed to load inventory");
     } finally {
-      setLoading(false);
+      setProcessing(false);
     }
   };
 
@@ -107,7 +112,7 @@ const EntriesPage = ({ userId }) => {
     }
 
     try {
-      setLoading(true);
+      setProcessing(true);
       await inventoryService.add(
         userId,
         name.trim(),
@@ -123,7 +128,7 @@ const EntriesPage = ({ userId }) => {
       console.error("Error adding entry:", error);
       Alert.alert("Error", "Failed to add item");
     } finally {
-      setLoading(false);
+      setProcessing(false);
     }
   };
 
@@ -135,7 +140,7 @@ const EntriesPage = ({ userId }) => {
     }
 
     try {
-      setLoading(true);
+      setProcessing(true);
       await inventoryService.edit(
         userId,
         item,
@@ -152,7 +157,7 @@ const EntriesPage = ({ userId }) => {
       console.error("Error editing entry:", error);
       Alert.alert("Error", "Failed to update item");
     } finally {
-      setLoading(false);
+      setProcessing(false);
     }
   };
 
@@ -180,7 +185,6 @@ const EntriesPage = ({ userId }) => {
 
   return (
     <View style={entriesStyles.container}>
-      {/* <Header /> */}
 
       {/* Main Content Section */}
       {isPosting ? (
@@ -244,7 +248,7 @@ const EntriesPage = ({ userId }) => {
             title={isAdding ? "Add Item" : "Update Item"}
             onPress={isAdding ? addEntry : editEntry}
             buttonStyle={entriesStyles.button}
-            loading={loading}
+            loading={processing}
           />
           <Button
             title="Cancel"
@@ -259,7 +263,7 @@ const EntriesPage = ({ userId }) => {
         </View>
       ) : (
         <View style={entriesStyles.content}>
-          {loading ? (
+          {processing ? (
             <Text>Loading inventory...</Text>
           ) : inventory.length === 0 ? (
             <>

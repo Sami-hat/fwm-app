@@ -1,6 +1,10 @@
-import { inventoryService } from "../services/apiService";
-
 import React, { useState, useEffect } from "react";
+import { NavigationContainer } from "@react-navigation/native";
+import { createStackNavigator } from "@react-navigation/stack";
+import { TabView, TabBar } from "react-native-tab-view";
+import { useWindowDimensions } from "react-native";
+import { useAuth } from "../contexts/AuthContext";
+
 import LandingPage from "../pages/LandingPage";
 import HomePage from "../pages/HomePage";
 import EntriesPage from "../pages/EntriesPage";
@@ -12,55 +16,48 @@ import LoginPage from "../pages/LoginPage";
 import RecipePage from "../pages/RecipePage";
 import SettingsPage from "../pages/SettingsPage";
 
-import { createStackNavigator } from "@react-navigation/stack";
-import { NavigationContainer } from "@react-navigation/native";
-import { TabView, TabBar } from "react-native-tab-view";
-import { useWindowDimensions } from "react-native";
-
 const Stack = createStackNavigator();
 
-const ProfileStack = ({ userId, setUserId, setIndex, recipe, setRecipe }) => (
-  <Stack.Navigator screenOptions={{ headerShown: false }}>
-    <Stack.Screen name="Landing">
-      {(props) => (
-        <LandingPage
-          {...props}
-          userId={userId}
-          setUserId={setUserId}
-          setIndex={setIndex}
-        />
-      )}
-    </Stack.Screen>
-    <Stack.Screen name="SignUp">
-      {(props) => (
-        <SignUpPage {...props} userId={userId} setUserId={setUserId} />
-      )}
-    </Stack.Screen>
-    <Stack.Screen name="Login">
-      {(props) => (
-        <LoginPage {...props} userId={userId} setUserId={setUserId} />
-      )}
-    </Stack.Screen>
-    <Stack.Screen name="Home">
-      {(props) => <HomePage {...props} userId={userId} setRecipe={setRecipe} />}
-    </Stack.Screen>
-    <Stack.Screen name="Camera">
-      {(props) => <CameraPage {...props} userId={userId} />}
-    </Stack.Screen>
-    <Stack.Screen name="Scanner">
-      {(props) => <ScannerPage {...props} userId={userId} />}
-    </Stack.Screen>
-    <Stack.Screen name="Preferences">
-      {(props) => <PreferencesPage {...props} userId={userId} />}
-    </Stack.Screen>
-    <Stack.Screen name="Recipe">
-      {(props) => <RecipePage {...props} userId={userId} recipe={recipe} />}
-    </Stack.Screen>
-    <Stack.Screen name="AddEntry">
-      {(props) => <AddEntry {...props} userId={userId} />}
-    </Stack.Screen>
-  </Stack.Navigator>
-);
+const ProfileStack = ({ setIndex, recipe, setRecipe }) => {
+  const { user, isAuthenticated } = useAuth();
+  const userId = user?.id;
+
+  return (
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="Landing">
+        {(props) => (
+          <LandingPage
+            {...props}
+            setIndex={setIndex}
+          />
+        )}
+      </Stack.Screen>
+      <Stack.Screen name="SignUp" component={SignUpPage} />
+      <Stack.Screen name="Login" component={LoginPage} />
+      <Stack.Screen name="Home">
+        {(props) => (
+          <HomePage 
+            {...props} 
+            userId={userId} 
+            setRecipe={setRecipe} 
+          />
+        )}
+      </Stack.Screen>
+      <Stack.Screen name="Camera">
+        {(props) => <CameraPage {...props} />}
+      </Stack.Screen>
+      <Stack.Screen name="Scanner">
+        {(props) => <ScannerPage {...props} />}
+      </Stack.Screen>
+      <Stack.Screen name="Preferences">
+        {(props) => <PreferencesPage {...props} />}
+      </Stack.Screen>
+      <Stack.Screen name="Recipe">
+        {(props) => <RecipePage {...props} recipe={recipe} />}
+      </Stack.Screen>
+    </Stack.Navigator>
+  );
+};
 
 const routes = [
   { key: "profile", title: "Home" },
@@ -68,20 +65,27 @@ const routes = [
   { key: "settings", title: "Settings" },
 ];
 
-export const Tabs = ({}) => {
+export const Tabs = () => {
   const dimensions = useWindowDimensions();
-  const [index, setIndex] = React.useState(0);
-  const [userId, setUserId] = React.useState(null);
-  const [recipe, setRecipe] = React.useState(null);
-  const [item, setItem] = React.useState(null);
+  const [index, setIndex] = useState(0);
+  const [recipe, setRecipe] = useState(null);
+  const [item, setItem] = useState(null);
+  
+  const { user, isAuthenticated, loading } = useAuth();
+  const userId = user?.id;
+
+  // Reset to home tab when user logs out
+  useEffect(() => {
+    if (!isAuthenticated && !loading) {
+      setIndex(0);
+    }
+  }, [isAuthenticated, loading]);
 
   const renderScene = ({ route }) => {
     switch (route.key) {
       case "profile":
         return (
           <ProfileStack
-            userId={userId}
-            setUserId={setUserId}
             recipe={recipe}
             setRecipe={setRecipe}
             item={item}
@@ -90,12 +94,10 @@ export const Tabs = ({}) => {
           />
         );
       case "entries":
-        return <EntriesPage userId={userId} />;
+        return <EntriesPage/>;
       case "settings":
         return (
           <SettingsPage
-            userId={userId}
-            setUserId={setUserId}
             setIndex={setIndex}
           />
         );
@@ -105,7 +107,9 @@ export const Tabs = ({}) => {
   };
 
   const renderTabBar = (props) => {
-    if (!userId) return null;
+    // Only show tab bar when user is authenticated
+    if (!isAuthenticated) return null;
+    
     return (
       <TabBar
         {...props}
@@ -128,9 +132,8 @@ export const Tabs = ({}) => {
         initialLayout={{ width: dimensions.width }}
         renderTabBar={renderTabBar}
         tabBarPosition="bottom"
-        swipeEnabled={!!userId}
+        swipeEnabled={isAuthenticated}
       />
-    {/* <Footer/> */}
     </NavigationContainer>
   );
 };

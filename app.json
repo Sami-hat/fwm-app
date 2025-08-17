@@ -1,8 +1,10 @@
 {
   "expo": {
-    "name": "fwm-app",
-    "slug": "fwm-app",
+    "name": "Shelfie",
+    "slug": "Shelfie",
+    "scheme": "Shelfie",
     "version": "1.0.0",
+    "platforms": ["ios", "android"],
     "orientation": "portrait",
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
@@ -11,7 +13,8 @@
       "bundleIdentifier": "com.sami.hat.fwmapp",
       "infoPlist": {
         "NSCameraUsageDescription": "This app uses the camera to take photos of food items for inventory management.",
-        "NSPhotoLibraryUsageDescription": "This app needs access to photo library to save food images."
+        "NSPhotoLibraryUsageDescription": "This app needs access to photo library to save food images.",
+        "NSFaceIDUsageDescription": "This app uses Face ID to secure your authentication tokens."
       }
     },
     "android": {
@@ -49,7 +52,8 @@
           }
         }
       ],
-      "expo-secure-store"
+      "expo-secure-store",
+      "expo-web-browser"
     ]
   }
 }

@@ -21,7 +21,12 @@ import FontAwesome from "@expo/vector-icons/FontAwesome";
 
 import { recipeService, inventoryService } from "../services/apiService";
 
-const CameraPage = ({ userId }) => {
+import { useAuth } from '../contexts/AuthContext';
+
+const CameraPage = ({ }) => {
+  const { user } = useAuth();
+  const userId = user?.id;
+
   const navigation = useNavigation();
   const [type, setType] = useState("back");
   const [hasPermission, setHasPermission] = useState(null);

@@ -6,7 +6,12 @@ import { SafeAreaView, Alert, ScrollView, View } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { Button, Text, CheckBox, Input } from "@rneui/themed";
 
-const PreferencesPage = ({ userId }) => {
+import { useAuth } from '../contexts/AuthContext';
+
+const PreferencesPage = ({ }) => {
+  const { user } = useAuth();
+  const userId = user?.id;
+
   const navigation = useNavigation();
   const [loading, setLoading] = useState(false);
   const [preferences, setPreferences] = useState({

@@ -1,16 +1,17 @@
-import { signUpStyles } from "../styles/SignUpPageStyles";
-import { authService } from "../services/apiService";
+import React, { useState } from 'react';
+import { SafeAreaView, Alert } from 'react-native';
+import { Button, Input, Text } from '@rneui/themed';
+import { useNavigation } from '@react-navigation/native';
+import { useAuth } from '../contexts/AuthContext';
+import { signUpStyles } from '../styles/SignUpPageStyles';
 
-import React, { useState } from "react";
-import { SafeAreaView, Alert } from "react-native";
-import { useNavigation } from "@react-navigation/native";
-import { Button, Input, Text } from "@rneui/themed";
-
-const SignUpPage = ({ setUserId }) => {
+const SignUpPage = () => {
   const navigation = useNavigation();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
+  const { signUpWithEmail } = useAuth();
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
   const validateEmail = (email) => {
@@ -18,54 +19,59 @@ const SignUpPage = ({ setUserId }) => {
     return emailRegex.test(email);
   };
 
-  const handleSignup = async (email, password) => {
-    // Input validation
+  const validatePassword = (password) => {
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    return passwordRegex.test(password);
+  };
+
+  const handleSignup = async () => {
     if (!email.trim()) {
-      setError("Please enter your email");
+      setError('Please enter your email');
       return;
     }
 
     if (!validateEmail(email.trim())) {
-      setError("Please enter a valid email address");
+      setError('Please enter a valid email address');
       return;
     }
 
     if (!password.trim()) {
-      setError("Please enter a password");
+      setError('Please enter a password');
       return;
     }
 
-    if (password.length < 6) {
-      setError("Password must be at least 6 characters long");
+    if (!validatePassword(password)) {
+      setError('Password must be at least 8 characters with uppercase, lowercase, number, and special character');
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      setError('Passwords do not match');
       return;
     }
 
     try {
       setLoading(true);
-      setError(""); // Clear any previous errors
+      setError('');
 
-      const data = await authService.signup(email.trim(), password);
-
-      if (data.userId) {
-        setUserId(data.userId);
-        navigation.navigate("Home");
-      } else {
-        setError("Signup failed. Please try again.");
-      }
+      await signUpWithEmail(email.trim(), password);
+      
+      Alert.alert(
+        'Success!',
+        'Your account has been created. Please check your email to verify your account.',
+        [{ text: 'OK', onPress: () => navigation.navigate('Home') }]
+      );
     } catch (error) {
-      console.error("Signup error:", error);
+      console.error('Signup error:', error);
 
-      // Handle specific error messages
-      if (error.message.includes("User already exists")) {
-        setError("An account with this email already exists");
-      } else if (error.message.includes("Invalid email")) {
-        setError("Please enter a valid email address");
-      } else if (error.message.includes("Password")) {
-        setError("Password requirements not met");
-      } else if (error.message.includes("Network")) {
-        setError("Network error. Please check your connection.");
+      if (error.message.includes('already exists')) {
+        setError('An account with this email already exists');
+      } else if (error.message.includes('Too many')) {
+        setError(error.message);
+      } else if (error.message.includes('Network')) {
+        setError('Network error. Please check your connection.');
       } else {
-        setError("Signup failed. Please try again.");
+        setError('Signup failed. Please try again.');
       }
     } finally {
       setLoading(false);
@@ -84,38 +90,59 @@ const SignUpPage = ({ setUserId }) => {
         autoCapitalize="none"
         value={email}
         leftIcon={{
-          type: "font-awesome",
-          name: "envelope",
-          color: "#52B788",
+          type: 'font-awesome',
+          name: 'envelope',
+          color: '#52B788',
           size: 20,
         }}
         leftIconContainerStyle={signUpStyles.leftIconContainer}
         inputContainerStyle={signUpStyles.inputContainer}
         inputStyle={signUpStyles.inputText}
         onChangeText={setEmail}
-        errorMessage={error && error.includes("email") ? error : ""}
+        errorMessage={error && error.includes('email') ? error : ''}
       />
 
       <Input
-        placeholder="Password (min 8 characters)"
+        placeholder="Password"
         secureTextEntry
         value={password}
         leftIcon={{
-          type: "font-awesome",
-          name: "lock",
-          color: "#52B788",
+          type: 'font-awesome',
+          name: 'lock',
+          color: '#52B788',
           size: 22,
         }}
         leftIconContainerStyle={signUpStyles.leftIconContainer}
         inputContainerStyle={signUpStyles.inputContainer}
         inputStyle={signUpStyles.inputText}
         onChangeText={setPassword}
-        errorMessage={error && error.includes("Password") ? error : ""}
+        errorMessage={error && error.includes('Password') ? error : ''}
       />
+
+      <Input
+        placeholder="Confirm Password"
+        secureTextEntry
+        value={confirmPassword}
+        leftIcon={{
+          type: 'font-awesome',
+          name: 'lock',
+          color: '#52B788',
+          size: 22,
+        }}
+        leftIconContainerStyle={signUpStyles.leftIconContainer}
+        inputContainerStyle={signUpStyles.inputContainer}
+        inputStyle={signUpStyles.inputText}
+        onChangeText={setConfirmPassword}
+        errorMessage={error && error.includes('match') ? error : ''}
+      />
+
+      <Text style={signUpStyles.passwordHint}>
+        Password must contain at least 8 characters, including uppercase, lowercase, number, and special character
+      </Text>
 
       <Button
         title="Sign Up"
-        onPress={() => handleSignup(email, password)}
+        onPress={handleSignup}
         buttonStyle={signUpStyles.signupButton}
         titleStyle={signUpStyles.buttonTitle}
         loading={loading}
@@ -124,13 +151,13 @@ const SignUpPage = ({ setUserId }) => {
 
       <Button
         style={{ paddingTop: 10 }}
-        title="Back to Profile"
+        title="Back to Home"
         type="clear"
         titleStyle={signUpStyles.backText}
         onPress={() => navigation.goBack()}
       />
 
-      {error && !error.includes("email") && !error.includes("Password") ? (
+      {error && !error.includes('email') && !error.includes('Password') && !error.includes('match') ? (
         <Text style={signUpStyles.errorText}>{error}</Text>
       ) : null}
     </SafeAreaView>

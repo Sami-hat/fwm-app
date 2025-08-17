@@ -16,7 +16,12 @@ import { CameraView, useCameraPermissions } from "expo-camera";
 import { useNavigation } from "@react-navigation/native";
 import Ionicons from "@expo/vector-icons/Ionicons";
 
-const ScannerPage = ({ userId }) => {
+import { useAuth } from '../contexts/AuthContext';
+
+const ScannerPage = ({ }) => {
+  const { user } = useAuth();
+  const userId = user?.id;
+
   const navigation = useNavigation();
   const [permission, requestPermission] = useCameraPermissions();
   const [scanned, setScanned] = useState(false);

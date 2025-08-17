@@ -1,23 +1,32 @@
-import { landingStyles } from "../styles/LandingPageStyles";
+import React, { useEffect } from 'react';
+import { View, ScrollView, SafeAreaView, Alert } from 'react-native';
+import { Button, Text } from '@rneui/themed';
+import { useNavigation } from '@react-navigation/native';
+import { useAuth } from '../contexts/AuthContext';
+import { landingStyles } from '../styles/LandingPageStyles';
+import Icon from 'react-native-vector-icons/FontAwesome';
 
-import React, { useEffect, useState } from "react";
-import { useNavigation } from "@react-navigation/native";
-import { View } from "react-native";
-import { Button, Text } from "@rneui/themed";
-
-// Landing Page, User is not signed in
-const LandingPage = ({ userId }) => {
-  React.useEffect(() => {
-    if (userId >= 1) {
-      navigation.navigate("Home");
-    }
-  }, [userId]);
-
+const LandingPage = () => {
   const navigation = useNavigation();
+  const { isAuthenticated, signInWithGoogle } = useAuth();
   const currentYear = new Date().getFullYear();
 
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigation.navigate('Home');
+    }
+  }, [isAuthenticated, navigation]);
+
+  const handleGoogleSignIn = async () => {
+    try {
+      await signInWithGoogle();
+    } catch (error) {
+      Alert.alert('Sign In Failed', 'Unable to sign in with Google. Please try again.');
+    }
+  };
+
   return (
-    <View style={{ alignItems: "center", justifyContent: "center", flex: 1 }}>
+    <View style={landingStyles.container}>
       <View style={landingStyles.banner}>
         <Text h3 style={landingStyles.welcomeText}>
           Welcome to Shelfie!
@@ -28,21 +37,45 @@ const LandingPage = ({ userId }) => {
       </View>
 
       <Button
-        title="Sign Up"
-        onPress={() => navigation.navigate("SignUp")}
+        title="Sign Up with Email"
+        onPress={() => navigation.navigate('SignUp')}
         buttonStyle={{
           ...landingStyles.button,
-          backgroundColor: "#5295B7FF",
+          backgroundColor: '#5295B7FF',
         }}
         titleStyle={landingStyles.buttonText}
       />
 
       <Button
-        title="Log In"
-        onPress={() => navigation.navigate("Login")}
+        title="Log In with Email"
+        onPress={() => navigation.navigate('Login')}
         buttonStyle={{
           ...landingStyles.button,
-          backgroundColor: "#5295B7FF",
+          backgroundColor: '#5295B7FF',
+        }}
+        titleStyle={landingStyles.buttonText}
+      />
+
+      <View style={landingStyles.divider}>
+        <View style={landingStyles.dividerLine} />
+        <Text style={landingStyles.dividerText}>OR</Text>
+        <View style={landingStyles.dividerLine} />
+      </View>
+
+      <Button
+        title="Continue with Google"
+        icon={
+          <Icon
+            name="google"
+            size={20}
+            color="white"
+            style={{ marginRight: 10 }}
+          />
+        }
+        onPress={handleGoogleSignIn}
+        buttonStyle={{
+          ...landingStyles.button,
+          backgroundColor: '#4285F4',
         }}
         titleStyle={landingStyles.buttonText}
       />
@@ -56,6 +89,7 @@ const LandingPage = ({ userId }) => {
           effectively use the food products you own!
         </Text>
       </View>
+      
       <View style={landingStyles.footer}>
         <Text style={landingStyles.footerTextLeft}>
           © {currentYear} Shelfie.
@@ -64,7 +98,6 @@ const LandingPage = ({ userId }) => {
           All rights reserved.
         </Text>
       </View>
-
     </View>
   );
 };

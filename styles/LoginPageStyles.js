@@ -11,7 +11,10 @@ export const loginStyles = StyleSheet.create({
     paddingHorizontal: 20,
   },
   title: {
-    marginBottom: 20,
+    marginBottom: 30,
+    fontSize: 28,
+    fontWeight: "bold",
+    color: "#333",
   },
   inputContainer: {
     backgroundColor: "white",
@@ -21,10 +24,19 @@ export const loginStyles = StyleSheet.create({
     paddingHorizontal: 15,
     height: 50,
     alignItems: "center",
+    elevation: 1,
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: 0.05,
+    shadowRadius: 2,
   },
   inputText: {
     fontSize: 16,
     paddingLeft: 10,
+    color: "#333",
   },
   leftIconContainer: {
     marginLeft: 5,
@@ -32,21 +44,47 @@ export const loginStyles = StyleSheet.create({
   },
   loginButton: {
     backgroundColor: "#52B788",
-    width: 200,
-    marginTop: 10,
+    width: windowWidth * 0.6,
+    height: 50,
+    marginTop: 20,
+    marginBottom: 15,
     borderRadius: 25,
+    elevation: 2,
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 3.84,
   },
   buttonTitle: {
     fontSize: 18,
     fontWeight: "bold",
+    color: "white",
+  },
+  forgotPasswordText: {
+    color: "#5295B7",
+    fontSize: 14,
+    marginTop: 10,
+    textDecorationLine: "underline",
   },
   backText: {
     color: "#5295B7",
     fontSize: 16,
+    marginTop: 20,
   },
   errorText: {
-    color: "red",
+    color: "#d32f2f",
     marginTop: 10,
     textAlign: "center",
+    fontSize: 14,
+    paddingHorizontal: 20,
+  },
+  successText: {
+    color: "#52B788",
+    marginTop: 10,
+    textAlign: "center",
+    fontSize: 14,
   },
 });

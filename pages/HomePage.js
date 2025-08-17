@@ -6,9 +6,9 @@ import {
 } from "../services/apiService";
 
 import React, { useState, useEffect } from "react";
-import { Header } from "../components/Header";
 import { useNavigation } from "@react-navigation/native";
 import {
+  SafeAreaView,
   View,
   FlatList,
   Dimensions,
@@ -19,8 +19,13 @@ import { Button, Text, ListItem, Icon } from "@rneui/themed";
 import Feather from "@expo/vector-icons/Feather";
 import AntDesign from "@expo/vector-icons/AntDesign";
 
+import { useAuth } from '../contexts/AuthContext';
+
 // Home Page, User is signed in
-const HomePage = ({ userId, setRecipe }) => {
+const HomePage = ({ setRecipe }) => {
+  const { user, isAuthenticated, loading } = useAuth();
+  const userId = user?.id;
+
   const windowHeight = Dimensions.get("window").height;
   const navigation = useNavigation();
 
@@ -35,10 +40,10 @@ const HomePage = ({ userId, setRecipe }) => {
 
   // Navigate to landing if not logged in
   useEffect(() => {
-    if (userId === 0) {
-      navigation.navigate("Landing");
+    if (!loading && !isAuthenticated) {
+      navigation.navigate('Landing');
     }
-  }, [userId]);
+  }, [isAuthenticated, loading, navigation]);
 
   // Load data when userId changes
   useEffect(() => {
@@ -177,11 +182,25 @@ const HomePage = ({ userId, setRecipe }) => {
     navigation.navigate("Preferences");
   };
 
+  // Show loading state while checking auth
+  if (loading) {
+    return (
+      <SafeAreaView style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <Text>Loading...</Text>
+      </SafeAreaView>
+    );
+  }
+
+  // Don't render content if not authenticated
+  if (!isAuthenticated || !userId) {
+    return null;
+  }
+
+  // Show validated profile information
   return (
-    <View style={homeStyles.container}>
-      {/* <Header /> */}
+    <SafeAreaView style={homeStyles.container}>
       <View>
-        <View style={{ alignItems: "center", justifyContent: "center" }}>
+        <View style={ homeStyles.buttonContainer }>
           {/* Scan Barcode */}
           <Button
             title="Scan Barcode"
@@ -261,7 +280,7 @@ const HomePage = ({ userId, setRecipe }) => {
           </Text>
 
           {isLoadingRecipes ? (
-            <View style={{ alignItems: "center", padding: 20 }}>
+            <View style={ homeStyles.emptyText }>
               <ActivityIndicator size="large" color="#52B788" />
               <Text style={{ marginTop: 10 }}>Finding recipes...</Text>
             </View>
@@ -284,7 +303,7 @@ const HomePage = ({ userId, setRecipe }) => {
                   </ListItem>
                 )}
               />
-              <View style={{ flexDirection: 'row', margin: 10, gap: 10 }}>
+              <View style={ homeStyles.recipeActionButtonContainer }>
                 <Button
                   title="Add 3 More"
                   onPress={handleAddMore}
@@ -320,11 +339,12 @@ const HomePage = ({ userId, setRecipe }) => {
               </View>
             </>
           ) : ingredients.length === 0 ? (
-            <View style={{ padding: 20 }}>
-              <Text>No ingredients in inventory. Add items to generate recipes!</Text>
+            <View style={ homeStyles.emptyText }>
+              <Text>No ingredients in inventory.</Text>
+              <Text>Add items to generate recipes!</Text>
             </View>
           ) : (
-            <View style={{ padding: 20, alignItems: "center" }}>
+            <View style={ homeStyles.emptyText }>
               {hasGeneratedRecipes ? (
                 <>
                   <Text style={{ marginBottom: 10 }}>
@@ -353,7 +373,7 @@ const HomePage = ({ userId, setRecipe }) => {
         </View>
 
         {/* Saved Recipes */}
-        <View style={{ maxHeight: windowHeight * 0.19 }}>
+        {/* <View style={{ maxHeight: windowHeight * 0.19 }}>
           <Text h4 style={homeStyles.header}>
             Saved Recipes:
           </Text>
@@ -368,28 +388,34 @@ const HomePage = ({ userId, setRecipe }) => {
                   navigation.navigate("Recipe");
                 }}
               >
-                <Icon name="star" type="material" color="#FFD700" size={20} />
-                <ListItem.Content>
+                <Icon
+                  key={`icon-${item.itemId}`}
+                  name="star"
+                  type="material"
+                  color="#FFD700"
+                  size={20}
+                />
+                <ListItem.Content key={`content-${item.itemId}`}>
                   <ListItem.Title>{item.recipe_name}</ListItem.Title>
                 </ListItem.Content>
               </ListItem>
             )}
             ListEmptyComponent={() => (
-              <View style={{ padding: 20 }}>
+              <View style={{ homeStyles.emptyText }}>
                 <Text>No saved recipes yet. Star recipes to save them!</Text>
               </View>
             )}
             ListHeaderComponent={
               isLoadingSaved ? (
-                <View style={{ alignItems: "center", padding: 20 }}>
+                <View style={ homeStyles.emptyText }>
                   <ActivityIndicator size="large" color="#52B788" />
                 </View>
               ) : null
             }
           />
-        </View>
+        </View> */}
       </View>
-    </View>
+    </SafeAreaView>
   );
 };
 

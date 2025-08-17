@@ -1,5 +1,11 @@
-import { Tabs } from "./components/Tabs";
+import React from 'react';
+import { AuthProvider } from './contexts/AuthContext';
+import { Tabs } from './components/Tabs';
 
 export default function App() {
-  return <Tabs></Tabs>;
+  return (
+    <AuthProvider>
+      <Tabs />
+    </AuthProvider>
+  );
 }

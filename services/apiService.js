@@ -1,26 +1,60 @@
-import { API_BASE_URL, API_ENDPOINTS, buildApiUrl } from "../config/api";
+import { API_BASE_URL, API_ENDPOINTS, buildApiUrl } from '../config/api';
+import * as SecureStore from 'expo-secure-store';
 
-// Base fetch function with error handling
+// API request builder
 const apiRequest = async (url, options = {}) => {
   try {
+    const accessToken = await SecureStore.getItemAsync('access_token');
+
+    const headers = {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    };
+
+    // Add auth header if token exists
+    if (accessToken && !options.skipAuth) {
+      headers['Authorization'] = `Bearer ${accessToken}`;
+    }
+
     const response = await fetch(url, {
-      headers: {
-        "Content-Type": "application/json",
-        ...options.headers,
-      },
       ...options,
+      headers
     });
+
+    // Handle token expiry
+    if (response.status === 401 && !options.skipRetry) {
+      const refreshToken = await SecureStore.getItemAsync('refresh_token');
+      if (refreshToken) {
+        try {
+          // Try to refresh token
+          const refreshResponse = await fetch(`${API_BASE_URL}${API_ENDPOINTS.REFRESH}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ refreshToken })
+          });
+
+          if (refreshResponse.ok) {
+            const tokens = await refreshResponse.json();
+            await SecureStore.setItemAsync('access_token', tokens.accessToken);
+            await SecureStore.setItemAsync('refresh_token', tokens.refreshToken);
+
+            // Retry original request with new token
+            return apiRequest(url, { ...options, skipRetry: true });
+          }
+        } catch (error) {
+          console.error('Token refresh failed:', error);
+        }
+      }
+    }
 
     if (!response.ok) {
       const errorData = await response.json();
-      throw new Error(
-        errorData.error || errorData.message || `HTTP ${response.status}`,
-      );
+      throw new Error(errorData.message || `HTTP ${response.status}`);
     }
 
     return await response.json();
   } catch (error) {
-    console.error("API Request failed:", error);
+    console.error('API Request failed:', error);
     throw error;
   }
 };
@@ -29,22 +63,65 @@ const apiRequest = async (url, options = {}) => {
 export const authService = {
   login: async (email, password) => {
     return apiRequest(`${API_BASE_URL}${API_ENDPOINTS.LOGIN}`, {
-      method: "POST",
+      method: 'POST',
       body: JSON.stringify({ email, password }),
+      skipAuth: true
     });
   },
 
   signup: async (email, password) => {
     return apiRequest(`${API_BASE_URL}${API_ENDPOINTS.SIGNUP}`, {
-      method: "POST",
+      method: 'POST',
       body: JSON.stringify({ email, password }),
+      skipAuth: true
     });
   },
 
-  getUserEmail: async (userId) => {
-    const url = buildApiUrl(API_ENDPOINTS.EMAIL, { userId });
-    return apiRequest(url);
+  googleAuth: async (idToken) => {
+    return apiRequest(`${API_BASE_URL}${API_ENDPOINTS.GOOGLE}`, {
+      method: 'POST',
+      body: JSON.stringify({ idToken }),
+      skipAuth: true
+    });
   },
+
+  refreshToken: async (refreshToken) => {
+    return apiRequest(`${API_BASE_URL}${API_ENDPOINTS.REFRESH}`, {
+      method: 'POST',
+      body: JSON.stringify({ refreshToken }),
+      skipAuth: true
+    });
+  },
+
+  logout: async (refreshToken, logoutAll = false, userId = null) => {
+    return apiRequest(`${API_BASE_URL}${API_ENDPOINTS.LOGOUT}`, {
+      method: 'POST',
+      body: JSON.stringify({ refreshToken, logoutAll, userId }),
+      skipAuth: true
+    });
+  },
+
+  verifyEmail: async (token) => {
+    return apiRequest(`${API_BASE_URL}${API_ENDPOINTS.VERIFY_EMAIL}`, {
+      method: 'POST',
+      body: JSON.stringify({ token }),
+      skipAuth: true
+    });
+  },
+
+  resendVerification: async (email) => {
+    return apiRequest(`${API_BASE_URL}${API_ENDPOINTS.RESEND_VERIFICATION}`, {
+      method: 'POST',
+      body: JSON.stringify({ email }),
+      skipAuth: true
+    });
+  },
+
+  getUserProfile: async (userId) => {
+    return apiRequest(`${API_BASE_URL}/users/${userId}`, {
+      method: 'GET'
+    });
+  }
 };
 
 // Inventory Services
@@ -115,11 +192,11 @@ export const recipeService = {
     return apiRequest(`${API_BASE_URL}${API_ENDPOINTS.RECIPES}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ 
-        ingredients, 
-        userId, 
+      body: JSON.stringify({
+        ingredients,
+        userId,
         action,
-        currentRecipes 
+        currentRecipes
       })
     });
   },

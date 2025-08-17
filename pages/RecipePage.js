@@ -2,7 +2,6 @@ import { recipeStyles } from "../styles/RecipePageStyles";
 import { recipeService } from "../services/apiService";
 
 import React, { useState, useEffect } from "react";
-import { Header } from "../components/Header";
 import {
   SafeAreaView,
   ScrollView,
@@ -16,7 +15,12 @@ import { Button, Text, Input, Icon } from "@rneui/themed";
 import * as Sharing from "expo-sharing";
 import * as FileSystem from "expo-file-system";
 
-const RecipePage = ({ userId, recipe }) => {
+import { useAuth } from '../contexts/AuthContext';
+
+const RecipePage = ({ recipe }) => {
+  const { user } = useAuth();
+  const userId = user?.id;
+  
   const navigation = useNavigation();
   const [modalVisible, setModalVisible] = useState(false);
   const [recipient, setRecipient] = useState("");
@@ -183,7 +187,6 @@ const RecipePage = ({ userId, recipe }) => {
 
   return (
     <SafeAreaView style={recipeStyles.container}>
-      {/* <Header /> */}
 
       <ScrollView contentContainerStyle={{ paddingBottom: 200 }}>
         <View style={recipeStyles.recipeContainer}>

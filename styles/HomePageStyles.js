@@ -9,10 +9,13 @@ export const homeStyles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
+  buttonContainer: {
+    alignItems: "center",
+    justifyContent: "center"
+  },
   button: {
     width: Dimensions.get("window").width * 0.85,
     height: Dimensions.get("window").height * 0.07,
-    // marginTop: "2%",
     marginBottom: "3%",
     borderRadius: 10,
   },
@@ -20,6 +23,10 @@ export const homeStyles = StyleSheet.create({
     fontSize: 20,
     textAlign: "center",
     color: "white",
+  },
+  emptyText: {
+    padding: 20,
+    alignItems: "center"
   },
   banner: {
     width: "110%",
@@ -61,6 +68,11 @@ export const homeStyles = StyleSheet.create({
   preferencesText: {
     fontSize: 14,
     color: "#666",
+  },
+  recipeActionButtonContainer: {
+    flexDirection: 'row',
+    margin: 10,
+    gap: 10
   },
   recipeActionButton: {
     borderRadius: 25,
