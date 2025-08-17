@@ -20,9 +20,17 @@ const getGoogleApiUrl = () => {
   };
 }
 
+const getRedirectUri = () => {
+    if (process.env.REDIRECT_URI) {
+    return process.env.REDIRECT_URI
+  };
+}
+
 export const API_BASE_URL = getBaseApiUrl();
 
-export const API_GOOGLE_URL = getGoogleApiUrl;
+export const API_GOOGLE_URL = getGoogleApiUrl();
+
+export const REDIRECT_URI = getRedirectUri();
 
 export const API_ENDPOINTS = {
   // Auth

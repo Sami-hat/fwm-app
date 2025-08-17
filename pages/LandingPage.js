@@ -18,10 +18,13 @@ const LandingPage = () => {
   }, [isAuthenticated, navigation]);
 
   const handleGoogleSignIn = async () => {
+    console.log('Starting Google Sign In');
     try {
-      await signInWithGoogle();
+      const result = await signInWithGoogle();
+      console.log('Sign in result:', result);
     } catch (error) {
-      Alert.alert('Sign In Failed', 'Unable to sign in with Google. Please try again.');
+      console.error('Sign in failed:', error);
+      Alert.alert('Sign In Failed', error.message || 'Please try again');
     }
   };
 
@@ -89,7 +92,7 @@ const LandingPage = () => {
           effectively use the food products you own!
         </Text>
       </View>
-      
+
       <View style={landingStyles.footer}>
         <Text style={landingStyles.footerTextLeft}>
           © {currentYear} Shelfie.

@@ -1,8 +1,8 @@
 {
   "expo": {
-    "name": "Shelfie",
-    "slug": "Shelfie",
-    "scheme": "Shelfie",
+    "name": "shelfie",
+    "slug": "shelfie",
+    "scheme": "shelfie",
     "version": "1.0.0",
     "platforms": ["ios", "android"],
     "orientation": "portrait",
@@ -10,7 +10,7 @@
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.sami.hat.fwmapp",
+      "bundleIdentifier": "com.sami.hat.shelfie",
       "infoPlist": {
         "NSCameraUsageDescription": "This app uses the camera to take photos of food items for inventory management.",
         "NSPhotoLibraryUsageDescription": "This app needs access to photo library to save food images.",
@@ -24,7 +24,7 @@
         "READ_EXTERNAL_STORAGE",
         "WRITE_EXTERNAL_STORAGE"
       ],
-      "package": "com.sami.hat.fwmapp"
+      "package": "com.sami.hat.shelfie"
     },
     "web": {
       "favicon": "./assets/favicon.png"
