@@ -7,14 +7,14 @@ import { useAuth } from "../contexts/AuthContext";
 
 import LandingPage from "../pages/LandingPage";
 import HomePage from "../pages/HomePage";
-import EntriesPage from "../pages/EntriesPage";
+// import EntriesPage from "../pages/EntriesPage";
 import CameraPage from "../pages/CameraPage";
 import ScannerPage from "../pages/ScannerPage";
 import PreferencesPage from "../pages/PreferencesPage";
 import SignUpPage from "../pages/SignUpPage";
 import LoginPage from "../pages/LoginPage";
 import RecipePage from "../pages/RecipePage";
-import SettingsPage from "../pages/SettingsPage";
+// import SettingsPage from "../pages/SettingsPage";
 
 const Stack = createStackNavigator();
 
@@ -61,8 +61,8 @@ const ProfileStack = ({ setIndex, recipe, setRecipe }) => {
 
 const routes = [
   { key: "profile", title: "Home" },
-  { key: "entries", title: "Inventory" },
-  { key: "settings", title: "Settings" },
+  // { key: "entries", title: "Inventory" },
+  // { key: "settings", title: "Settings" },
 ];
 
 export const Tabs = () => {
@@ -93,14 +93,14 @@ export const Tabs = () => {
             setIndex={setIndex}
           />
         );
-      case "entries":
-        return <EntriesPage/>;
-      case "settings":
-        return (
-          <SettingsPage
-            setIndex={setIndex}
-          />
-        );
+      // case "entries":
+      //   return <EntriesPage/>;
+      // case "settings":
+      //   return (
+      //     <SettingsPage
+      //       setIndex={setIndex}
+      //     />
+      //   );
       default:
         return null;
     }

@@ -28,10 +28,8 @@ export const AuthProvider = ({ children }) => {
     useProxy: true,
   });
 
-  console.log('Using redirect URI:', redirectUri);
-
   const [request, response, promptAsync] = Google.useAuthRequest({
-    expoClientId: REDIRECT_URI,
+    expoClientId: API_GOOGLE_URL,
     androidClientId: API_GOOGLE_URL,
     iosClientId: API_GOOGLE_URL,
     webClientId: API_GOOGLE_URL,
