@@ -2,7 +2,7 @@ import Constants from 'expo-constants';
 
 const getGoogleClientIds = () => {
   const extra = Constants.expoConfig?.extra || {};
-  
+
   return {
     WEB_CLIENT_ID: extra.GOOGLE_WEB_CLIENT_ID || process.env.GOOGLE_WEB_CLIENT_ID,
     ANDROID_CLIENT_ID: extra.GOOGLE_ANDROID_CLIENT_ID || process.env.GOOGLE_ANDROID_CLIENT_ID,
@@ -32,9 +32,6 @@ if (__DEV__) {
     GOOGLE_IOS_CLIENT_ID: process.env.GOOGLE_IOS_CLIENT_ID,
     GOOGLE_EXPO_CLIENT_ID: process.env.GOOGLE_EXPO_CLIENT_ID,
   });
-  
-  console.log('Expo extra:', Constants.expoConfig?.extra);
-  console.log('Final GOOGLE_CLIENT_IDS:', GOOGLE_CLIENT_IDS);
 }
 
 export { GOOGLE_CLIENT_IDS, validateClientIds };

@@ -25,11 +25,9 @@ export const AuthProvider = ({ children }) => {
 
   const redirectUri = makeRedirectUri({
     scheme: 'shelfie',
-    useProxy: true
+    useProxy: false
   });
   
-  console.log("google android " + GOOGLE_CLIENT_IDS.ANDROID_CLIENT_ID);
-
   const [request, response, promptAsync] = Google.useAuthRequest({
     webClientId: GOOGLE_CLIENT_IDS.WEB_CLIENT_ID,
     androidClientId: GOOGLE_CLIENT_IDS.ANDROID_CLIENT_ID,
@@ -38,7 +36,10 @@ export const AuthProvider = ({ children }) => {
     redirectUri: redirectUri,
     scopes: ['openid', 'profile', 'email'],
     responseType: ['id_token', 'token'],
-    prompt: 'select_account'
+    prompt: 'select_account',
+    additionalParameters: {},
+    shouldAutoExchangeCode: false,
+    codeChallengeMethod: "",
   });
   
 
