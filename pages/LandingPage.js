@@ -42,20 +42,14 @@ const LandingPage = () => {
       <Button
         title="Sign Up with Email"
         onPress={() => navigation.navigate('SignUp')}
-        buttonStyle={{
-          ...landingStyles.button,
-          backgroundColor: '#5295B7FF',
-        }}
+        buttonStyle={landingStyles.signUpButton}
         titleStyle={landingStyles.buttonText}
       />
 
       <Button
         title="Log In with Email"
         onPress={() => navigation.navigate('Login')}
-        buttonStyle={{
-          ...landingStyles.button,
-          backgroundColor: '#5295B7FF',
-        }}
+        buttonStyle={landingStyles.loginButton}
         titleStyle={landingStyles.buttonText}
       />
 
@@ -72,14 +66,11 @@ const LandingPage = () => {
             name="google"
             size={20}
             color="white"
-            style={{ marginRight: 10 }}
+            style={landingStyles.googleIcon}
           />
         }
         onPress={handleGoogleSignIn}
-        buttonStyle={{
-          ...landingStyles.button,
-          backgroundColor: '#4285F4',
-        }}
+        buttonStyle={landingStyles.googleButton}
         titleStyle={landingStyles.buttonText}
       />
 

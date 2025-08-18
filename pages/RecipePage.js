@@ -20,7 +20,7 @@ import { useAuth } from '../contexts/AuthContext';
 const RecipePage = ({ recipe }) => {
   const { user } = useAuth();
   const userId = user?.id;
-  
+
   const navigation = useNavigation();
   const [modalVisible, setModalVisible] = useState(false);
   const [recipient, setRecipient] = useState("");
@@ -237,10 +237,6 @@ const RecipePage = ({ recipe }) => {
           onPress={() => navigation.navigate("Home")}
           buttonStyle={recipeStyles.iconButton}
         />
-
-        {/* <Button title="Consume Ingredients" buttonStyle={recipeStyles.button}
-                    onPress={() => Alert.alert('TBC')}
-                /> */}
 
         <Button
           icon={

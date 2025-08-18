@@ -4,7 +4,7 @@ import * as Google from 'expo-auth-session/providers/google';
 import * as WebBrowser from 'expo-web-browser';
 import { makeRedirectUri } from 'expo-auth-session';
 import { authService } from '../services/apiService';
-import { API_GOOGLE_URL, REDIRECT_URI } from '../config/api';
+import { GOOGLE_CLIENT_IDS } from '../config/googleAuth';
 
 WebBrowser.maybeCompleteAuthSession();
 
@@ -25,19 +25,22 @@ export const AuthProvider = ({ children }) => {
 
   const redirectUri = makeRedirectUri({
     scheme: 'shelfie',
-    useProxy: true,
+    useProxy: true
   });
+  
+  console.log("google android " + GOOGLE_CLIENT_IDS.ANDROID_CLIENT_ID);
 
   const [request, response, promptAsync] = Google.useAuthRequest({
-    expoClientId: API_GOOGLE_URL,
-    androidClientId: API_GOOGLE_URL,
-    iosClientId: API_GOOGLE_URL,
-    webClientId: API_GOOGLE_URL,
+    webClientId: GOOGLE_CLIENT_IDS.WEB_CLIENT_ID,
+    androidClientId: GOOGLE_CLIENT_IDS.ANDROID_CLIENT_ID,
+    iosClientId: GOOGLE_CLIENT_IDS.IOS_CLIENT_ID,
+    expoClientId: GOOGLE_CLIENT_IDS.EXPO_CLIENT_ID,
     redirectUri: redirectUri,
     scopes: ['openid', 'profile', 'email'],
     responseType: ['id_token', 'token'],
-    prompt: 'select_account',
+    prompt: 'select_account'
   });
+  
 
   // Load stored tokens on app start
   useEffect(() => {
@@ -229,7 +232,7 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     if (!accessToken || !refreshToken) return;
 
-    // Refresh token 5 minutes before expiry (15min - 5min = 10min)
+    // Refresh token 5 minutes before expiry
     const refreshInterval = setInterval(() => {
       refreshAccessToken(refreshToken);
     }, 10 * 60 * 1000); // 10 minutes
@@ -237,7 +240,7 @@ export const AuthProvider = ({ children }) => {
     return () => clearInterval(refreshInterval);
   }, [accessToken, refreshToken]);
 
-  // Enhanced Google sign in with error handling
+  // Google sign in
   const signInWithGoogle = async () => {
     try {
       console.log('Request object:', request);
@@ -251,7 +254,6 @@ export const AuthProvider = ({ children }) => {
       const result = await promptAsync();
       console.log('Prompt result:', result);
 
-      // The response handling is done in useEffect above
       return result;
     } catch (error) {
       console.error('Error during Google sign in:', error);

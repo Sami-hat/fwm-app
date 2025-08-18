@@ -6,15 +6,15 @@ import { useWindowDimensions } from "react-native";
 import { useAuth } from "../contexts/AuthContext";
 
 import LandingPage from "../pages/LandingPage";
+import LoginPage from "../pages/LoginPage";
+import SignUpPage from "../pages/SignUpPage";
 import HomePage from "../pages/HomePage";
-// import EntriesPage from "../pages/EntriesPage";
 import CameraPage from "../pages/CameraPage";
 import ScannerPage from "../pages/ScannerPage";
 import PreferencesPage from "../pages/PreferencesPage";
-import SignUpPage from "../pages/SignUpPage";
-import LoginPage from "../pages/LoginPage";
 import RecipePage from "../pages/RecipePage";
-// import SettingsPage from "../pages/SettingsPage";
+import EntriesPage from "../pages/EntriesPage";
+import SettingsPage from "../pages/SettingsPage";
 
 const Stack = createStackNavigator();
 
@@ -61,8 +61,8 @@ const ProfileStack = ({ setIndex, recipe, setRecipe }) => {
 
 const routes = [
   { key: "profile", title: "Home" },
-  // { key: "entries", title: "Inventory" },
-  // { key: "settings", title: "Settings" },
+  { key: "entries", title: "Inventory" },
+  { key: "settings", title: "Settings" },
 ];
 
 export const Tabs = () => {
@@ -93,21 +93,20 @@ export const Tabs = () => {
             setIndex={setIndex}
           />
         );
-      // case "entries":
-      //   return <EntriesPage/>;
-      // case "settings":
-      //   return (
-      //     <SettingsPage
-      //       setIndex={setIndex}
-      //     />
-      //   );
+      case "entries":
+        return <EntriesPage/>;
+      case "settings":
+        return (
+          <SettingsPage
+            setIndex={setIndex}
+          />
+        );
       default:
         return null;
     }
   };
 
   const renderTabBar = (props) => {
-    // Only show tab bar when user is authenticated
     if (!isAuthenticated) return null;
     
     return (
@@ -117,10 +116,10 @@ export const Tabs = () => {
         style={{
           backgroundColor: "#52B788",
           fontSize: 50,
-          height: dimensions.height * 0.065,
+          height: dimensions.height * 0.065
         }}
       />
-    );
+    )
   };
 
   return (

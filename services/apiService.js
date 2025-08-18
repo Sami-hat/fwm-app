@@ -78,9 +78,16 @@ export const authService = {
   },
 
   googleAuth: async (idToken) => {
+    const platform = Platform.select({
+      ios: 'ios',
+      android: 'android',
+      web: 'web',
+      default: 'expo'
+    });
+
     return apiRequest(`${API_BASE_URL}${API_ENDPOINTS.GOOGLE}`, {
       method: 'POST',
-      body: JSON.stringify({ idToken }),
+      body: JSON.stringify({ idToken, platform }),
       skipAuth: true
     });
   },
