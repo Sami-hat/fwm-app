@@ -1,6 +1,6 @@
 // screens/EmailVerificationScreen.js
 import React, { useEffect, useState } from 'react';
-import { View, Text, TextInput, Button, Alert } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, Alert } from 'react-native';
 
 export default function EmailVerificationScreen({ route, navigation }) {
   const [verificationCode, setVerificationCode] = useState('');
@@ -68,7 +68,7 @@ export default function EmailVerificationScreen({ route, navigation }) {
           borderRadius: 4,
         }}
       />
-      <Button
+      <TouchableOpacity
         title="Verify"
         onPress={() => verifyEmail(verificationCode)}
         disabled={isVerifying || !verificationCode}

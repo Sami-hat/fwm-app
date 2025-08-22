@@ -14,10 +14,9 @@ import {
   Dimensions,
   TouchableOpacity,
   ActivityIndicator,
+  Text,
 } from "react-native";
-import { Button, Text, ListItem, Icon } from "@rneui/themed";
-import Feather from "@expo/vector-icons/Feather";
-import AntDesign from "@expo/vector-icons/AntDesign";
+import { Feather, AntDesign } from "@expo/vector-icons";
 
 import { useAuth } from '../contexts/AuthContext';
 
@@ -200,47 +199,51 @@ const HomePage = ({ setRecipe }) => {
   return (
     <SafeAreaView style={homeStyles.container}>
       <View>
-        <View style={ homeStyles.buttonContainer }>
+        <View style={homeStyles.buttonContainer}>
           {/* Scan Barcode */}
-          <Button
-            title="Scan Barcode"
-            iconRight
-            icon={
-              <Feather
-                name="grid"
-                size={24}
-                color="white"
-                position="absolute"
-                right="20"
-              />
-            }
+          <TouchableOpacity
             onPress={() => navigation.navigate("Scanner")}
-            buttonStyle={{
-              ...homeStyles.button,
-              backgroundColor: "#B8528A",
-            }}
-            titleStyle={homeStyles.buttonText}
-          />
+            style={[
+              homeStyles.button,
+              { 
+                backgroundColor: "#B8528A",
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'center',
+                paddingVertical: 12,
+                paddingHorizontal: 20,
+                borderRadius: 8,
+                marginBottom: 10,
+              }
+            ]}
+          >
+            <Text style={[homeStyles.buttonText, { marginRight: 10 }]}>
+              Scan Barcode
+            </Text>
+            <Feather name="grid" size={24} color="white" />
+          </TouchableOpacity>
+
           {/* Take Image */}
-          <Button
-            title="Take Image"
-            icon={
-              <Feather
-                name="camera"
-                size={24}
-                color="white"
-                position="absolute"
-                right="20"
-              />
-            }
-            iconRight
+          <TouchableOpacity
             onPress={() => navigation.navigate("Camera")}
-            buttonStyle={{
-              ...homeStyles.button,
-              backgroundColor: "#D8A052",
-            }}
-            titleStyle={homeStyles.buttonText}
-          />
+            style={[
+              homeStyles.button,
+              { 
+                backgroundColor: "#D8A052",
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'center',
+                paddingVertical: 12,
+                paddingHorizontal: 20,
+                borderRadius: 8,
+              }
+            ]}
+          >
+            <Text style={[homeStyles.buttonText, { marginRight: 10 }]}>
+              Take Image
+            </Text>
+            <Feather name="camera" size={24} color="white" />
+          </TouchableOpacity>
         </View>
 
         {/* Preferences Display */}
@@ -275,12 +278,12 @@ const HomePage = ({ setRecipe }) => {
 
         {/* Suggested Recipes */}
         <View style={{ maxHeight: windowHeight * 0.35 }}>
-          <Text h4 style={homeStyles.header}>
+          <Text style={homeStyles.header}>
             Suggested Recipes:
           </Text>
 
           {isLoadingRecipes ? (
-            <View style={ homeStyles.emptyText }>
+            <View style={homeStyles.emptyText}>
               <ActivityIndicator size="large" color="#52B788" />
               <Text style={{ marginTop: 10 }}>Finding recipes...</Text>
             </View>
@@ -290,130 +293,206 @@ const HomePage = ({ setRecipe }) => {
                 data={suggestedRecipes}
                 keyExtractor={(item) => item.itemId}
                 renderItem={({ item }) => (
-                  <ListItem
-                    bottomDivider
+                  <TouchableOpacity
                     onPress={() => {
                       setRecipe(item);
                       navigation.navigate("Recipe");
                     }}
+                    style={{
+                      paddingVertical: 12,
+                      paddingHorizontal: 16,
+                      backgroundColor: '#fff',
+                      borderBottomWidth: 1,
+                      borderBottomColor: '#e0e0e0',
+                    }}
                   >
-                    <ListItem.Content>
-                      <ListItem.Title>{item.recipe_name}</ListItem.Title>
-                    </ListItem.Content>
-                  </ListItem>
+                    <Text style={{ 
+                      fontSize: 16, 
+                      fontWeight: '500',
+                      color: '#333' 
+                    }}>
+                      {item.recipe_name}
+                    </Text>
+                  </TouchableOpacity>
                 )}
               />
-              <View style={ homeStyles.recipeActionButtonContainer }>
-                <Button
-                  title="Add 3 More"
+              <View style={homeStyles.recipeActionButtonContainer}>
+                <TouchableOpacity
                   onPress={handleAddMore}
-                  buttonStyle={homeStyles.recipeActionButton}
-                  titleStyle={homeStyles.recipeActionButtonText}
-                  icon={
-                    <Feather
-                      name="plus-circle"
-                      size={18}
-                      color="#52B788"
-                      style={{ marginRight: 5 }}
-                    />
-                  }
-                  type="outline"
+                  style={[
+                    homeStyles.recipeActionButton,
+                    {
+                      flexDirection: 'row',
+                      alignItems: 'center',
+                      paddingVertical: 8,
+                      paddingHorizontal: 12,
+                      borderWidth: 1,
+                      borderColor: '#52B788',
+                      borderRadius: 6,
+                      marginRight: 8,
+                    }
+                  ]}
                   disabled={isLoadingRecipes}
-                />
-                <Button
-                  title="Refresh All"
+                >
+                  <Feather
+                    name="plus-circle"
+                    size={18}
+                    color="#52B788"
+                    style={{ marginRight: 5 }}
+                  />
+                  <Text style={[
+                    homeStyles.recipeActionButtonText,
+                    { color: '#52B788' }
+                  ]}>
+                    Add 3 More
+                  </Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity
                   onPress={handleRefreshRecipes}
-                  buttonStyle={homeStyles.recipeActionButton}
-                  titleStyle={homeStyles.recipeActionButtonText}
-                  icon={
-                    <Feather
-                      name="refresh-cw"
-                      size={18}
-                      color="#4A90E2"
-                      style={{ marginRight: 5 }}
-                    />
-                  }
-                  type="outline"
+                  style={[
+                    homeStyles.recipeActionButton,
+                    {
+                      flexDirection: 'row',
+                      alignItems: 'center',
+                      paddingVertical: 8,
+                      paddingHorizontal: 12,
+                      borderWidth: 1,
+                      borderColor: '#4A90E2',
+                      borderRadius: 6,
+                    }
+                  ]}
                   disabled={isLoadingRecipes}
-                />
+                >
+                  <Feather
+                    name="refresh-cw"
+                    size={18}
+                    color="#4A90E2"
+                    style={{ marginRight: 5 }}
+                  />
+                  <Text style={[
+                    homeStyles.recipeActionButtonText,
+                    { color: '#4A90E2' }
+                  ]}>
+                    Refresh All
+                  </Text>
+                </TouchableOpacity>
               </View>
             </>
           ) : ingredients.length === 0 ? (
-            <View style={ homeStyles.emptyText }>
+            <View style={homeStyles.emptyText}>
               <Text>No ingredients in inventory.</Text>
               <Text>Add items to generate recipes!</Text>
             </View>
           ) : (
-            <View style={ homeStyles.emptyText }>
+            <View style={homeStyles.emptyText}>
               {hasGeneratedRecipes ? (
                 <>
                   <Text style={{ marginBottom: 10 }}>
                     No recipes found. Try again?
                   </Text>
-                  <Button
-                    title="Retry"
-                    onPress={generateRecipes("generate")}
-                    buttonStyle={homeStyles.generateRecipeButton}
-                    titleStyle={homeStyles.generateRecipeButtonText}
-                    type="outline"
-                  />
+                  <TouchableOpacity
+                    onPress={() => generateRecipes("generate")}
+                    style={[
+                      homeStyles.generateRecipeButton,
+                      {
+                        paddingVertical: 10,
+                        paddingHorizontal: 20,
+                        borderWidth: 1,
+                        borderColor: '#52B788',
+                        borderRadius: 6,
+                      }
+                    ]}
+                  >
+                    <Text style={[
+                      homeStyles.generateRecipeButtonText,
+                      { color: '#52B788' }
+                    ]}>
+                      Retry
+                    </Text>
+                  </TouchableOpacity>
                 </>
               ) : (
-                <Button
-                  title="Generate Recipes"
-                  onPress={generateRecipes("generate")}
-                  buttonStyle={homeStyles.generateRecipeButton}
-                  titleStyle={homeStyles.generateRecipeButtonText}
-                  type="solid"
-                  color="#52B788"
-                />
+                <TouchableOpacity
+                  onPress={() => generateRecipes("generate")}
+                  style={[
+                    homeStyles.generateRecipeButton,
+                    {
+                      backgroundColor: '#52B788',
+                      paddingVertical: 10,
+                      paddingHorizontal: 20,
+                      borderRadius: 6,
+                    }
+                  ]}
+                >
+                  <Text style={[
+                    homeStyles.generateRecipeButtonText,
+                    { color: '#fff', fontWeight: 'bold' }
+                  ]}>
+                    Generate Recipes
+                  </Text>
+                </TouchableOpacity>
               )}
             </View>
           )}
         </View>
 
         {/* Saved Recipes */}
-        {/* <View style={{ maxHeight: windowHeight * 0.19 }}>
-          <Text h4 style={homeStyles.header}>
+        <View style={{ maxHeight: windowHeight * 0.19 }}>
+          <Text style={homeStyles.header}>
             Saved Recipes:
           </Text>
           <FlatList
             data={savedRecipes}
             keyExtractor={(item) => item.itemId}
             renderItem={({ item }) => (
-              <ListItem
-                bottomDivider
+              <TouchableOpacity
                 onPress={() => {
                   setRecipe(item);
                   navigation.navigate("Recipe");
                 }}
+                style={{
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  paddingVertical: 12,
+                  paddingHorizontal: 16,
+                  backgroundColor: '#fff',
+                  borderBottomWidth: 1,
+                  borderBottomColor: '#e0e0e0',
+                }}
               >
-                <Icon
-                  key={`icon-${item.itemId}`}
-                  name="star"
-                  type="material"
-                  color="#FFD700"
-                  size={20}
-                />
-                <ListItem.Content key={`content-${item.itemId}`}>
-                  <ListItem.Title>{item.recipe_name}</ListItem.Title>
-                </ListItem.Content>
-              </ListItem>
+                <Text style={{
+                  fontSize: 20,
+                  color: '#FFD700',
+                  marginRight: 12
+                }}>
+                  ⭐
+                </Text>
+                <View style={{ flex: 1 }}>
+                  <Text style={{
+                    fontSize: 16,
+                    fontWeight: '500',
+                    color: '#333'
+                  }}>
+                    {item.recipe_name}
+                  </Text>
+                </View>
+              </TouchableOpacity>
             )}
             ListEmptyComponent={() => (
-              <View style={{ homeStyles.emptyText }}>
+              <View style={homeStyles.emptyText}>
                 <Text>No saved recipes yet. Star recipes to save them!</Text>
               </View>
             )}
             ListHeaderComponent={
               isLoadingSaved ? (
-                <View style={ homeStyles.emptyText }>
+                <View style={homeStyles.emptyText}>
                   <ActivityIndicator size="large" color="#52B788" />
                 </View>
               ) : null
             }
           />
-        </View> */}
+        </View>
       </View>
     </SafeAreaView>
   );

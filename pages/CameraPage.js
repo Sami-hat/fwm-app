@@ -7,8 +7,8 @@ import {
   Alert,
   ActivityIndicator,
   SafeAreaView,
+  Text
 } from "react-native";
-import { Text } from "@rneui/themed";
 import { useNavigation } from "@react-navigation/native";
 
 import { CameraView, useCameraPermissions } from "expo-camera";
@@ -112,7 +112,7 @@ const CameraPage = ({ }) => {
       <SafeAreaView style={cameraStyles.permissionContainer}>
         <View style={cameraStyles.permissionContent}>
           <Ionicons name="camera-outline" size={80} color="#52B788" />
-          <Text h3 style={cameraStyles.permissionTitle}>
+          <Text style={cameraStyles.permissionTitle}>
             Camera Permission Required
           </Text>
           <Text style={cameraStyles.permissionText}>

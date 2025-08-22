@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-import { SafeAreaView, Alert } from 'react-native';
-import { Button, Input, Text } from '@rneui/themed';
+import { SafeAreaView, Alert, TouchableOpacity, TextInput, Text } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { useAuth } from '../contexts/AuthContext';
 import { signUpStyles } from '../styles/SignUpPageStyles';
@@ -80,11 +79,11 @@ const SignUpPage = () => {
 
   return (
     <SafeAreaView style={signUpStyles.container}>
-      <Text h3 style={signUpStyles.title}>
+      <Text style={signUpStyles.title}>
         Sign Up
       </Text>
 
-      <Input
+      <TextInput
         placeholder="Email"
         keyboardType="email-address"
         autoCapitalize="none"
@@ -102,7 +101,7 @@ const SignUpPage = () => {
         errorMessage={error && error.includes('email') ? error : ''}
       />
 
-      <Input
+      <TextInput
         placeholder="Password"
         secureTextEntry
         value={password}
@@ -119,7 +118,7 @@ const SignUpPage = () => {
         errorMessage={error && error.includes('Password') ? error : ''}
       />
 
-      <Input
+      <TextInput
         placeholder="Confirm Password"
         secureTextEntry
         value={confirmPassword}
@@ -140,7 +139,7 @@ const SignUpPage = () => {
         Password must contain at least 8 characters, including uppercase, lowercase, number, and special character
       </Text>
 
-      <Button
+      <TouchableOpacity
         title="Sign Up"
         onPress={handleSignup}
         buttonStyle={signUpStyles.signupButton}
@@ -149,7 +148,7 @@ const SignUpPage = () => {
         disabled={loading}
       />
 
-      <Button
+      <TouchableOpacity
         style={{ paddingTop: 10 }}
         title="Back to Home"
         type="clear"

@@ -9,9 +9,12 @@ import {
   View,
   Alert,
   ActivityIndicator,
+  TouchableOpacity, 
+  Text, 
+  TextInput, 
+  Icon
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import { Button, Text, Input, Icon } from "@rneui/themed";
 import * as Sharing from "expo-sharing";
 import * as FileSystem from "expo-file-system";
 
@@ -190,32 +193,32 @@ const RecipePage = ({ recipe }) => {
 
       <ScrollView contentContainerStyle={{ paddingBottom: 200 }}>
         <View style={recipeStyles.recipeContainer}>
-          <Text h3 style={recipeStyles.title}>
+          <Text style={recipeStyles.title}>
             {recipe.recipe_name}
           </Text>
 
-          <Text h4 style={recipeStyles.subtitle}>
+          <Text style={recipeStyles.subtitle}>
             Ingredients
           </Text>
           <Text style={recipeStyles.displayText}>
             {formatIngredients(getString(recipe.ingredients_needed))}
           </Text>
 
-          <Text h4 style={recipeStyles.subtitle}>
+          <Text style={recipeStyles.subtitle}>
             Method
           </Text>
           <Text style={recipeStyles.displayText}>
             {formatMethod(getString(recipe.instructions))}
           </Text>
 
-          <Text h4 style={recipeStyles.subtitle}>
+          <Text style={recipeStyles.subtitle}>
             Servings
           </Text>
           <Text style={recipeStyles.displayText}>
             {formatServings(getString(recipe.servings))}
           </Text>
 
-          <Text h4 style={recipeStyles.subtitle}>
+          <Text style={recipeStyles.subtitle}>
             Difficulty
           </Text>
           <Text style={recipeStyles.displayText}>
@@ -232,13 +235,13 @@ const RecipePage = ({ recipe }) => {
           padding: 10,
         }}
       >
-        <Button
+        <TouchableOpacity
           icon={<Icon name="arrow-back" type="material" color="black" />}
           onPress={() => navigation.navigate("Home")}
           buttonStyle={recipeStyles.iconButton}
         />
 
-        <Button
+        <TouchableOpacity
           icon={
             isLoading ? (
               <ActivityIndicator size="small" color="black" />
@@ -255,7 +258,7 @@ const RecipePage = ({ recipe }) => {
           disabled={isLoading}
         />
 
-        <Button
+        <TouchableOpacity
           icon={<Icon name="share" type="material" color="black" />}
           onPress={async () => {
             await shareText(
@@ -279,20 +282,20 @@ const RecipePage = ({ recipe }) => {
       >
         <View style={recipeStyles.modalOverlay}>
           <View style={recipeStyles.modalView}>
-            <Input
+            <TextInput
               placeholder="Enter recipient email here..."
               value={recipient}
               onChangeText={setRecipient}
               containerStyle={recipeStyles.inputContainer}
               inputStyle={recipeStyles.input}
             />
-            <Button
+            <TouchableOpacity
               title="Submit"
               onPress={handlePopupSubmit}
               buttonStyle={recipeStyles.submitButton}
               titleStyle={recipeStyles.modalButtonText}
             />
-            <Button
+            <TouchableOpacity
               title="Cancel"
               onPress={handleCancel}
               buttonStyle={recipeStyles.submitButton}

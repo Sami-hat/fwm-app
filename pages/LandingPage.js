@@ -1,6 +1,5 @@
 import React, { useEffect } from 'react';
-import { View, ScrollView, SafeAreaView, Alert } from 'react-native';
-import { Button, Text } from '@rneui/themed';
+import { View, ScrollView, SafeAreaView, Alert, TouchableOpacity, Text } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { useAuth } from '../contexts/AuthContext';
 import { landingStyles } from '../styles/LandingPageStyles';
@@ -31,22 +30,22 @@ const LandingPage = () => {
   return (
     <View style={landingStyles.container}>
       <View style={landingStyles.banner}>
-        <Text h3 style={landingStyles.welcomeText}>
+        <Text style={landingStyles.welcomeText}>
           Welcome to Shelfie!
         </Text>
-        <Text h5 style={landingStyles.welcomeText}>
+        <Text style={landingStyles.welcomeText}>
           Please sign up or log in to access your profile.
         </Text>
       </View>
 
-      <Button
+      <TouchableOpacity
         title="Sign Up with Email"
         onPress={() => navigation.navigate('SignUp')}
         buttonStyle={landingStyles.signUpButton}
         titleStyle={landingStyles.buttonText}
       />
 
-      <Button
+      <TouchableOpacity
         title="Log In with Email"
         onPress={() => navigation.navigate('Login')}
         buttonStyle={landingStyles.loginButton}
@@ -59,7 +58,7 @@ const LandingPage = () => {
         <View style={landingStyles.dividerLine} />
       </View>
 
-      <Button
+      <TouchableOpacity
         title="Continue with Google"
         icon={
           <Icon
@@ -75,7 +74,7 @@ const LandingPage = () => {
       />
 
       <View style={landingStyles.statisticsBox}>
-        <Text h3 style={landingStyles.statisticsTitle}>
+        <Text style={landingStyles.statisticsTitle}>
           Your Statistics
         </Text>
         <Text style={landingStyles.statisticsText}>

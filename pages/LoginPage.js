@@ -1,8 +1,7 @@
 import { loginStyles } from '../styles/LoginPageStyles';
 
 import React, { useState } from 'react';
-import { SafeAreaView, Alert } from 'react-native';
-import { Button, Input, Text } from '@rneui/themed';
+import { SafeAreaView, Alert, TextInput, Text } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { useAuth } from '../contexts/AuthContext';
 
@@ -61,11 +60,11 @@ const LoginPage = () => {
 
   return (
     <SafeAreaView style={loginStyles.container}>
-      <Text h3 style={loginStyles.title}>
+      <Text style={loginStyles.title}>
         Log In
       </Text>
 
-      <Input
+      <TextInput
         placeholder="Email"
         keyboardType="email-address"
         autoCapitalize="none"
@@ -83,7 +82,7 @@ const LoginPage = () => {
         errorMessage={error && error.includes('email') ? error : ''}
       />
 
-      <Input
+      <TextInput
         placeholder="Password"
         secureTextEntry
         value={password}
@@ -100,7 +99,7 @@ const LoginPage = () => {
         errorMessage={error && error.includes('password') ? error : ''}
       />
 
-      <Button
+      <TouchableOpacity
         title="Log In"
         onPress={handleLogin}
         buttonStyle={loginStyles.loginButton}
@@ -109,7 +108,7 @@ const LoginPage = () => {
         disabled={loading}
       />
 
-      <Button
+      <TouchableOpacity
         style={{ paddingTop: 10 }}
         title="Back to Home"
         type="clear"

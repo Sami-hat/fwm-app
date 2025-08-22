@@ -2,9 +2,8 @@ import { preferencesStyles } from "../styles/PreferencesPageStyles";
 import { preferencesService } from "../services/apiService";
 
 import React, { useState, useEffect } from "react";
-import { SafeAreaView, Alert, ScrollView, View } from "react-native";
+import { SafeAreaView, Alert, ScrollView, View, TouchableOpacity, Text, Switch, TextInput } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import { Button, Text, CheckBox, Input } from "@rneui/themed";
 
 import { useAuth } from '../contexts/AuthContext';
 
@@ -100,11 +99,11 @@ const PreferencesPage = ({ }) => {
         contentContainerStyle={preferencesStyles.scrollContainer}
         showsVerticalScrollIndicator={false}
       >
-        <Text h3 style={preferencesStyles.title}>
+        <Text style={preferencesStyles.title}>
           Dietary Preferences
         </Text>
 
-        <CheckBox
+        <Switch
           title="Vegan"
           checked={preferences.is_vegan}
           onPress={() => updatePreference("is_vegan", !preferences.is_vegan)}
@@ -113,7 +112,7 @@ const PreferencesPage = ({ }) => {
           checkedColor="#52B788"
         />
 
-        <CheckBox
+        <Switch
           title="Vegetarian"
           checked={preferences.is_vegetarian}
           onPress={() =>
@@ -124,7 +123,7 @@ const PreferencesPage = ({ }) => {
           checkedColor="#52B788"
         />
 
-        <CheckBox
+        <Switch
           title="Gluten Free"
           checked={preferences.is_gluten_free}
           onPress={() =>
@@ -135,7 +134,7 @@ const PreferencesPage = ({ }) => {
           checkedColor="#52B788"
         />
 
-        <CheckBox
+        <Switch
           title="Dairy Free"
           checked={preferences.is_dairy_free}
           onPress={() =>
@@ -146,7 +145,7 @@ const PreferencesPage = ({ }) => {
           checkedColor="#52B788"
         />
 
-        <CheckBox
+        <Switch
           title="Nut Free"
           checked={preferences.is_nut_free}
           onPress={() =>
@@ -157,7 +156,7 @@ const PreferencesPage = ({ }) => {
           checkedColor="#52B788"
         />
 
-        <CheckBox
+        <Switch
           title="High Protein"
           checked={preferences.is_high_protein}
           onPress={() =>
@@ -168,7 +167,7 @@ const PreferencesPage = ({ }) => {
           checkedColor="#52B788"
         />
 
-        <CheckBox
+        <Switch
           title="Low Carb"
           checked={preferences.is_low_carb}
           onPress={() =>
@@ -179,7 +178,7 @@ const PreferencesPage = ({ }) => {
           checkedColor="#52B788"
         />
 
-        <CheckBox
+        <Switch
           title="Custom Dietary Restrictions"
           checked={preferences.is_custom}
           onPress={toggleCustom}
@@ -190,7 +189,7 @@ const PreferencesPage = ({ }) => {
 
         {preferences.is_custom && (
           <View style={preferencesStyles.customInputContainer}>
-            <Input
+            <TextInput
               placeholder="Enter your custom dietary preferences..."
               placeholderTextColor="#999"
               value={preferences.custom_text}
@@ -210,7 +209,7 @@ const PreferencesPage = ({ }) => {
           </View>
         )}
 
-        <Button
+        <TouchableOpacity
           title="Save Preferences"
           onPress={savePreferences}
           loading={loading}
@@ -219,7 +218,7 @@ const PreferencesPage = ({ }) => {
           titleStyle={preferencesStyles.buttonTitle}
         />
 
-        <Button
+        <TouchableOpacity
           title="Cancel"
           type="clear"
           titleStyle={preferencesStyles.cancelText}

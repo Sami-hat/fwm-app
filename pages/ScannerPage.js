@@ -6,7 +6,7 @@ import React, { useState } from "react";
 import {
   Text,
   View,
-  Button,
+  TouchableOpacity,
   StyleSheet,
   TouchableOpacity,
   Alert,
@@ -114,7 +114,7 @@ const ScannerPage = ({ }) => {
         <Text style={scannerStyles.message}>
           We need camera permission to scan barcodes
         </Text>
-        <Button onPress={requestPermission} title="Grant Permission" />
+        <TouchableOpacity onPress={requestPermission} title="Grant Permission" />
       </View>
     );
   }
@@ -191,7 +191,7 @@ const ScannerPage = ({ }) => {
       {/* Scan again button */}
       {scanned && !processing && (
         <View style={scannerStyles.scannedContainer}>
-          <Button
+          <TouchableOpacity
             title="Tap to Scan Again"
             onPress={() => setScanned(false)}
             color="#52B788"

@@ -8,8 +8,10 @@ import {
   Alert,
   Platform,
   TouchableOpacity,
+  TextInput, 
+  Text, 
+  Card
 } from "react-native";
-import { Button, Input, Text, Card } from "@rneui/themed";
 import DateTimePicker from "@react-native-community/datetimepicker";
 
 import { useAuth } from '../contexts/AuthContext';
@@ -189,29 +191,29 @@ const EntriesPage = ({ }) => {
       {/* Main Content Section */}
       {isPosting ? (
         <View style={entriesStyles.content}>
-          <Text h4 style={entriesStyles.inputLabel}>
+          <Text style={entriesStyles.inputLabel}>
             Name of Item:
           </Text>
-          <Input
+          <TextInput
             placeholder={isEditing ? "Edit item name" : "Enter item name"}
             value={name}
             onChangeText={setName}
             inputContainerStyle={entriesStyles.inputContainer}
           />
-          <Text h4 style={entriesStyles.inputLabel}>
+          <Text style={entriesStyles.inputLabel}>
             Quantity:
           </Text>
-          <Input
+          <TextInput
             placeholder={isEditing ? "Edit quantity" : "Enter quantity"}
             keyboardType="numeric"
             value={quantity}
             onChangeText={setQuantity}
             inputContainerStyle={entriesStyles.inputContainer}
           />
-          <Text h4 style={entriesStyles.inputLabel}>
+          <Text style={entriesStyles.inputLabel}>
             Barcode Number:
           </Text>
-          <Input
+          <TextInput
             placeholder={
               isEditing ? "Edit barcode" : "Enter barcode (optional)"
             }
@@ -220,7 +222,7 @@ const EntriesPage = ({ }) => {
             onChangeText={setBarcode}
             inputContainerStyle={entriesStyles.inputContainer}
           />
-          <Text h4 style={entriesStyles.inputLabel}>
+          <Text style={entriesStyles.inputLabel}>
             Expiry Date:
           </Text>
           <TouchableOpacity
@@ -244,13 +246,13 @@ const EntriesPage = ({ }) => {
             />
           )}
 
-          <Button
+          <TouchableOpacity
             title={isAdding ? "Add Item" : "Update Item"}
             onPress={isAdding ? addEntry : editEntry}
             buttonStyle={entriesStyles.button}
             loading={processing}
           />
-          <Button
+          <TouchableOpacity
             title="Cancel"
             onPress={() => {
               setIsPosting(false);
@@ -267,7 +269,7 @@ const EntriesPage = ({ }) => {
             <Text>Loading inventory...</Text>
           ) : inventory.length === 0 ? (
             <>
-              <Text h3 style={entriesStyles.statisticsTitle}>
+              <Text style={entriesStyles.statisticsTitle}>
                 Your Groceries
               </Text>
               <Text style={entriesStyles.statisticsText}>
@@ -278,7 +280,7 @@ const EntriesPage = ({ }) => {
             </>
           ) : (
             <>
-              <Text h3 style={entriesStyles.title}>
+              <Text style={entriesStyles.title}>
                 Your Groceries
               </Text>
               <FlatList
@@ -327,7 +329,7 @@ const EntriesPage = ({ }) => {
                         paddingHorizontal: 2,
                       }}
                     >
-                      <Button
+                      <TouchableOpacity
                         title="Delete"
                         buttonStyle={[
                           entriesStyles.subButton,
@@ -335,7 +337,7 @@ const EntriesPage = ({ }) => {
                         ]}
                         onPress={() => deleteEntry(item.id, item.is_expired)}
                       />
-                      <Button
+                      <TouchableOpacity
                         title="Edit"
                         buttonStyle={[
                           entriesStyles.subButton,
@@ -357,7 +359,7 @@ const EntriesPage = ({ }) => {
               />
             </>
           )}
-          <Button
+          <TouchableOpacity
             title="Add Groceries Manually"
             onPress={() => {
               setIsPosting(true);
