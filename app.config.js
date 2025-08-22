@@ -10,6 +10,19 @@ export default {
     orientation: "portrait",
     userInterfaceStyle: "light",
     newArchEnabled: true,
+    owner: "sami.hat", 
+    icon: "./assets/icon.png",
+    splash: {
+      image: "./assets/splash.png",
+      resizeMode: "contain",
+      backgroundColor: "#ffffff"
+    },
+    updates: {
+      fallbackToCacheTimeout: 0
+    },
+    assetBundlePatterns: [
+      "**/*"
+    ],
     extra: {
       GOOGLE_WEB_CLIENT_ID: process.env.GOOGLE_WEB_CLIENT_ID,
       GOOGLE_ANDROID_CLIENT_ID: process.env.GOOGLE_ANDROID_CLIENT_ID,
@@ -17,10 +30,17 @@ export default {
       GOOGLE_EXPO_CLIENT_ID: process.env.GOOGLE_EXPO_CLIENT_ID,
       GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID,
       REDIRECT_URI: process.env.REDIRECT_URI,
+      eas: {
+        "projectId": "00efa2c3-dbeb-41c5-bafc-f0dfc30db2d6"
+      },
     },
     ios: {
+      associatedDomains: [
+        "applinks:https://fwm-backend.vercel.app/"
+      ],
       supportsTablet: true,
       bundleIdentifier: "com.sami.hat.shelfie",
+      googleServicesFile: "./GoogleService-Info.plist",
       infoPlist: {
         NSCameraUsageDescription: "This app uses the camera to take photos of food items for inventory management.",
         NSPhotoLibraryUsageDescription: "This app needs access to photo library to save food images.",
@@ -28,6 +48,17 @@ export default {
       }
     },
     android: {
+      intentFilters: [
+        {
+          action: "VIEW",
+          data: [
+            {
+              scheme: "shelfie"
+            }
+          ],
+          category: ["BROWSABLE", "DEFAULT"]
+        }
+      ],
       permissions: [
         "android.permission.CAMERA",
         "android.permission.CAMERA",
@@ -61,10 +92,12 @@ export default {
         "expo-build-properties",
         {
           android: {
-            usesCleartextTraffic: true
+            usesCleartextTraffic: true,
+            
           },
           ios: {
-            flipper: true
+            flipper: true,
+            deploymentTarget: "15.1",
           }
         }
       ],

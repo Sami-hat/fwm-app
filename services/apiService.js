@@ -77,19 +77,54 @@ export const authService = {
     });
   },
 
-  googleAuth: async (idToken) => {
-    const platform = Platform.select({
-      ios: 'ios',
-      android: 'android',
-      web: 'web',
-      default: 'expo'
-    });
+  exchangeGoogleCode: async (data) => {
+    try {
+      const response = await fetch(`${API_BASE_URL}${API_ENDPOINTS.GOOGLE_EXCHANGE}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      });
 
-    return apiRequest(`${API_BASE_URL}${API_ENDPOINTS.GOOGLE}`, {
-      method: 'POST',
-      body: JSON.stringify({ idToken, platform }),
-      skipAuth: true
-    });
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.message || 'Failed to exchange authorization code');
+      }
+
+      return result;
+    } catch (error) {
+      console.error('Exchange code error:', error);
+      throw error;
+    }
+  },
+
+  // Fallback OAuth for Expo Go
+  googleAuth: async (idToken) => {
+    try {
+      const response = await fetch(`${API_BASE_URL}${API_ENDPOINTS.GOOGLE_FALLBACK}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          idToken,
+          platform: Platform.OS
+        }),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.message || 'Google authentication failed');
+      }
+
+      return result;
+    } catch (error) {
+      console.error('Google auth error:', error);
+      throw error;
+    }
   },
 
   refreshToken: async (refreshToken) => {

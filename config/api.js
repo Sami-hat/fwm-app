@@ -42,7 +42,8 @@ export const API_ENDPOINTS = {
   RESEND_VERIFICATION: "/auth/resend-verification",
 
   // OAuth
-  GOOGLE: "/auth/google",
+  GOOGLE_EXCHANGE: "/auth/google-exchange",
+  GOOGLE_FALLBACK: "/auth/google",
 
   // User
   EMAIL: "/email",
