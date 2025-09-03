@@ -28,7 +28,7 @@ const LandingPage = () => {
   };
 
   return (
-    <View style={landingStyles.container}>
+    <SafeAreaView style={landingStyles.container}>
       <View style={landingStyles.banner}>
         <Text style={landingStyles.welcomeText}>
           Welcome to Shelfie!
@@ -91,7 +91,7 @@ const LandingPage = () => {
           All rights reserved.
         </Text>
       </View>
-    </View>
+    </SafeAreaView>
   );
 };
 

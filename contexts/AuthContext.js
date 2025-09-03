@@ -4,18 +4,17 @@ import { Platform } from 'react-native';
 import { authService } from '../services/apiService';
 import { GOOGLE_CLIENT_IDS } from '../config/googleAuth';
 
-// Native Google Sign-In (for development builds)
 import {
   GoogleSignin,
+  GoogleSigninButton,
   statusCodes,
 } from '@react-native-google-signin/google-signin';
 
-// Web-based auth (fallback for Expo Go)
+// Web-based auth
 import * as Google from 'expo-auth-session/providers/google';
 import * as WebBrowser from 'expo-web-browser';
 import { makeRedirectUri } from 'expo-auth-session';
 
-// Only needed for Expo Go
 WebBrowser.maybeCompleteAuthSession();
 
 const AuthContext = createContext({});
@@ -33,7 +32,7 @@ export const AuthProvider = ({ children }) => {
   const REFRESH_TOKEN_KEY = 'refresh_token';
   const USER_DATA_KEY = 'user_data';
 
-  // Web-based auth setup (for Expo Go fallback)
+  // Web-based auth setup
   const redirectUri = makeRedirectUri({
     scheme: 'shelfie',
     useProxy: true
@@ -45,11 +44,10 @@ export const AuthProvider = ({ children }) => {
     scopes: ['openid', 'profile', 'email'],
   });
 
-  // Initialize Google Sign-In for development builds
+  // Google Sign-In for dev build
   useEffect(() => {
     const initGoogleSignIn = async () => {
       try {
-        // Check if native module is available (development build)
         if (GoogleSignin) {
           await GoogleSignin.configure({
             webClientId: GOOGLE_CLIENT_IDS.WEB_CLIENT_ID,
@@ -72,7 +70,7 @@ export const AuthProvider = ({ children }) => {
     loadStoredAuth();
   }, []);
 
-  // Handle web-based OAuth response (Expo Go)
+  // Web-based OAuth response
   useEffect(() => {
     if (response?.type === 'success') {
       handleWebAuthResponse(response);
@@ -98,7 +96,7 @@ export const AuthProvider = ({ children }) => {
   const signInWithGoogle = async () => {
     try {
       if (isNativeSignInAvailable) {
-        // Use native Google Sign-In (development build)
+        // Use native Google Sign-In
         console.log('Using native Google Sign-In');
         
         // Check if device supports Google Play Services
@@ -117,7 +115,7 @@ export const AuthProvider = ({ children }) => {
         
         return result;
       } else {
-        // Fallback to web-based auth (Expo Go)
+        // Fallback to web-based auth
         console.log('Using web-based Google Sign-In');
         
         if (!request) {
