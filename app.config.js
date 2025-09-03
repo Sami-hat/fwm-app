@@ -72,12 +72,6 @@ export default {
     },
     plugins: [
       [
-        "@react-native-google-signin/google-signin",
-        {
-          iosUrlScheme: "com.googleusercontent.apps.653807450931-d24sr67p03e8m6n1ro4c2hno7dj7a104"
-        }
-      ],
-      [
         "expo-camera",
         {
           cameraPermission: "Allow $(PRODUCT_NAME) to access your camera",
