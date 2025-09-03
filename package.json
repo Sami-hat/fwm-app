@@ -4,8 +4,8 @@
   "main": "node_modules/expo/AppEntry.js",
   "scripts": {
     "start": "expo start",
-    "android": "expo start --android",
-    "ios": "expo start --ios",
+    "android": "expo run:android",
+    "ios": "expo run:ios",
     "web": "expo start --web",
     "build:dev:android": "eas build --profile development --platform android",
     "build:dev:ios": "eas build --profile development --platform ios"
@@ -22,7 +22,7 @@
     "expo-build-properties": "^0.14.8",
     "expo-camera": "~15.0.0",
     "expo-constants": "~16.0.0",
-    "expo-dev-client": "~4.0.0",
+    "expo-dev-client": "~4.0.29",
     "expo-image-picker": "~15.0.0",
     "expo-linking": "~6.3.1",
     "expo-secure-store": "~13.0.2",
