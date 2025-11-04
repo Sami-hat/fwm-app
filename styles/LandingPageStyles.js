@@ -69,6 +69,7 @@ export const landingStyles = StyleSheet.create({
   buttonText: {
     fontSize: 18,
     textAlign: "center",
+    paddingVertical: 0.25 * windowHeight * 0.07,
     color: "white",
     fontWeight: "600",
   },

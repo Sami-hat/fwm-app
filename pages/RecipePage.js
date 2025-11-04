@@ -15,8 +15,8 @@ import {
   Icon
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import * as Sharing from "expo-sharing";
-import * as FileSystem from "expo-file-system";
+// import * as Sharing from "expo-sharing";
+// import * as FileSystem from "expo-file-system";
 
 import { useAuth } from '../contexts/AuthContext';
 
@@ -176,17 +176,17 @@ const RecipePage = ({ recipe }) => {
     setModalVisible(false);
   };
 
-  const shareText = async (title, text) => {
-    const fileUri = FileSystem.documentDirectory + `${title}` + ".txt";
-    await FileSystem.writeAsStringAsync(fileUri, text);
+  // const shareText = async (title, text) => {
+  //   const fileUri = FileSystem.documentDirectory + `${title}` + ".txt";
+  //   await FileSystem.writeAsStringAsync(fileUri, text);
 
-    // Share with appropriate MIME type and UTI
-    await Sharing.shareAsync(fileUri, {
-      mimeType: "text/plain", // For Android
-      UTI: "public.text", // For iOS
-      dialogTitle: "Share Text",
-    });
-  };
+  //   // Share with appropriate MIME type and UTI
+  //   await Sharing.shareAsync(fileUri, {
+  //     mimeType: "text/plain", // For Android
+  //     UTI: "public.text", // For iOS
+  //     dialogTitle: "Share Text",
+  //   });
+  // };
 
   return (
     <SafeAreaView style={recipeStyles.container}>
@@ -258,7 +258,7 @@ const RecipePage = ({ recipe }) => {
           disabled={isLoading}
         />
 
-        <TouchableOpacity
+        {/* <TouchableOpacity
           icon={<Icon name="share" type="material" color="black" />}
           onPress={async () => {
             await shareText(
@@ -271,7 +271,7 @@ const RecipePage = ({ recipe }) => {
             );
           }}
           buttonStyle={recipeStyles.iconButton}
-        />
+        /> */}
       </View>
 
       <Modal

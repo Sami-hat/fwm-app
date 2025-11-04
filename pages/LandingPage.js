@@ -1,9 +1,9 @@
 import React, { useEffect } from 'react';
-import { View, ScrollView, SafeAreaView, Alert, TouchableOpacity, Text } from 'react-native';
+import { View, SafeAreaView, TouchableOpacity, Text, Icon } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { useAuth } from '../contexts/AuthContext';
 import { landingStyles } from '../styles/LandingPageStyles';
-import Icon from 'react-native-vector-icons/FontAwesome';
+
 
 const LandingPage = () => {
   const navigation = useNavigation();
@@ -39,18 +39,18 @@ const LandingPage = () => {
       </View>
 
       <TouchableOpacity
-        title="Sign Up with Email"
+        style={landingStyles.signUpButton}
         onPress={() => navigation.navigate('SignUp')}
-        buttonStyle={landingStyles.signUpButton}
-        titleStyle={landingStyles.buttonText}
-      />
+      >
+        <Text style={landingStyles.buttonText}>Sign Up with Email</Text>
+      </TouchableOpacity>
 
       <TouchableOpacity
-        title="Log In with Email"
+        style={landingStyles.loginButton}
         onPress={() => navigation.navigate('Login')}
-        buttonStyle={landingStyles.loginButton}
-        titleStyle={landingStyles.buttonText}
-      />
+      >
+        <Text style={landingStyles.buttonText}>Log In with Email</Text>
+      </TouchableOpacity>
 
       <View style={landingStyles.divider}>
         <View style={landingStyles.dividerLine} />
@@ -58,6 +58,13 @@ const LandingPage = () => {
         <View style={landingStyles.dividerLine} />
       </View>
 
+      <TouchableOpacity
+        style={landingStyles.googleButton}
+        onPress={handleGoogleSignIn}
+      >
+        <Text style={landingStyles.buttonText}>Continue with Google</Text>
+      </TouchableOpacity>
+      
       <TouchableOpacity
         title="Continue with Google"
         icon={

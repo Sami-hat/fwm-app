@@ -1,20 +1,19 @@
-import { scannerStyles } from "../styles/ScannerPageStyles";
+import { barcodeService, inventoryService } from "../services/apiService";
 import { cameraStyles } from "../styles/CameraPageStyles";
-import { inventoryService, barcodeService } from "../services/apiService";
+import { scannerStyles } from "../styles/ScannerPageStyles";
 
-import React, { useState } from "react";
+import Ionicons from "@expo/vector-icons/Ionicons";
+import { useNavigation } from "@react-navigation/native";
+import { CameraView, useCameraPermissions } from "expo-camera";
+import { useState } from "react";
 import {
-  Text,
-  View,
-  TouchableOpacity,
-  StyleSheet,
-  TouchableOpacity,
   Alert,
   SafeAreaView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
 } from "react-native";
-import { CameraView, useCameraPermissions } from "expo-camera";
-import { useNavigation } from "@react-navigation/native";
-import Ionicons from "@expo/vector-icons/Ionicons";
 
 import { useAuth } from '../contexts/AuthContext';
 

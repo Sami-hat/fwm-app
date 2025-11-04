@@ -12,7 +12,7 @@ import {
 import { useNavigation } from "@react-navigation/native";
 
 import { CameraView, useCameraPermissions } from "expo-camera";
-import { Image } from "expo-image";
+import { Image } from "react-native";
 
 import Ionicons from "@expo/vector-icons/Ionicons";
 import Entypo from "@expo/vector-icons/Entypo";
