@@ -31,7 +31,7 @@ export default {
       GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID,
       REDIRECT_URI: process.env.REDIRECT_URI,
       eas: {
-        "projectId": "00efa2c3-dbeb-41c5-bafc-f0dfc30db2d6"
+        "projectId": "9a3feb72-9264-4226-8d4e-c724712dee32"
       },
     },
     ios: {
