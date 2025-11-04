@@ -95,8 +95,7 @@ export default {
           }
         }
       ],
-      "expo-secure-store",
-      "expo-web-browser"
+      "expo-secure-store"
     ]
   }
 };
