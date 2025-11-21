@@ -16,21 +16,13 @@ const getBaseApiUrl = () => {
   );
 };
 
-const getGoogleClientId = () => {
-  const extra = Constants.expoConfig?.extra || {};
-  return extra.GOOGLE_CLIENT_ID || process.env.GOOGLE_CLIENT_ID;
-};
-
-const getRedirectUri = () => {
-  const extra = Constants.expoConfig?.extra || {};
-  return extra.REDIRECT_URI || process.env.REDIRECT_URI;
-};
-
 export const API_BASE_URL = getBaseApiUrl();
 
-export const GOOGLE_CLIENT_ID = getGoogleClientId();
-
-export const REDIRECT_URI = getRedirectUri();
+// Google OAuth Configuration
+export const GOOGLE_CONFIG = {
+  clientId: process.env.EXPO_PUBLIC_GOOGLE_CLIENT_ID || '',
+  // Expo handles redirect URIs automatically
+};
 
 export const API_ENDPOINTS = {
   // Auth
@@ -40,10 +32,7 @@ export const API_ENDPOINTS = {
   LOGOUT: "/auth/logout",
   VERIFY_EMAIL: "/auth/verify-email",
   RESEND_VERIFICATION: "/auth/resend-verification",
-
-  // OAuth
-  GOOGLE_EXCHANGE: "/auth/google-exchange",
-  GOOGLE_FALLBACK: "/auth/google",
+  GOOGLE_AUTH: "/auth/google",
 
   // User
   EMAIL: "/email",

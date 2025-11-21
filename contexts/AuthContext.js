@@ -1,6 +1,11 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import * as SecureStore from 'expo-secure-store';
+import * as Google from 'expo-auth-session/providers/google';
+import * as WebBrowser from 'expo-web-browser';
 import { authService } from '../services/apiService';
+import { GOOGLE_CONFIG } from '../config/api';
+
+WebBrowser.maybeCompleteAuthSession();
 
 const AuthContext = createContext({});
 
@@ -16,9 +21,22 @@ export const AuthProvider = ({ children }) => {
   const REFRESH_TOKEN_KEY = 'refresh_token';
   const USER_DATA_KEY = 'user_data';
 
+  // Google OAuth configuration
+  const [request, response, promptAsync] = Google.useIdTokenAuthRequest({
+    clientId: GOOGLE_CONFIG.clientId,
+  });
+
   useEffect(() => {
     loadStoredAuth();
   }, []);
+
+  // Handle Google OAuth response
+  useEffect(() => {
+    if (response?.type === 'success') {
+      const { id_token } = response.params;
+      handleGoogleAuth(id_token);
+    }
+  }, [response]);
 
   const loadStoredAuth = async () => {
     try {
@@ -106,6 +124,29 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  const handleGoogleAuth = async (idToken) => {
+    try {
+      const response = await authService.googleAuth(idToken);
+      await handleAuthSuccess(response);
+      return response;
+    } catch (error) {
+      console.error('Google authentication error:', error);
+      throw error;
+    }
+  };
+
+  const signInWithGoogle = async () => {
+    try {
+      if (!GOOGLE_CONFIG.clientId) {
+        throw new Error('Google Client ID not configured. Please set EXPO_PUBLIC_GOOGLE_CLIENT_ID environment variable.');
+      }
+      await promptAsync();
+    } catch (error) {
+      console.error('Google sign in error:', error);
+      throw error;
+    }
+  };
+
   const logout = async (logoutAll = false) => {
     try {
       if (refreshToken) {
@@ -141,6 +182,7 @@ export const AuthProvider = ({ children }) => {
     accessToken,
     signInWithEmail,
     signUpWithEmail,
+    signInWithGoogle,
     logout,
     refreshAccessToken,
     isAuthenticated: !!user,

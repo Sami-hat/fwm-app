@@ -1,14 +1,14 @@
-import React, { useEffect } from 'react';
-import { View, SafeAreaView, TouchableOpacity, Text, Icon } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, SafeAreaView, TouchableOpacity, Text, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { useAuth } from '../contexts/AuthContext';
 import { landingStyles } from '../styles/LandingPageStyles';
-
 
 const LandingPage = () => {
   const navigation = useNavigation();
   const { isAuthenticated, signInWithGoogle } = useAuth();
   const currentYear = new Date().getFullYear();
+  const [isGoogleLoading, setIsGoogleLoading] = useState(false);
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -17,13 +17,14 @@ const LandingPage = () => {
   }, [isAuthenticated, navigation]);
 
   const handleGoogleSignIn = async () => {
-    console.log('Starting Google Sign In');
     try {
-      const result = await signInWithGoogle();
-      console.log('Sign in result:', result);
+      setIsGoogleLoading(true);
+      await signInWithGoogle();
     } catch (error) {
-      console.error('Sign in failed:', error);
+      console.error('Google sign in failed:', error);
       Alert.alert('Sign In Failed', error.message || 'Please try again');
+    } finally {
+      setIsGoogleLoading(false);
     }
   };
 
@@ -61,24 +62,12 @@ const LandingPage = () => {
       <TouchableOpacity
         style={landingStyles.googleButton}
         onPress={handleGoogleSignIn}
+        disabled={isGoogleLoading}
       >
-        <Text style={landingStyles.buttonText}>Continue with Google</Text>
+        <Text style={landingStyles.buttonText}>
+          {isGoogleLoading ? 'Signing in...' : 'Continue with Google'}
+        </Text>
       </TouchableOpacity>
-      
-      <TouchableOpacity
-        title="Continue with Google"
-        icon={
-          <Icon
-            name="google"
-            size={20}
-            color="white"
-            style={landingStyles.googleIcon}
-          />
-        }
-        onPress={handleGoogleSignIn}
-        buttonStyle={landingStyles.googleButton}
-        titleStyle={landingStyles.buttonText}
-      />
 
       <View style={landingStyles.statisticsBox}>
         <Text style={landingStyles.statisticsTitle}>

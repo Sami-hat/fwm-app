@@ -5,8 +5,10 @@ import {
   preferencesService,
 } from "../services/apiService";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback, useMemo, memo } from "react";
 import { useNavigation } from "@react-navigation/native";
+import { useCache } from '../hooks/useCache';
+import { useCancellableRequest } from '../hooks/useCancellableRequest';
 import {
   SafeAreaView,
   View,
@@ -20,6 +22,61 @@ import { Feather, AntDesign } from "@expo/vector-icons";
 
 import { useAuth } from '../contexts/AuthContext';
 
+// Memoised component for suggested recipe items
+const SuggestedRecipeItem = memo(({ item, onPress }) => (
+  <TouchableOpacity
+    onPress={onPress}
+    style={{
+      paddingVertical: 12,
+      paddingHorizontal: 16,
+      backgroundColor: '#fff',
+      borderBottomWidth: 1,
+      borderBottomColor: '#e0e0e0',
+    }}
+  >
+    <Text style={{
+      fontSize: 16,
+      fontWeight: '500',
+      color: '#333'
+    }}>
+      {item.recipe_name}
+    </Text>
+  </TouchableOpacity>
+));
+
+// Memoised component for saved recipe items
+const SavedRecipeItem = memo(({ item, onPress }) => (
+  <TouchableOpacity
+    onPress={onPress}
+    style={{
+      flexDirection: 'row',
+      alignItems: 'center',
+      paddingVertical: 12,
+      paddingHorizontal: 16,
+      backgroundColor: '#fff',
+      borderBottomWidth: 1,
+      borderBottomColor: '#e0e0e0',
+    }}
+  >
+    <Text style={{
+      fontSize: 20,
+      color: '#FFD700',
+      marginRight: 12
+    }}>
+      ⭐
+    </Text>
+    <View style={{ flex: 1 }}>
+      <Text style={{
+        fontSize: 16,
+        fontWeight: '500',
+        color: '#333'
+      }}>
+        {item.recipe_name}
+      </Text>
+    </View>
+  </TouchableOpacity>
+));
+
 // Home Page, User is signed in
 const HomePage = ({ setRecipe }) => {
   const { user, isAuthenticated, loading } = useAuth();
@@ -27,6 +84,10 @@ const HomePage = ({ setRecipe }) => {
 
   const windowHeight = Dimensions.get("window").height;
   const navigation = useNavigation();
+
+  // Caching and cancellation hooks
+  const { getCached, setCached, invalidateByPattern } = useCache(5); // 5 minute TTL
+  const { createCancellableRequest, cancelPendingRequests } = useCancellableRequest();
 
   const [ingredients, setIngredients] = useState("");
   const [suggestedRecipes, setSuggestedRecipes] = useState([]);
@@ -63,7 +124,14 @@ const HomePage = ({ setRecipe }) => {
     });
 
     return unsubscribe;
-  }, [navigation, userId, lastUserId]);
+  }, [navigation, userId, lastUserId, loadInventory, loadPreferences, loadSavedRecipes]);
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      cancelPendingRequests();
+    };
+  }, [cancelPendingRequests]);
 
   const loadInitialData = async () => {
     if (userId >= 1) {
@@ -76,58 +144,104 @@ const HomePage = ({ setRecipe }) => {
     }
   };
 
-  const loadInventory = async () => {
+  const loadInventory = useCallback(async () => {
     if (userId < 1) return;
 
+    const cacheKey = `inventory_names_${userId}`;
+    const cached = getCached(cacheKey);
+
+    if (cached) {
+      setIngredients(cached);
+      return;
+    }
+
     try {
-      const data = await inventoryService.getNames(userId);
-      const ingredientsString = data.join(", ");
-      setIngredients(ingredientsString);
+      const cancellableRequest = createCancellableRequest(async () => {
+        return await inventoryService.getNames(userId);
+      });
+
+      const data = await cancellableRequest();
+      if (data) {
+        const ingredientsString = data.join(", ");
+        setIngredients(ingredientsString);
+        setCached(cacheKey, ingredientsString);
+      }
     } catch (error) {
       console.error("Error fetching inventory:", error);
       setIngredients("");
     }
-  };
+  }, [userId, getCached, setCached, createCancellableRequest]);
 
-  const loadPreferences = async () => {
+  const loadPreferences = useCallback(async () => {
     if (userId < 1) return;
 
+    const cacheKey = `preferences_${userId}`;
+    const cached = getCached(cacheKey);
+
+    if (cached) {
+      setPreferences(cached);
+      return;
+    }
+
     try {
-      const userPrefs = await preferencesService.get(userId);
-      setPreferences(userPrefs || {});
+      const cancellableRequest = createCancellableRequest(async () => {
+        return await preferencesService.get(userId);
+      });
+
+      const userPrefs = await cancellableRequest();
+      if (userPrefs !== null) {
+        const prefs = userPrefs || {};
+        setPreferences(prefs);
+        setCached(cacheKey, prefs);
+      }
     } catch (error) {
       console.log("Error loading preferences:", error);
       setPreferences({});
     }
-  };
+  }, [userId, getCached, setCached, createCancellableRequest]);
 
-  const loadSavedRecipes = async () => {
+  const loadSavedRecipes = useCallback(async () => {
     if (userId < 1) return;
+
+    const cacheKey = `saved_recipes_${userId}`;
+    const cached = getCached(cacheKey);
+
+    if (cached) {
+      setSavedRecipes(cached);
+      return;
+    }
 
     setIsLoadingSaved(true);
     try {
-      const saved = await recipeService.getSaved(userId);
-      const parsedRecipes = saved.map((recipe) => ({
-        ...recipe,
-        itemId: `saved-${userId}-${recipe.id}`,
-        ingredients_needed:
-          typeof recipe.ingredients_needed === "string"
-            ? JSON.parse(recipe.ingredients_needed)
-            : recipe.ingredients_needed,
-        instructions:
-          typeof recipe.instructions === "string"
-            ? JSON.parse(recipe.instructions)
-            : recipe.instructions,
-      }));
-      setSavedRecipes(parsedRecipes);
+      const cancellableRequest = createCancellableRequest(async () => {
+        return await recipeService.getSaved(userId);
+      });
+
+      const saved = await cancellableRequest();
+      if (saved) {
+        const parsedRecipes = saved.map((recipe) => ({
+          ...recipe,
+          itemId: `saved-${userId}-${recipe.id}`,
+          ingredients_needed:
+            typeof recipe.ingredients_needed === "string"
+              ? JSON.parse(recipe.ingredients_needed)
+              : recipe.ingredients_needed,
+          instructions:
+            typeof recipe.instructions === "string"
+              ? JSON.parse(recipe.instructions)
+              : recipe.instructions,
+        }));
+        setSavedRecipes(parsedRecipes);
+        setCached(cacheKey, parsedRecipes);
+      }
     } catch (error) {
       console.error("Error loading saved recipes:", error);
       setSavedRecipes([]);
     }
     setIsLoadingSaved(false);
-  };
+  }, [userId, getCached, setCached, createCancellableRequest]);
 
-  const generateRecipes = async (action) => {
+  const generateRecipes = useCallback(async (action) => {
     if (!ingredients || ingredients.length === 0 || isLoadingRecipes) {
       return;
     }
@@ -167,19 +281,53 @@ const HomePage = ({ setRecipe }) => {
       }
     }
     setIsLoadingRecipes(false);
-  };
+  }, [userId, ingredients, isLoadingRecipes, suggestedRecipes]);
 
-  const handleAddMore = () => {
+  const handleAddMore = useCallback(() => {
     generateRecipes("add");
-  };
+  }, [generateRecipes]);
 
-  const handleRefreshRecipes = () => {
+  const handleRefreshRecipes = useCallback(() => {
     generateRecipes("refresh");
-  };
+  }, [generateRecipes]);
 
-  const handlePreferencesPress = () => {
+  const handlePreferencesPress = useCallback(() => {
     navigation.navigate("Preferences");
-  };
+  }, [navigation]);
+
+  // Memoised preferences display text (expensive string manipulation)
+  const preferencesDisplayText = useMemo(() => {
+    if (!preferences || Object.keys(preferences).length === 0) return null;
+
+    return Object.entries(preferences)
+      .filter(([key, value]) => value === true && key.startsWith("is_"))
+      .map(([key]) =>
+        key
+          .replace(/^is_|_/g, " ")
+          .trim()
+          .split(" ")
+          .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+          .join(" "),
+      )
+      .join(", ") || "None";
+  }, [preferences]);
+
+  // Memoised render functions for FlatList
+  const renderSuggestedRecipe = useCallback(({ item }) => {
+    const handlePress = () => {
+      setRecipe(item);
+      navigation.navigate("Recipe");
+    };
+    return <SuggestedRecipeItem item={item} onPress={handlePress} />;
+  }, [setRecipe, navigation]);
+
+  const renderSavedRecipe = useCallback(({ item }) => {
+    const handlePress = () => {
+      setRecipe(item);
+      navigation.navigate("Recipe");
+    };
+    return <SavedRecipeItem item={item} onPress={handlePress} />;
+  }, [setRecipe, navigation]);
 
   // Show loading state while checking auth
   if (loading) {
@@ -247,25 +395,13 @@ const HomePage = ({ setRecipe }) => {
         </View>
 
         {/* Preferences Display */}
-        {preferences && Object.keys(preferences).length > 0 && (
+        {preferencesDisplayText && (
           <View style={homeStyles.preferencesDisplay}>
             <Text style={homeStyles.preferencesTitle}>
               Active Dietary Preferences:
             </Text>
             <Text style={homeStyles.preferencesText}>
-              {Object.entries(preferences)
-                .filter(
-                  ([key, value]) => value === true && key.startsWith("is_"),
-                )
-                .map(([key]) =>
-                  key
-                    .replace(/^is_|_/g, " ")
-                    .trim()
-                    .split(" ")
-                    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-                    .join(" "),
-                )
-                .join(", ") || "None"}
+              {preferencesDisplayText}
             </Text>
             <TouchableOpacity
               style={{ position: "absolute", top: 10, right: 10 }}
@@ -292,29 +428,7 @@ const HomePage = ({ setRecipe }) => {
               <FlatList
                 data={suggestedRecipes}
                 keyExtractor={(item) => item.itemId}
-                renderItem={({ item }) => (
-                  <TouchableOpacity
-                    onPress={() => {
-                      setRecipe(item);
-                      navigation.navigate("Recipe");
-                    }}
-                    style={{
-                      paddingVertical: 12,
-                      paddingHorizontal: 16,
-                      backgroundColor: '#fff',
-                      borderBottomWidth: 1,
-                      borderBottomColor: '#e0e0e0',
-                    }}
-                  >
-                    <Text style={{ 
-                      fontSize: 16, 
-                      fontWeight: '500',
-                      color: '#333' 
-                    }}>
-                      {item.recipe_name}
-                    </Text>
-                  </TouchableOpacity>
-                )}
+                renderItem={renderSuggestedRecipe}
               />
               <View style={homeStyles.recipeActionButtonContainer}>
                 <TouchableOpacity
@@ -445,40 +559,7 @@ const HomePage = ({ setRecipe }) => {
           <FlatList
             data={savedRecipes}
             keyExtractor={(item) => item.itemId}
-            renderItem={({ item }) => (
-              <TouchableOpacity
-                onPress={() => {
-                  setRecipe(item);
-                  navigation.navigate("Recipe");
-                }}
-                style={{
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                  paddingVertical: 12,
-                  paddingHorizontal: 16,
-                  backgroundColor: '#fff',
-                  borderBottomWidth: 1,
-                  borderBottomColor: '#e0e0e0',
-                }}
-              >
-                <Text style={{
-                  fontSize: 20,
-                  color: '#FFD700',
-                  marginRight: 12
-                }}>
-                  ⭐
-                </Text>
-                <View style={{ flex: 1 }}>
-                  <Text style={{
-                    fontSize: 16,
-                    fontWeight: '500',
-                    color: '#333'
-                  }}>
-                    {item.recipe_name}
-                  </Text>
-                </View>
-              </TouchableOpacity>
-            )}
+            renderItem={renderSavedRecipe}
             ListEmptyComponent={() => (
               <View style={homeStyles.emptyText}>
                 <Text>No saved recipes yet. Star recipes to save them!</Text>
